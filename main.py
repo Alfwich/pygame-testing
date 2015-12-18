@@ -5,7 +5,8 @@ FPS = 60
 SCREEN_SIZE = (1000, 1000)
 TITLE = "Test Game"
 IMAGE_LOAD_LIST = [
-    ("frog", "frog-face.png")
+    ("frog", "frog-face.png"),
+    ("frog2", "funny-frog-face.png")
 ]
 
 SOUND_LOAD_LIST = [
@@ -24,13 +25,6 @@ def init():
     images.loadImageList(IMAGE_LOAD_LIST)
     sounds.loadSoundList(SOUND_LOAD_LIST)
 
-def bindEvents():
-    def quitApplication(e):
-        pygame.quit()
-        sys.exit()
-
-    events.bindEvent(QUIT, quitApplication)
-
 def getRandomCoord():
     return (random.randint(0, SCREEN_SIZE[0]), random.randint(0, SCREEN_SIZE[1]))
 
@@ -41,8 +35,12 @@ def main():
     init()
     screen = pygame.display.set_mode(SCREEN_SIZE)
     clock = pygame.time.Clock()
+
+    if screen is None or clock is None:
+        print("Could not create screen or clock object.", screen, clock)
+        return
+
     mainRenderList = RenderList.RenderList()
-    bindEvents()
     frogObject = StaticObject.StaticObject()
     frogObject.setBitmap(images.getImage("frog"))
     mainRenderList.addObject(frogObject)
@@ -67,14 +65,29 @@ def main():
         elif event.key in [ord("a"), ord("d")]:
             frog.velocity[0] = 0
 
+    def moveTextMouseMotion(event, text):
+        text.position = [event.pos[0], event.pos[1]]
 
+    def quitApplication(event):
+        pygame.quit()
+        sys.exit()
+
+    def quitApplicationKeyDown(event):
+        if event.unicode == u"q":
+            quitApplication(event)
+
+    def changeFrogFaceKeyDown(event, frog):
+        if event.unicode == u"o":
+            frog.setBitmap(images.getImage("frog"))
+        elif event.unicode == u"p":
+            frog.setBitmap(images.getImage("frog2"))
+
+    events.bindEvent(QUIT, quitApplication)
+    events.bindEvent(KEYDOWN, quitApplicationKeyDown)
     events.bindEvent(KEYDOWN, moveFrogKeyDown, frogObject)
+    events.bindEvent(KEYDOWN, changeFrogFaceKeyDown, frogObject)
     events.bindEvent(KEYUP, moveFrogKeyUp, frogObject)
-
-    if screen is None or clock is None:
-        print("Could not create screen or clock object.", screen, clock)
-        return
-
+    events.bindEvent(MOUSEMOTION, moveTextMouseMotion, coolText)
     sounds.playSoundOnce("startup")
     while True:
         # Limit framerate to the desired FPS
