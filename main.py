@@ -1,7 +1,9 @@
-import pygame, sys, os, colors, time, random, images, fonts, sounds, events, StaticObject, RenderList
+import pygame, sys, os, colors, time, random, images, fonts, sounds, events
+import StaticObject, RenderList, Camera
+import SOFrog, SOStaticText
 from pygame.locals import *
 
-FPS = 60
+FPS = 1000
 SCREEN_SIZE = (1000, 1000)
 TITLE = "Test Game"
 IMAGE_LOAD_LIST = [
@@ -41,32 +43,16 @@ def main():
         return
 
     mainRenderList = RenderList.RenderList()
-    frogObject = StaticObject.StaticObject()
-    frogObject.setBitmap(images.getImage("frog"))
+    mainCamera = Camera.Camera()
+
+    frogObject = SOFrog.SOFrog()
     mainRenderList.addObject(frogObject)
 
-    coolText = StaticObject.StaticObject()
-    coolText.setBitmap(fonts.renderTextSurface("Cool Text; Brah!"))
+    coolText = SOStaticText.SOStaticText("Cool Text; Brah!")
     mainRenderList.addObject(coolText)
 
-    def moveFrogKeyDown(event, frog):
-        if event.unicode == u"w":
-            frog.velocity[1] = -1
-        elif event.unicode == u"s":
-            frog.velocity[1] = 1
-        elif event.unicode == u"a":
-            frog.velocity[0] = -1
-        elif event.unicode == u"d":
-            frog.velocity[0] = 1
-
-    def moveFrogKeyUp(event, frog):
-        if event.key in [ord("w"), ord("s")]:
-            frog.velocity[1] = 0
-        elif event.key in [ord("a"), ord("d")]:
-            frog.velocity[0] = 0
-
-    def moveTextMouseMotion(event, text):
-        text.position = [event.pos[0], event.pos[1]]
+    def moveCameraMouseMotion(event, camera):
+        camera.moveOffset(event.rel[0], event.rel[1])
 
     def quitApplication(event):
         pygame.quit()
@@ -76,29 +62,26 @@ def main():
         if event.unicode == u"q":
             quitApplication(event)
 
-    def changeFrogFaceKeyDown(event, frog):
-        if event.unicode == u"o":
-            frog.setBitmap(images.getImage("frog"))
-        elif event.unicode == u"p":
-            frog.setBitmap(images.getImage("frog2"))
-
     events.bindEvent(QUIT, quitApplication)
     events.bindEvent(KEYDOWN, quitApplicationKeyDown)
-    events.bindEvent(KEYDOWN, moveFrogKeyDown, frogObject)
-    events.bindEvent(KEYDOWN, changeFrogFaceKeyDown, frogObject)
-    events.bindEvent(KEYUP, moveFrogKeyUp, frogObject)
-    events.bindEvent(MOUSEMOTION, moveTextMouseMotion, coolText)
+    events.bindEvent(KEYDOWN, frogObject.moveKeyDown)
+    events.bindEvent(KEYUP, frogObject.moveKeyUp)
+    events.bindEvent(KEYDOWN, frogObject.changeFaceKeyDown)
+    events.bindEvent(MOUSEMOTION, moveCameraMouseMotion, mainCamera)
     sounds.playSoundOnce("startup")
     while True:
         # Limit framerate to the desired FPS
-        clock.tick(FPS)
+        delta = clock.tick(FPS)/1000.0
 
-        # Handle game events and each object's tick function
+        # Handle game events through the event queue
         events.handleEvents()
 
+        # Call the tick methos from any tickable object
+        events.tickObjects(delta)
+
         # Draw screen
-        screen.fill(colors.getColor(colors.BLACK))
-        mainRenderList.renderList(screen)
+        #screen.fill(colors.getColor(colors.BLACK))
+        mainRenderList.renderList(screen, mainCamera)
         pygame.display.update()
 
 if __name__ == "__main__":

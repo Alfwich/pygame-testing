@@ -13,21 +13,25 @@ def handleEvents():
     for e in pygame.event.get():
         if e.type in _callbacks:
             for callback in _callbacks[e.type]:
-                if not callback._binder is None:
+                if hasattr(callback, "_binder"):
                     callback(e, callback._binder)
                 else:
                     callback(e)
 
+def tickObjects(delta=None):
     for obj in _tickableObjects:
-        obj.tick(0.0)
+        if obj._shouldTick:
+            obj.tick(delta)
 
 def bindEvent(action, callback, obj=None):
-    boundFunction = copyFunction(callback)
-    boundFunction._binder = obj
+    if not hasattr(callback, "im_self") and not obj is None:
+        callback = copyFunction(callback)
+        callback._binder = obj
+
     if action not in _callbacks:
         _callbacks[action] = []
 
-    _callbacks[action].append(boundFunction)
+    _callbacks[action].append(callback)
 
 def unbindEvents(action, obj=None):
     if action in _callbacks:
