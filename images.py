@@ -2,6 +2,14 @@ import pygame
 
 IMAGE_LOAD_TEMPLATE = "src\image\%s"
 _loadedImages = {}
+_globalImageLoadList = []
+
+def addToGlobalLoadList(newList):
+    for asset in newList:
+        _globalImageLoadList.append(asset)
+
+def loadGlobalImageList():
+    loadImageList(_globalImageLoadList)
 
 def loadImageList(imageList):
     for asset in imageList:

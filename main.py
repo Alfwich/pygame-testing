@@ -3,15 +3,16 @@ import StaticObject, RenderList, Camera
 import SOFrog, SOStaticText
 from pygame.locals import *
 
-FPS = 10
+FPS = 60
 SCREEN_SIZE = (1000, 1000)
 TITLE = "Test Game"
-GAME_IMAGE_LOAD_LIST = [
-]
 
-GAME_SOUND_LOAD_LIST = [
+images.addToGlobalLoadList([
+])
+
+sounds.addToGlobalLoadList([
     ("startup", "windows-logon.wav")
-]
+])
 
 # Inits pygame and various components
 def init():
@@ -21,10 +22,10 @@ def init():
     events.init()
     pygame.display.set_caption(TITLE)
 
-    # Init images from list
-    images.loadImageList(GAME_IMAGE_LOAD_LIST)
-    images.loadImageList(SOFrog.IMAGE_LOAD_LIST)
-    sounds.loadSoundList(GAME_SOUND_LOAD_LIST)
+    # Init images from their respective lists. This allows game classes
+    # to define images and sounds that will be used at declaration time
+    images.loadGlobalImageList()
+    sounds.loadGlobalSoundList()
 
 def getRandomCoord():
     return (random.randint(0, SCREEN_SIZE[0]), random.randint(0, SCREEN_SIZE[1]))
