@@ -1,5 +1,4 @@
 import pygame, StaticObject as SO, images, events
-from pygame.locals import *
 
 
 images.addToGlobalLoadList([
@@ -12,9 +11,9 @@ class SOFrog(SO.StaticObject):
         super(SOFrog, self).__init__()
         self.setBitmap(images.getImage("frog"))
         self.moveSpeed = 100
-        events.bindEvent(KEYDOWN, self.moveKeyDown)
-        events.bindEvent(KEYUP, self.moveKeyUp)
-        events.bindEvent(KEYDOWN, self.changeFaceKeyDown)
+        events.bindKeyDownEvent(["w","a","s","d"], self.moveKeyDown)
+        events.bindKeyUpEvent(["w","a","s","d"], self.moveKeyUp)
+        events.bindKeyDownEvent(["o", "p"], self.changeFaceKeyDown)
 
     def moveKeyDown(self, event):
         if event.unicode == u"w":
