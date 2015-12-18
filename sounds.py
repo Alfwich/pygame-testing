@@ -1,7 +1,32 @@
 import pygame
 
+SOUND_LOAD_TEMPLATE = "src\sound\%s"
+_loadedSounds = {}
+
 def init():
     pass
 
 def loadSound(name, path):
-    pass    
+    sound = pygame.mixer.Sound(SOUND_LOAD_TEMPLATE % path)
+    _loadedSounds[name] = sound
+
+def loadSoundList(soundList):
+    for asset in soundList:
+        loadSound(*asset)
+
+def getSound(name):
+    if name in _loadedSounds:
+        return _loadedSounds[name]
+    else:
+        print("Could not load sound for name: '%s'" % name)
+        return None
+
+def playSoundOnce(name):
+    if name in _loadedSounds:
+        return _loadedSounds[name].play()
+    else:
+        print("Could not find sound for name: '%s'" % name)
+
+def stopAllSounds():
+    for key, sound in _loadedSounds.iteritems():
+        sound.stop()

@@ -1,25 +1,30 @@
-import pygame, sys, os, colors, time, random, images, fonts
+import pygame, sys, os, colors, time, random, images, fonts, sounds
 from pygame.locals import *
 
-FPS = 60
+FPS = 4
 SCREEN_SIZE = (1000, 1000)
 TITLE = "Test Game"
-IMAGE_LOAD_TEMPLATE = "src\img\%s"
 IMAGE_LOAD_LIST = [
     ("frog", "frog-face.png")
 ]
 
+SOUND_LOAD_LIST = [
+    ("startup", "windows-logon.wav")
+]
+
 # Inits pygame and various components
 def init():
+    pygame.mixer.pre_init(frequency=44100, size=-16, channels=2, buffer=4096)
     pygame.init()
     fonts.init()
+    colors.init()
     pygame.display.set_caption(TITLE)
     screen = pygame.display.set_mode(SCREEN_SIZE)
     clock = pygame.time.Clock()
 
     # Init images from list
-    for asset in IMAGE_LOAD_LIST:
-        images.loadImage(asset[0], IMAGE_LOAD_TEMPLATE % asset[1])
+    images.loadImageList(IMAGE_LOAD_LIST)
+    sounds.loadSoundList(SOUND_LOAD_LIST)
 
     return screen, clock
 
@@ -34,7 +39,8 @@ def main():
 
     coolText = fonts.renderTextSurface("Cool Text; Brah!")
     while True:
-        # Limit framerate to 60fps
+        sounds.playSoundOnce("startup")
+        # Limit framerate to the desired FPS
         clock.tick(FPS)
 
         # Handle game events
