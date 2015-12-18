@@ -50,43 +50,23 @@ def main():
     coolText = SOStaticText.SOStaticText("Cool Text; Brah!")
     mainRenderList.addObject(coolText)
 
-    def moveCameraMouseMotion(event, camera):
-        camera.moveOffset(event.rel[0], event.rel[1])
-
-    def moveCameraMouseDown(event, camera):
-        if event.button == 1:
-            camera.unlock()
-
-    def moveCameraMouseUp(event, camera):
-        if event.button == 1:
-            camera.lock()
-
-    def spawnNewFrogMouseDown(event):
-        if event.button == 3:
-            newFrog = SOFrog.SOFrog()
-            newFrogPosition = mainCamera.transformScreenPosition(event.pos)
-            newFrog.setPosition(newFrogPosition[0], newFrogPosition[1])
-            mainRenderList.addObject(newFrog)
+    def spawnNewFrog(event):
+        newFrog = SOFrog.SOFrog()
+        newFrogPosition = mainCamera.transformScreenPosition(event.pos)
+        newFrog.setPosition(newFrogPosition[0], newFrogPosition[1])
+        mainRenderList.addObject(newFrog)
 
     def quitApplication(event):
         pygame.quit()
         sys.exit()
 
-    def quitApplicationKeyDown(event):
-        if event.unicode == u"q":
-            quitApplication(event)
-
-    def playCoolSoundKeyDown(event):
-        if event.unicode == u"g":
-            sounds.playSoundOnce("startup")
-
     events.bindEvent(QUIT, quitApplication)
-    events.bindEvent(KEYDOWN, quitApplicationKeyDown)
-    events.bindEvent(KEYDOWN, playCoolSoundKeyDown)
-    events.bindEvent(MOUSEMOTION, moveCameraMouseMotion, mainCamera)
-    events.bindEvent(MOUSEBUTTONDOWN, moveCameraMouseDown, mainCamera)
-    events.bindEvent(MOUSEBUTTONUP, moveCameraMouseUp, mainCamera)
-    events.bindEvent(MOUSEBUTTONDOWN, spawnNewFrogMouseDown)
+    events.bindKeyDownEvent(["q"], quitApplication)
+    events.bindMouseMotionEvent(lambda e: mainCamera.moveOffset(e.rel[0], e.rel[1]))
+    events.bindMouseDownEvent([1], lambda e: mainCamera.unlock())
+    events.bindMouseUpEvent([1], lambda e: mainCamera.lock())
+    events.bindMouseDownEvent([3], spawnNewFrog)
+    events.bindKeyDownEvent(["g"], lambda e: sounds.playSoundOnce("startup"))
     while True:
         # Limit framerate to the desired FPS
         delta = clock.tick(FPS)/1000.0
