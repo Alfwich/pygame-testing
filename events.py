@@ -115,7 +115,7 @@ def bindMouseDownEvent(buttons, callback, obj=None):
     if not hasattr(callback, "im_self") and not obj is None:
         callback = _createBoundFunction(obj, callback)
 
-    buttonOrds = processButtonsArray(buttons)
+    buttonOrds = _processButtonsArray(buttons)
 
     def mouseDownFilter(event):
         if event.button in buttonOrds:
@@ -130,7 +130,7 @@ def bindMouseUpEvent(buttons, callback, obj=None):
     if not hasattr(callback, "im_self") and not obj is None:
         callback = _createBoundFunction(obj, callback)
 
-    buttonOrds = processButtonsArray(buttons)
+    buttonOrds = _processButtonsArray(buttons)
 
     def mouseUpFilter(event):
         if event.button in buttonOrds:
