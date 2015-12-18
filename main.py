@@ -3,15 +3,13 @@ import StaticObject, RenderList, Camera
 import SOFrog, SOStaticText
 from pygame.locals import *
 
-FPS = 1000
+FPS = 10
 SCREEN_SIZE = (1000, 1000)
 TITLE = "Test Game"
-IMAGE_LOAD_LIST = [
-    ("frog", "frog-face.png"),
-    ("frog2", "funny-frog-face.png")
+GAME_IMAGE_LOAD_LIST = [
 ]
 
-SOUND_LOAD_LIST = [
+GAME_SOUND_LOAD_LIST = [
     ("startup", "windows-logon.wav")
 ]
 
@@ -24,8 +22,9 @@ def init():
     pygame.display.set_caption(TITLE)
 
     # Init images from list
-    images.loadImageList(IMAGE_LOAD_LIST)
-    sounds.loadSoundList(SOUND_LOAD_LIST)
+    images.loadImageList(GAME_IMAGE_LOAD_LIST)
+    images.loadImageList(SOFrog.IMAGE_LOAD_LIST)
+    sounds.loadSoundList(GAME_SOUND_LOAD_LIST)
 
 def getRandomCoord():
     return (random.randint(0, SCREEN_SIZE[0]), random.randint(0, SCREEN_SIZE[1]))
@@ -75,13 +74,17 @@ def main():
         if event.unicode == u"q":
             quitApplication(event)
 
+    def playCoolSoundKeyDown(event):
+        if event.unicode == u"g":
+            sounds.playSoundOnce("startup")
+
     events.bindEvent(QUIT, quitApplication)
     events.bindEvent(KEYDOWN, quitApplicationKeyDown)
+    events.bindEvent(KEYDOWN, playCoolSoundKeyDown)
     events.bindEvent(MOUSEMOTION, moveCameraMouseMotion, mainCamera)
     events.bindEvent(MOUSEBUTTONDOWN, moveCameraMouseDown, mainCamera)
     events.bindEvent(MOUSEBUTTONUP, moveCameraMouseUp, mainCamera)
     events.bindEvent(MOUSEBUTTONDOWN, spawnNewFrogMouseDown)
-    sounds.playSoundOnce("startup")
     while True:
         # Limit framerate to the desired FPS
         delta = clock.tick(FPS)/1000.0

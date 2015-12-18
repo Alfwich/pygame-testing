@@ -1,6 +1,11 @@
 import pygame, StaticObject as SO, images, events
 from pygame.locals import *
 
+IMAGE_LOAD_LIST = [
+    ("frog", "frog-face.png"),
+    ("frog2", "funny-frog-face.png")
+]
+
 class SOFrog(SO.StaticObject):
     def __init__(self):
         super(SOFrog, self).__init__()
