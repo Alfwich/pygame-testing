@@ -20,9 +20,14 @@ class RenderList():
             self.objects = filter(lambda y: y, self.objects)
 
     def render(self, screen, camera=None):
+        shouldCameraTransform = not camera is None
         for obj in self.objects:
             if obj._isValid:
                 objectBitmap = obj.getBitmap()
-                objectPosition = camera.transformWorldPosition(obj.getPosition()) if not camera is None else obj.getPosition()
+                objectPosition = obj.getPosition()
                 objectRenderRect = obj.getRenderRect()
+
+                if shouldCameraTransform:
+                    objectPosition = camera.transformWorldPosition(objectPosition)
+
                 screen.blit(objectBitmap, objectPosition, objectRenderRect)

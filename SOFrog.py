@@ -1,4 +1,4 @@
-import pygame, StaticObject as SO, images, events
+import pygame, StaticObject as SO, images, events, random
 
 
 images.addToGlobalLoadList([
@@ -10,7 +10,7 @@ class SOFrog(SO.StaticObject):
     def __init__(self):
         super(SOFrog, self).__init__()
         self.setBitmap(images.getImage("frog"))
-        self.moveSpeed = 100
+        self.moveSpeed = random.randint(50,100)
         events.bindKeyDownEvent(["w","a","s","d"], self.moveKeyDown)
         events.bindKeyUpEvent(["w","a","s","d"], self.moveKeyUp)
         events.bindKeyDownEvent(["o", "p"], self.changeFaceKeyDown)

@@ -23,7 +23,7 @@ class StaticObject(object):
         return self.bitmap.get_rect() if self.bitmap else None
 
     def getPosition(self):
-        return self.position
+        return list(self.position)
 
     def setPosition(self, x, y):
         self.position = [x, y]
@@ -35,12 +35,18 @@ class StaticObject(object):
     def setSize(self, width, height):
         self.size = [width, height]
 
+    def getSize(self):
+        return list(self.size)
+
     def setVelocity(self, velocityX, velocityY):
         self.velocity = [velocityX, velocityY]
 
     def addVelocity(self, deltaX, deltaY):
         self.velocity[0] += deltaX
         self.velocity[1] += deltaY
+        
+    def getVelocity(self):
+        return list(self.velocity)
 
     def tick(self, delta):
         pass
