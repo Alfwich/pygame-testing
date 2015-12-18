@@ -19,9 +19,10 @@ class RenderList():
                     break
             self.objects = filter(lambda y: y, self.objects)
 
-    def renderList(self, screen, camera=None):
+    def render(self, screen, camera=None):
         for obj in self.objects:
-            objectBitmap = obj.getBitmap()
-            objectPosition = camera.transformPosition(obj.getPosition()) if not camera is None else obj.getPosition()
-            objectRenderRect = obj.getRenderRect()
-            screen.blit(objectBitmap, objectPosition, objectRenderRect)
+            if obj._isValid:
+                objectBitmap = obj.getBitmap()
+                objectPosition = camera.transformWorldPosition(obj.getPosition()) if not camera is None else obj.getPosition()
+                objectRenderRect = obj.getRenderRect()
+                screen.blit(objectBitmap, objectPosition, objectRenderRect)

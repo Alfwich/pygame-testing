@@ -30,9 +30,6 @@ def init():
 def getRandomCoord():
     return (random.randint(0, SCREEN_SIZE[0]), random.randint(0, SCREEN_SIZE[1]))
 
-def blitStaticObject(screen, staticObject):
-    screen.blit(staticObject.getBitmap(), staticObject.getPosition())
-
 def main():
     init()
     screen = pygame.display.set_mode(SCREEN_SIZE)
@@ -44,6 +41,7 @@ def main():
 
     mainRenderList = RenderList.RenderList()
     mainCamera = Camera.Camera()
+    mainCamera.locked = True
 
     frogObject = SOFrog.SOFrog()
     mainRenderList.addObject(frogObject)
@@ -53,6 +51,21 @@ def main():
 
     def moveCameraMouseMotion(event, camera):
         camera.moveOffset(event.rel[0], event.rel[1])
+
+    def moveCameraMouseDown(event, camera):
+        if event.button == 1:
+            camera.unlock()
+
+    def moveCameraMouseUp(event, camera):
+        if event.button == 1:
+            camera.lock()
+
+    def spawnNewFrogMouseDown(event):
+        if event.button == 3:
+            newFrog = SOFrog.SOFrog()
+            newFrogPosition = mainCamera.transformScreenPosition(event.pos)
+            newFrog.setPosition(newFrogPosition[0], newFrogPosition[1])
+            mainRenderList.addObject(newFrog)
 
     def quitApplication(event):
         pygame.quit()
@@ -64,10 +77,10 @@ def main():
 
     events.bindEvent(QUIT, quitApplication)
     events.bindEvent(KEYDOWN, quitApplicationKeyDown)
-    events.bindEvent(KEYDOWN, frogObject.moveKeyDown)
-    events.bindEvent(KEYUP, frogObject.moveKeyUp)
-    events.bindEvent(KEYDOWN, frogObject.changeFaceKeyDown)
     events.bindEvent(MOUSEMOTION, moveCameraMouseMotion, mainCamera)
+    events.bindEvent(MOUSEBUTTONDOWN, moveCameraMouseDown, mainCamera)
+    events.bindEvent(MOUSEBUTTONUP, moveCameraMouseUp, mainCamera)
+    events.bindEvent(MOUSEBUTTONDOWN, spawnNewFrogMouseDown)
     sounds.playSoundOnce("startup")
     while True:
         # Limit framerate to the desired FPS
@@ -81,7 +94,7 @@ def main():
 
         # Draw screen
         #screen.fill(colors.getColor(colors.BLACK))
-        mainRenderList.renderList(screen, mainCamera)
+        mainRenderList.render(screen, mainCamera)
         pygame.display.update()
 
 if __name__ == "__main__":

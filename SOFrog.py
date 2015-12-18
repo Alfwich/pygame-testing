@@ -1,10 +1,14 @@
-import pygame, StaticObject as SO, images
+import pygame, StaticObject as SO, images, events
+from pygame.locals import *
 
 class SOFrog(SO.StaticObject):
     def __init__(self):
         super(SOFrog, self).__init__()
         self.setBitmap(images.getImage("frog"))
         self.moveSpeed = 100
+        events.bindEvent(KEYDOWN, self.moveKeyDown)
+        events.bindEvent(KEYUP, self.moveKeyUp)
+        events.bindEvent(KEYDOWN, self.changeFaceKeyDown)
 
     def moveKeyDown(self, event):
         if event.unicode == u"w":
@@ -30,5 +34,6 @@ class SOFrog(SO.StaticObject):
 
     def tick(self, delta):
        super(SOFrog, self).tick(delta)
-       self.position[0] += self.velocity[0] * delta
-       self.position[1] += self.velocity[1] * delta
+       if not self.velocity[0] == 0 or not self.velocity[1] == 0:
+           self.position[0] += self.velocity[0] * delta
+           self.position[1] += self.velocity[1] * delta

@@ -20,7 +20,7 @@ def handleEvents():
 
 def tickObjects(delta=None):
     for obj in _tickableObjects:
-        if obj._shouldTick:
+        if obj._shouldTick and obj._isValid:
             obj.tick(delta)
 
 def bindEvent(action, callback, obj=None):
