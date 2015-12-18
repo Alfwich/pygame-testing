@@ -4,7 +4,7 @@ _callbacks = {}
 _tickableObjects = []
 
 def init():
-    pass
+    pygame.init()
 
 def copyFunction(f):
     return types.FunctionType(f.func_code, f.func_globals, f.func_name, f.func_defaults, f.func_closure)
@@ -24,6 +24,7 @@ def tickObjects(delta=None):
             obj.tick(delta)
 
 def bindEvent(action, callback, obj=None):
+    # Create a copy of a callback function with the bound object
     if not hasattr(callback, "im_self") and not obj is None:
         callback = copyFunction(callback)
         callback._binder = obj

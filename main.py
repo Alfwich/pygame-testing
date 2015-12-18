@@ -17,6 +17,7 @@ sounds.addToGlobalLoadList([
 # Inits pygame and various components
 def init():
     pygame.init()
+    images.init()
     fonts.init()
     colors.init()
     events.init()
