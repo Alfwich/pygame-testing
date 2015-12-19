@@ -25,4 +25,7 @@ def loadImage(name, path):
     return _loadedImages[name]
 
 def getImage(name):
-    return _loadedImages[name] if name in _loadedImages else None
+    if name in _loadedImages:
+        return _loadedImages[name]
+    else:
+        print("Could not find image for name: '%s'")

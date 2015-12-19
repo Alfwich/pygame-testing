@@ -60,13 +60,14 @@ def main():
         pygame.quit()
         sys.exit()
 
-    events.bindEvent(QUIT, quitApplication)
+    events.bindQuitEvent(quitApplication)
     events.bindKeyDownEvent(["q"], quitApplication)
     events.bindMouseMotionEvent(lambda e: mainCamera.moveOffset(e.rel[0], e.rel[1]))
     events.bindMouseDownEvent([1], lambda e: mainCamera.unlock())
     events.bindMouseUpEvent([1], lambda e: mainCamera.lock())
     events.bindMouseDownEvent([3], spawnNewFrog)
     events.bindKeyDownEvent(["g"], lambda e: sounds.playSoundOnce("startup"))
+    #print events._callbacks
     while True:
         # Limit framerate to the desired FPS
         delta = clock.tick(FPS)/1000.0

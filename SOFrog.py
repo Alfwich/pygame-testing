@@ -11,31 +11,16 @@ class SOFrog(SO.StaticObject):
         super(SOFrog, self).__init__()
         self.setBitmap(images.getImage("frog"))
         self.moveSpeed = random.randint(50,100)
-        events.bindKeyDownEvent(["w","a","s","d"], self.moveKeyDown)
-        events.bindKeyUpEvent(["w","a","s","d"], self.moveKeyUp)
-        events.bindKeyDownEvent(["o", "p"], self.changeFaceKeyDown)
+        events.bindKeyAxis(["w","K_UP"], ["s", "K_DOWN"], self.moveUp)
+        events.bindKeyAxis(["a", "K_LEFT"], ["d","K_RIGHT"], self.moveRight)
+        events.bindKeyDownEvent("o", lambda e: self.setBitmap(images.getImage("frog")))
+        events.bindKeyDownEvent("p", lambda e: self.setBitmap(images.getImage("frog2")))
 
-    def moveKeyDown(self, event):
-        if event.unicode == u"w":
-            self.velocity[1] = -self.moveSpeed
-        elif event.unicode == u"s":
-            self.velocity[1] = self.moveSpeed
-        elif event.unicode == u"a":
-            self.velocity[0] = -self.moveSpeed
-        elif event.unicode == u"d":
-            self.velocity[0] = self.moveSpeed
+    def moveUp(self, event, value):
+        self.velocity[1] = self.moveSpeed * value
 
-    def moveKeyUp(self, event):
-        if event.key in [ord("w"), ord("s")]:
-            self.velocity[1] = 0
-        elif event.key in [ord("a"), ord("d")]:
-            self.velocity[0] = 0
-
-    def changeFaceKeyDown(self, event):
-        if event.unicode == u"o":
-            self.setBitmap(images.getImage("frog"))
-        elif event.unicode == u"p":
-            self.setBitmap(images.getImage("frog2"))
+    def moveRight(self, event, value):
+        self.velocity[0] = self.moveSpeed * value
 
     def tick(self, delta):
        super(SOFrog, self).tick(delta)

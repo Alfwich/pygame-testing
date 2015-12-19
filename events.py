@@ -7,11 +7,6 @@ _tickableObjects = []
 LEFT_MOUSE_BUTTON = 1
 RIGHT_MOUSE_BUTTON = 3
 
-def _createBoundFunction(obj, fun):
-    newFunction = _copyFunction(fun)
-    newFunction._binder = obj
-    return newFunction
-
 def _processKeysArray(keys):
     keyOrds = []
 
@@ -19,16 +14,16 @@ def _processKeysArray(keys):
         keys = [keys]
 
     for key in keys:
-        if isinstance(key, str):
+        if key in globals() and isinstance(globals()[key], int):
+            keyOrds.append(globals()[key])
+        elif isinstance(key, str):
             keyOrds.append(ord(key[0]))
-        elif key in locals() and isinstance(locals()[key], int):
-            keyOrds.append(locals()[key])
         elif isinstance(key, int):
             keyOrds.append(key)
         else:
             print("Attempted to bind function with activation key: %s, but could not fine a way to convert to a key ord." % key)
 
-    return keyOrds
+    return set(keyOrds)
 
 def _processButtonsArray(buttons):
     buttonOrds = []
@@ -44,7 +39,7 @@ def _processButtonsArray(buttons):
         else:
             print("Attempted to bind function with activation button: %s, but could not fine a way to convert to a button ord." % button)
 
-    return buttonOrds
+    return set(buttonOrds)
 
 def _copyFunction(f):
     return types.FunctionType(f.func_code, f.func_globals, f.func_name, f.func_defaults, f.func_closure)
@@ -56,10 +51,7 @@ def handleEvents():
     for e in pygame.event.get():
         if e.type in _callbacks:
             for callback in _callbacks[e.type]:
-                if hasattr(callback, "_binder"):
-                    callback(e, callback._binder)
-                else:
-                    callback(e)
+                callback(e)
 
 def tickObjects(delta=None):
     for obj in _tickableObjects:
@@ -69,87 +61,80 @@ def tickObjects(delta=None):
 def registerTickableObject(obj):
     _tickableObjects.append(obj)
 
-
-
-def bindEvent(action, callback, obj=None):
-    if not hasattr(callback, "im_self") and not obj is None:
-        callback = _createBoundFunction(obj, callback)
-
+def _bindEvent(action, callback):
     if action not in _callbacks:
         _callbacks[action] = []
-
     _callbacks[action].append(callback)
 
-def bindKeyUpEvent(keys, callback, obj=None):
-    if not hasattr(callback, "im_self") and not obj is None:
-        callback = _createBoundFunction(obj, callback)
+def bindQuitEvent(callback, obj=None):
+    def quitEventWrapper(event):
+        pramList = (event,) if obj is None else (event, obj)
+        callback(*pramList)
 
+    _bindEvent(QUIT, quitEventWrapper)
+
+def bindKeyAxis(downKeys, upKeys, callback, obj=None):
+    downKeyOrds = _processKeysArray(downKeys)
+    upKeyOrds = _processKeysArray(upKeys)
+    combinedOrds = downKeyOrds | upKeyOrds
+
+    def keyAxisWrapper(event):
+        if event.key in combinedOrds:
+            val = 0 if event.type == KEYUP else 1 if event.key in upKeyOrds else -1
+            pramList = (event, val) if obj is None else (event, val, obj)
+            callback(*pramList)
+
+    _bindEvent(KEYUP, keyAxisWrapper)
+    _bindEvent(KEYDOWN, keyAxisWrapper)
+
+def bindKeyUpEvent(keys, callback, obj=None):
     keyOrds = _processKeysArray(keys)
 
-    def keydownFilter(event):
+    def keydownWrapper(event):
         if event.key in keyOrds:
-            if hasattr(callback, "_binder"):
-                callback(event, callback._binder)
-            else:
-                callback(event)
+            pramList = (event,) if obj is None else (event, obj)
+            callback(*pramList)
 
-    bindEvent(KEYUP, keydownFilter)
+    _bindEvent(KEYUP, keydownWrapper)
 
 def bindKeyDownEvent(keys, callback, obj=None):
-    if not hasattr(callback, "im_self") and not obj is None:
-        callback = _createBoundFunction(obj, callback)
-
     keyOrds = _processKeysArray(keys)
 
-    def keyupFilter(event):
+    def keyupWrapper(event):
         if event.key in keyOrds:
-            if hasattr(callback, "_binder"):
-                callback(event, callback._binder)
-            else:
-                callback(event)
+            pramList = (event,) if obj is None else (event, obj)
+            callback(*pramList)
 
-    bindEvent(KEYDOWN, keyupFilter)
+    _bindEvent(KEYDOWN, keyupWrapper)
 
 
 def bindMouseDownEvent(buttons, callback, obj=None):
-    if not hasattr(callback, "im_self") and not obj is None:
-        callback = _createBoundFunction(obj, callback)
-
     buttonOrds = _processButtonsArray(buttons)
 
-    def mouseDownFilter(event):
+    def mouseDownWrapper(event):
         if event.button in buttonOrds:
-            if hasattr(callback, "_binder"):
-                callback(event, callback._binder)
-            else:
-                callback(event)
+            pramList = (event,) if obj is None else (event, obj)
+            callback(*pramList)
 
-    bindEvent(MOUSEBUTTONDOWN, mouseDownFilter)
+    _bindEvent(MOUSEBUTTONDOWN, mouseDownWrapper)
 
 def bindMouseUpEvent(buttons, callback, obj=None):
-    if not hasattr(callback, "im_self") and not obj is None:
-        callback = _createBoundFunction(obj, callback)
-
     buttonOrds = _processButtonsArray(buttons)
 
-    def mouseUpFilter(event):
+    def mouseUpWrapper(event):
         if event.button in buttonOrds:
-            if hasattr(callback, "_binder"):
-                callback(event, callback._binder)
-            else:
-                callback(event)
+            pramList = (event,) if obj is None else (event, obj)
+            callback(*pramList)
 
-    bindEvent(MOUSEBUTTONUP, mouseUpFilter)
+    _bindEvent(MOUSEBUTTONUP, mouseUpWrapper)
 
 def bindMouseMotionEvent(callback, obj=None):
-    if not hasattr(callback, "im_self") and not obj is None:
-        callback = _createBoundFunction(obj, callback)
+    def mouseMotionEventWrapper(event):
+        pramList = (event,) if obj is None else (event, obj)
+        callback(*pramList)
 
-    bindEvent(MOUSEMOTION, callback)
+    _bindEvent(MOUSEMOTION, mouseMotionEventWrapper)
 
-def unbindEvents(action, obj=None):
+def unbindEvents(action):
     if action in _callbacks:
-        for idx, callback in enumerate(_callbacks[action]):
-            if obj is None or callback._binder is obj:
-                _callbacks[action][idx] = None
-        _callbacks[action] = filter(lambda x: x, _callbacks[action])
+        _callbacks[action] = []
