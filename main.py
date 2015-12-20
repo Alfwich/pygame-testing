@@ -40,7 +40,10 @@ def main():
 
     mainRenderList = RenderList.RenderList()
     mainCamera = Camera.Camera()
-    mainCamera.locked = True
+    mainCamera.locked = False
+
+    coolText = SOStaticText.SOStaticText("Fuck you man!")
+    mainRenderList.addObject(coolText)
 
     animatedGuy = AOWalkingGuy.AOWalkingGuy()
     mainRenderList.addObject(animatedGuy)
@@ -49,11 +52,33 @@ def main():
         pygame.quit()
         sys.exit()
 
+    mainCameraVelocity = [0, 0]
+    def updateCameraVelocityX(x):
+        if abs(x) > 0.2:
+            mainCameraVelocity[0] = x
+        else:
+            mainCameraVelocity[0] = 0
+
+    def updateCameraVelocityY(y):
+        if abs(y) > 0.2:
+            mainCameraVelocity[1] = y
+        else:
+            mainCameraVelocity[1] = 0
+
+    if pygame.joystick.get_count() > 0:
+        js = pygame.joystick.Joystick(0)
+        js.init()
+
+    pygame.joystick.init()
+
     events.bindQuitEvent(quitApplication)
     events.bindKeyDownEvent(["q"], quitApplication)
-    events.bindMouseMotionEvent(lambda e: mainCamera.moveOffset(e.rel[0], e.rel[1]))
-    events.bindMouseDownEvent([1], lambda e: mainCamera.unlock())
-    events.bindMouseUpEvent([1], lambda e: mainCamera.lock())
+    #events.bindMouseMotionEvent(lambda e: mainCamera.moveOffset(e.rel[0], e.rel[1]))
+
+    events.bindJoystickAxisMotionEvent(0, 3, lambda e, v: updateCameraVelocityY(v))
+    events.bindJoystickAxisMotionEvent(0, 4, lambda e, v: updateCameraVelocityX(v))
+    #events.bindMouseDownEvent([1], lambda e: mainCamera.unlock())
+    #events.bindMouseUpEvent([1], lambda e: mainCamera.lock())
     events.bindKeyDownEvent(["g"], lambda e: sounds.playSoundOnce("startup"))
     while True:
         # Limit framerate to the desired FPS
@@ -64,10 +89,10 @@ def main():
 
         # Call the tick methos from any tickable object
         events.tickObjects(delta)
+        mainCamera.moveOffset( mainCameraVelocity[0] * delta * 100, mainCameraVelocity[1] * delta * 100)
 
         # Draw screen
-        #screen.fill(colors.getColor(colors.BLACK))
-
+        screen.fill(colors.getColor(colors.BLACK))
         mainRenderList.render(screen, mainCamera)
         pygame.display.update()
 

@@ -44,6 +44,11 @@ def _processButtonsArray(buttons):
 def _copyFunction(f):
     return types.FunctionType(f.func_code, f.func_globals, f.func_name, f.func_defaults, f.func_closure)
 
+def _bindEvent(action, callback):
+    if action not in _callbacks:
+        _callbacks[action] = []
+    _callbacks[action].append(callback)
+
 def init():
     pygame.init()
 
@@ -61,17 +66,13 @@ def tickObjects(delta=None):
 def registerTickableObject(obj):
     _tickableObjects.append(obj)
 
-def _bindEvent(action, callback):
-    if action not in _callbacks:
-        _callbacks[action] = []
-    _callbacks[action].append(callback)
-
 def bindQuitEvent(callback, obj=None):
     def quitEventWrapper(event):
         pramList = (event,) if obj is None else (event, obj)
         callback(*pramList)
 
     _bindEvent(QUIT, quitEventWrapper)
+    return id(bindQuitEvent)
 
 def bindKeyAxis(downKeys, upKeys, callback, obj=None):
     downKeyOrds = _processKeysArray(downKeys)
@@ -86,26 +87,29 @@ def bindKeyAxis(downKeys, upKeys, callback, obj=None):
 
     _bindEvent(KEYUP, keyAxisWrapper)
     _bindEvent(KEYDOWN, keyAxisWrapper)
+    return id(keyAxisWrapper)
 
 def bindKeyUpEvent(keys, callback, obj=None):
     keyOrds = _processKeysArray(keys)
 
-    def keydownWrapper(event):
+    def keyUpWrapper(event):
         if event.key in keyOrds:
             pramList = (event,) if obj is None else (event, obj)
             callback(*pramList)
 
-    _bindEvent(KEYUP, keydownWrapper)
+    _bindEvent(KEYUP, keyUpWrapper)
+    return id(keyUpWrapper)
 
 def bindKeyDownEvent(keys, callback, obj=None):
     keyOrds = _processKeysArray(keys)
 
-    def keyupWrapper(event):
+    def keyDownWrapper(event):
         if event.key in keyOrds:
             pramList = (event,) if obj is None else (event, obj)
             callback(*pramList)
 
-    _bindEvent(KEYDOWN, keyupWrapper)
+    _bindEvent(KEYDOWN, keyDownWrapper)
+    return id(keyDownWrapper)
 
 
 def bindMouseDownEvent(buttons, callback, obj=None):
@@ -117,6 +121,7 @@ def bindMouseDownEvent(buttons, callback, obj=None):
             callback(*pramList)
 
     _bindEvent(MOUSEBUTTONDOWN, mouseDownWrapper)
+    return id(mouseDownWrapper)
 
 def bindMouseUpEvent(buttons, callback, obj=None):
     buttonOrds = _processButtonsArray(buttons)
@@ -127,6 +132,7 @@ def bindMouseUpEvent(buttons, callback, obj=None):
             callback(*pramList)
 
     _bindEvent(MOUSEBUTTONUP, mouseUpWrapper)
+    return id(mouseUpWrapper)
 
 def bindMouseMotionEvent(callback, obj=None):
     def mouseMotionEventWrapper(event):
@@ -134,6 +140,16 @@ def bindMouseMotionEvent(callback, obj=None):
         callback(*pramList)
 
     _bindEvent(MOUSEMOTION, mouseMotionEventWrapper)
+    return id(mouseMotionEventWrapper)
+
+def bindJoystickAxisMotionEvent(joystick, axis, callback, obj=None):
+    def joystickMotionEventWrapper(event):
+        if event.joy == joystick and event.axis == axis:
+            pramList = (event, event.value) if obj is None else(event, event.value, obj)
+            callback(*pramList)
+
+    _bindEvent(JOYAXISMOTION, joystickMotionEventWrapper)
+    return id(joystickMotionEventWrapper)
 
 def unbindEvents(action):
     if action in _callbacks:

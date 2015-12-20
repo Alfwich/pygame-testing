@@ -1,4 +1,4 @@
-import pygame, AnimatedObject, animations, images, events
+import pygame, AnimatedObject, animations, images, events, math
 
 
 animations.addAnimation("walking-guy-walk-left", [(64*i, 64, 64, 64) for i in range(9)])
@@ -22,21 +22,30 @@ class AOWalkingGuy(AnimatedObject.AnimatedObject):
 
         events.bindKeyAxis("a", "d", self.moveRight)
         events.bindKeyAxis("w", "s", self.moveDown)
+        events.bindJoystickAxisMotionEvent(0, 0, self.moveRight)
+        events.bindJoystickAxisMotionEvent(0, 1, self.moveDown)
 
     def moveRight(self, e, value):
-        if value == 1:
+        if value > 0:
             self.setAnimation(animations.getAnimation("walking-guy-walk-right"))
-        elif value == -1:
+        elif value < 0:
             self.setAnimation(animations.getAnimation("walking-guy-walk-left"))
 
-        self.setXVelocity(value*100)
+        if abs(value) > 0.2:
+            self.setXVelocity(value*100)
+        else:
+            self.setXVelocity(0)
 
     def moveDown(self, e, value):
-        if value == 1:
+        if value > 0:
             self.setAnimation(animations.getAnimation("walking-guy-walk-down"))
-        elif value == -1:
+        elif value < 0:
             self.setAnimation(animations.getAnimation("walking-guy-walk-up"))
-        self.setYVelocity(value*100)
+
+        if abs(value) > 0.2:
+            self.setYVelocity(value*100)
+        else:
+            self.setYVelocity(0)
 
     def tick(self, delta):
         super(AOWalkingGuy, self).tick(delta)
