@@ -114,7 +114,6 @@ def bindKeyDownEvent(keys, callback, obj=None):
     _bindEvent(KEYDOWN, keyDownWrapper)
     return id(keyDownWrapper)
 
-
 def bindMouseDownEvent(buttons, callback, obj=None):
     buttonOrds = _processButtonsArray(buttons)
 
@@ -154,6 +153,41 @@ def bindJoystickAxisMotionEvent(joystick, axis, callback, deadZone=0.2, obj=None
 
     _bindEvent(JOYAXISMOTION, joystickMotionEventWrapper)
     return id(joystickMotionEventWrapper)
+
+def bindJoystickButtonDownEvent(joystick, buttons, callback, obj=None):
+    buttonOrds = _processButtonsArray(buttons)
+    def joystickButtonDownEventWrapper(event):
+        if event.joy == joystick and event.button in buttonOrds:
+            prams = (event,) if obj is None else (event, obj)
+            callback(*prams)
+
+    _bindEvent(JOYBUTTONDOWN, joystickButtonDownEventWrapper)
+    return id(joystickButtonDownEventWrapper)
+
+def bindJoystickButtonUpEvent(joystick, buttons, callback, obj=None):
+    buttonOrds = _processButtonsArray(buttons)
+    def joystickButtonUpEventWrapper(event):
+        if event.joy == joystick and event.button in buttonOrds:
+            prams = (event,) if obj is None else (event, obj)
+            callback(*prams)
+
+    _bindEvent(JOYBUTTONUP, joystickButtonUpEventWrapper)
+    return id(joystickButtonUpEventWrapper)
+
+def bindJoystickButtonAxis(joystick, downButtons, upButtons, callback, obj=None):
+    downButtonOrds = _processKeysArray(downButtons)
+    upButtonOrds = _processKeysArray(upButtons)
+    combinedOrds = downButtonOrds | upButtonOrds
+
+    def joystickButtonAxisWrapper(event):
+        if event.button in combinedOrds:
+            val = 0 if event.type == JOYBUTTONUP else 1 if event.button in upButtonOrds else -1
+            pramList = (event, val) if obj is None else (event, val, obj)
+            callback(*pramList)
+
+    _bindEvent(JOYBUTTONUP, joystickButtonAxisWrapper)
+    _bindEvent(JOYBUTTONDOWN, joystickButtonAxisWrapper)
+    return id(joystickButtonAxisWrapper)
 
 def unbindEvents(action):
     if action in _callbacks:

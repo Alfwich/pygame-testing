@@ -46,8 +46,10 @@ def main():
     coolText = SOStaticText.SOStaticText("Fuck you man!")
     mainRenderList.addObject(coolText)
 
-    animatedGuy = AOWalkingGuy.AOWalkingGuy()
-    mainRenderList.addObject(animatedGuy)
+    for i in xrange(8):
+        animatedGuy = AOWalkingGuy.AOWalkingGuy(i)
+        animatedGuy.addPosition(i*(SCREEN_SIZE[0]/8), 0)
+        mainRenderList.addObject(animatedGuy)
 
     def quitApplication(event):
         pygame.quit()
@@ -79,7 +81,7 @@ def main():
 
         # Call the tick methos from any tickable object
         events.tickObjects(delta)
-        mainCamera.moveOffset( mainCameraVelocity[0] * delta * 100, mainCameraVelocity[1] * delta * 100)
+        mainCamera.moveOffset( mainCameraVelocity[0] * delta * -100, mainCameraVelocity[1] * delta * -100)
 
         # Draw screen
         screen.fill(colors.getColor(colors.BLACK))
