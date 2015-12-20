@@ -41,10 +41,16 @@ class StaticObject(object):
     def setVelocity(self, velocityX, velocityY):
         self.velocity = [velocityX, velocityY]
 
+    def setXVelocity(self, velocityX):
+        self.velocity[0] = velocityX
+
+    def setYVelocity(self, velocityY):
+        self.velocity[1] = velocityY
+
     def addVelocity(self, deltaX, deltaY):
         self.velocity[0] += deltaX
         self.velocity[1] += deltaY
-        
+
     def getVelocity(self):
         return list(self.velocity)
 

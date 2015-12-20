@@ -14,6 +14,9 @@ class Camera():
         if not self.locked:
             self.offset = [x, y]
 
+    def getOffset(self):
+        return list(self.offset)
+
     def moveOffset(self, deltaX, deltaY):
         if not self.locked:
             self.offset[0] += deltaX

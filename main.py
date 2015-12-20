@@ -1,6 +1,7 @@
-import pygame, sys, os, colors, time, random, images, fonts, sounds, events
-import StaticObject, RenderList, Camera
-import SOFrog, SOStaticText
+import pygame, sys, os, math, random
+import colors, time, images, fonts, sounds, events, gradient
+import StaticObject, RenderList, Camera, AnimatedObject
+import SOFrog, SOStaticText, AOWalkingGuy
 from pygame.locals import *
 
 FPS = 60
@@ -28,9 +29,6 @@ def init():
     images.loadGlobalImageList()
     sounds.loadGlobalSoundList()
 
-def getRandomCoord():
-    return (random.randint(0, SCREEN_SIZE[0]), random.randint(0, SCREEN_SIZE[1]))
-
 def main():
     init()
     screen = pygame.display.set_mode(SCREEN_SIZE)
@@ -44,17 +42,8 @@ def main():
     mainCamera = Camera.Camera()
     mainCamera.locked = True
 
-    frogObject = SOFrog.SOFrog()
-    mainRenderList.addObject(frogObject)
-
-    coolText = SOStaticText.SOStaticText("Cool Text; Brah!")
-    mainRenderList.addObject(coolText)
-
-    def spawnNewFrog(event):
-        newFrog = SOFrog.SOFrog()
-        newFrogPosition = mainCamera.transformScreenPosition(event.pos)
-        newFrog.setPosition(newFrogPosition[0], newFrogPosition[1])
-        mainRenderList.addObject(newFrog)
+    animatedGuy = AOWalkingGuy.AOWalkingGuy()
+    mainRenderList.addObject(animatedGuy)
 
     def quitApplication(event):
         pygame.quit()
@@ -65,9 +54,7 @@ def main():
     events.bindMouseMotionEvent(lambda e: mainCamera.moveOffset(e.rel[0], e.rel[1]))
     events.bindMouseDownEvent([1], lambda e: mainCamera.unlock())
     events.bindMouseUpEvent([1], lambda e: mainCamera.lock())
-    events.bindMouseDownEvent([3], spawnNewFrog)
     events.bindKeyDownEvent(["g"], lambda e: sounds.playSoundOnce("startup"))
-    #print events._callbacks
     while True:
         # Limit framerate to the desired FPS
         delta = clock.tick(FPS)/1000.0
@@ -80,6 +67,7 @@ def main():
 
         # Draw screen
         #screen.fill(colors.getColor(colors.BLACK))
+
         mainRenderList.render(screen, mainCamera)
         pygame.display.update()
 
