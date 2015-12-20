@@ -10,6 +10,7 @@ _config = {
 }
 
 def init():
+    pygame.init()
     _loadedFonts[DEFAULT_FONT_KEY] = loadFont('freesansbold.ttf', 32)
 
 def loadFont(fontPath, fontSize):

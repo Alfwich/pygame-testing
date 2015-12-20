@@ -1,5 +1,5 @@
-import pygame, sys, os, math, random
-import colors, time, images, fonts, sounds, events, gradient
+import pygame, sys, os, math, random, time
+import colors, images, fonts, sounds, events, gradient, joysticks
 import StaticObject, RenderList, Camera, AnimatedObject
 import SOFrog, SOStaticText, AOWalkingGuy
 from pygame.locals import *
@@ -22,6 +22,7 @@ def init():
     fonts.init()
     colors.init()
     events.init()
+    joysticks.init()
     pygame.display.set_caption(TITLE)
 
     # Init images from their respective lists. This allows game classes
@@ -54,22 +55,10 @@ def main():
 
     mainCameraVelocity = [0, 0]
     def updateCameraVelocityX(x):
-        if abs(x) > 0.2:
-            mainCameraVelocity[0] = x
-        else:
-            mainCameraVelocity[0] = 0
+        mainCameraVelocity[0] = x
 
     def updateCameraVelocityY(y):
-        if abs(y) > 0.2:
-            mainCameraVelocity[1] = y
-        else:
-            mainCameraVelocity[1] = 0
-
-    if pygame.joystick.get_count() > 0:
-        js = pygame.joystick.Joystick(0)
-        js.init()
-
-    pygame.joystick.init()
+        mainCameraVelocity[1] = y
 
     events.bindQuitEvent(quitApplication)
     events.bindKeyDownEvent(["q"], quitApplication)
@@ -86,6 +75,7 @@ def main():
 
         # Handle game events through the event queue
         events.handleEvents()
+        joysticks.init()
 
         # Call the tick methos from any tickable object
         events.tickObjects(delta)

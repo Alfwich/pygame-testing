@@ -14,6 +14,9 @@ images.addToGlobalLoadList([
 class AOWalkingGuy(AnimatedObject.AnimatedObject):
     def __init__(self):
         super(AOWalkingGuy, self).__init__()
+        self.walkingSpeed = 150
+        self.maxFPS = 30
+
         self.setBitmap(images.getImage("walking-guy"))
         self.setAnimation(animations.getAnimation("walking-guy-walk-left"))
         self.setNumberOfLoops(-1)
@@ -26,31 +29,30 @@ class AOWalkingGuy(AnimatedObject.AnimatedObject):
         events.bindJoystickAxisMotionEvent(0, 1, self.moveDown)
 
     def moveRight(self, e, value):
-        if value > 0:
-            self.setAnimation(animations.getAnimation("walking-guy-walk-right"))
-        elif value < 0:
-            self.setAnimation(animations.getAnimation("walking-guy-walk-left"))
-
-        if abs(value) > 0.2:
-            self.setXVelocity(value*100)
-        else:
-            self.setXVelocity(0)
+        self.setXVelocity(value)
 
     def moveDown(self, e, value):
-        if value > 0:
-            self.setAnimation(animations.getAnimation("walking-guy-walk-down"))
-        elif value < 0:
-            self.setAnimation(animations.getAnimation("walking-guy-walk-up"))
+        self.setYVelocity(value)
 
-        if abs(value) > 0.2:
-            self.setYVelocity(value*100)
+    def updateMoveAnimation(self):
+        if abs(self.velocity[0]) > abs(self.velocity[1]):
+            self.setFrameRate(abs(self.velocity[0])*self.maxFPS)
+            if self.velocity[0] > 0:
+                self.setAnimation(animations.getAnimation("walking-guy-walk-right"))
+            else:
+                self.setAnimation(animations.getAnimation("walking-guy-walk-left"))
         else:
-            self.setYVelocity(0)
+            self.setFrameRate(abs(self.velocity[1])*self.maxFPS)
+            if self.velocity[1] > 0:
+                self.setAnimation(animations.getAnimation("walking-guy-walk-down"))
+            else:
+                self.setAnimation(animations.getAnimation("walking-guy-walk-up"))
 
     def tick(self, delta):
         super(AOWalkingGuy, self).tick(delta)
         if not self.velocity[0] == 0 or not self.velocity[1] == 0:
-            self.position[0] += self.velocity[0] * delta
-            self.position[1] += self.velocity[1] * delta
+            self.updateMoveAnimation()
+            self.position[0] += self.velocity[0] * delta * self.walkingSpeed
+            self.position[1] += self.velocity[1] * delta * self.walkingSpeed
         else:
             self.setAnimation(animations.getAnimation("walking-guy-standing"))

@@ -49,6 +49,9 @@ def _bindEvent(action, callback):
         _callbacks[action] = []
     _callbacks[action].append(callback)
 
+def _transformAnalogInput(value, deadZone):
+    return value if abs(value) > deadZone else 0
+
 def init():
     pygame.init()
 
@@ -142,10 +145,11 @@ def bindMouseMotionEvent(callback, obj=None):
     _bindEvent(MOUSEMOTION, mouseMotionEventWrapper)
     return id(mouseMotionEventWrapper)
 
-def bindJoystickAxisMotionEvent(joystick, axis, callback, obj=None):
+def bindJoystickAxisMotionEvent(joystick, axis, callback, deadZone=0.2, obj=None):
     def joystickMotionEventWrapper(event):
         if event.joy == joystick and event.axis == axis:
-            pramList = (event, event.value) if obj is None else(event, event.value, obj)
+            value = _transformAnalogInput(event.value, deadZone)
+            pramList = (event, value) if obj is None else(event, value, obj)
             callback(*pramList)
 
     _bindEvent(JOYAXISMOTION, joystickMotionEventWrapper)
