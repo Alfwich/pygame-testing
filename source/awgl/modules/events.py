@@ -1,9 +1,11 @@
 import pygame, types
+from ..objs import Timeout
 from pygame.locals import *
 
 _callbacks = {}
 _createdEventHandlers = set()
 _tickableObjects = []
+_timers = []
 
 LEFT_MOUSE_BUTTON = 1
 RIGHT_MOUSE_BUTTON = 3
@@ -51,6 +53,18 @@ def _bindEvent(action, callback):
 def _transformAnalogInput(value, deadZone):
     return value if abs(value) > deadZone else 0
 
+def _handleTimers(delta):
+    global _timers
+    if len(_timers) > 0:
+        shouldFilterTimers = False
+        for idx, timer in enumerate(_timers):
+            timer.tick(delta)
+            if not timer.isValid():
+                _timers[idx] = None
+                shouldFilterTimers = True
+        if shouldFilterTimers:
+            _timers = filter(lambda x: x, _timers)
+
 def init():
     pygame.init()
 
@@ -60,10 +74,12 @@ def handleEvents():
             for callback in _callbacks[e.type]:
                 callback(e)
 
-def tickObjects(delta=None):
+def tick(delta=0.0):
     for obj in _tickableObjects:
         if obj._shouldTick and obj._isValid:
             obj.tick(delta)
+
+    _handleTimers(delta)
 
 def registerTickableObject(obj):
     _tickableObjects.append(obj)
@@ -206,3 +222,14 @@ def unbindEvent(eventHandles):
 
 
     return False
+
+def bindTimer(callback, time, repeats=False):
+    newTimeout = Timeout.Timeout(callback, time, repeats)
+    _timers.append(newTimeout)
+    return id(newTimeout)
+
+def unbindTimer(timerId):
+    for timeout in _timers:
+        if id(timeout) == timerId:
+            _timers.remove(timeout)
+            return

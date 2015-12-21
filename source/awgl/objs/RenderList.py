@@ -1,9 +1,17 @@
 import pygame
 
 class RenderList():
-    def __init__(self):
+    lists = {}
+
+    def getList(name):
+        if name in RenderList.lists:
+            return RenderList[name]
+        return None
+
+    def __init__(self, name):
         self.objectIds = {}
         self.objects = []
+        RenderList.lists[name] = self
 
     def addObject(self, obj):
         if not id(obj) in self.objectIds:

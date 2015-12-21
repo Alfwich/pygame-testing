@@ -35,6 +35,9 @@ def init():
     images.loadGlobalImageList()
     sounds.loadGlobalSoundList()
 
+def frameLimit(clock, fps):
+    return clock.tick(fps)/1000.0
+
 def main():
     init()
     screen = pygame.display.set_mode(SCREEN_SIZE)
@@ -44,12 +47,14 @@ def main():
         print("Could not create screen or clock object.", screen, clock)
         return
 
-    mainRenderList = RenderList.RenderList()
+    mainRenderList = RenderList.RenderList("main")
+    worldRenderList = RenderList.RenderList("world")
+    particleRenderList = RenderList.RenderList("particle")
     mainCamera = Camera.Camera()
     mainCamera.locked = False
 
     coolText = SOStaticText.SOStaticText("Hello World!")
-    mainRenderList.addObject(coolText)
+    worldRenderList.addObject(coolText)
 
     for i in range(8):
         animatedGuy = AOWalkingGuy.AOWalkingGuy(i)
@@ -60,33 +65,25 @@ def main():
         pygame.quit()
         sys.exit()
 
-    mainCameraVelocity = [0, 0]
-    def updateCameraVelocityX(x):
-        mainCameraVelocity[0] = x
-
-    def updateCameraVelocityY(y):
-        mainCameraVelocity[1] = y
+    def doNothing():
+        print("I do shit!")
 
     events.bindQuitEvent(quitApplication)
     events.bindKeyDownEvent(["q"], quitApplication)
-    events.bindJoystickAxisMotionEvent(0, 3, lambda e, v: updateCameraVelocityY(v))
-    events.bindJoystickAxisMotionEvent(0, 4, lambda e, v: updateCameraVelocityX(v))
     events.bindKeyDownEvent(["g"], lambda e: sounds.playSoundOnce("startup"))
     while True:
         # Limit framerate to the desired FPS
-        delta = clock.tick(FPS)/1000.0
+        delta = frameLimit(clock, FPS)
 
-        # Handle game events through the event queue
+        # Handle game events through the event queue and tick all game constructs
         events.handleEvents()
-        joysticks.init()
-
-        # Call the tick methos from any tickable object
-        events.tickObjects(delta)
-        mainCamera.moveOffset( mainCameraVelocity[0] * delta * -100, mainCameraVelocity[1] * delta * -100)
+        events.tick(delta)
 
         # Draw screen
         screen.fill(colors.BLACK)
+        worldRenderList.render(screen, mainCamera)
         mainRenderList.render(screen, mainCamera)
+        particleRenderList.render(screen, mainCamera)
         pygame.display.update()
 
 if __name__ == "__main__":

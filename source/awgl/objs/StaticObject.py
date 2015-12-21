@@ -29,6 +29,12 @@ class StaticObject(object):
     def setPosition(self, x, y):
         self.position = [x, y]
 
+    def setPositionX(self, x):
+        self.position[0] = x
+
+    def setPositionY(self, y):
+        self.position[1] = y
+
     def addPosition(self, deltaX, deltaY):
         self.position[0] += deltaX
         self.position[1] += deltaY
