@@ -1,30 +1,10 @@
 import pygame, random
 
-_loadedColors = {}
-BLACK = "black"
-WHITE = "white"
-RED = "red"
-GREEN = "green"
-BLUE = "blue"
-DEFAULT = WHITE
-
-
-def init():
-    loadColor(WHITE, 255, 255, 255)
-    loadColor(BLACK, 0, 0, 0)
-    loadColor(RED, 255, 0, 0)
-    loadColor(GREEN, 0, 255, 0)
-    loadColor(BLUE, 0, 0, 255)
-
-def loadColor(colorName, r, g, b, a=255):
-    _loadedColors[colorName] = pygame.Color(r, g, b, a)
-
-def getColor(colorName):
-    if colorName in _loadedColors:
-        return _loadedColors[colorName]
-    else:
-        print("Could not retrive color: '%s'" % (colorName))
-        return _loadedColors[DEFAULT]
+BLACK = pygame.Color(0, 0, 0)
+WHITE = pygame.Color(255, 255, 255)
+RED = pygame.Color(255, 0, 0)
+GREEN = pygame.Color(0, 255, 0)
+BLUE = pygame.Color(0, 0, 255)
 
 def randomColor():
-    return (random.randint(0,255), random.randint(0,255), random.randint(0,255))
+    return pygame.Color(random.randint(0,255), random.randint(0,255), random.randint(0,255))

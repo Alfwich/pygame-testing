@@ -28,6 +28,6 @@ def setCurrentFont(fontKey):
 
 def renderTextSurface(text):
     font = _loadedFonts[_config[FONT_KEY_KEY]]
-    fontColor = colors.getColor(_config[FONT_COLOR_KEY])
+    fontColor = _config[FONT_COLOR_KEY]
 
     return font.render(text, True, fontColor)

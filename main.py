@@ -26,7 +26,6 @@ def init():
     pygame.init()
     images.init()
     fonts.init()
-    colors.init()
     events.init()
     joysticks.init()
     pygame.display.set_caption(TITLE)
@@ -70,7 +69,6 @@ def main():
 
     events.bindQuitEvent(quitApplication)
     events.bindKeyDownEvent(["q"], quitApplication)
-    #events.bindMouseMotionEvent(lambda e: mainCamera.moveOffset(e.rel[0], e.rel[1]))
 
     events.bindJoystickAxisMotionEvent(0, 3, lambda e, v: updateCameraVelocityY(v))
     events.bindJoystickAxisMotionEvent(0, 4, lambda e, v: updateCameraVelocityX(v))
@@ -90,7 +88,7 @@ def main():
         mainCamera.moveOffset( mainCameraVelocity[0] * delta * -100, mainCameraVelocity[1] * delta * -100)
 
         # Draw screen
-        screen.fill(colors.getColor(colors.BLACK))
+        screen.fill(colors.BLACK)
         mainRenderList.render(screen, mainCamera)
         pygame.display.update()
 
