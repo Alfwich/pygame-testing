@@ -48,7 +48,7 @@ def main():
     mainCamera = Camera.Camera()
     mainCamera.locked = False
 
-    coolText = SOStaticText.SOStaticText("Fuck you man!")
+    coolText = SOStaticText.SOStaticText("Hello World!")
     mainRenderList.addObject(coolText)
 
     for i in range(8):
