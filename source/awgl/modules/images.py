@@ -1,6 +1,6 @@
 import pygame
 
-IMAGE_LOAD_TEMPLATE = "src/image/%s"
+IMAGE_LOAD_TEMPLATE = "data/image/%s"
 _loadedImages = {}
 _globalImageLoadList = []
 

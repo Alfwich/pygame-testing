@@ -1,7 +1,7 @@
 import pygame, colors
 
 
-FONT_LOAD_TEMPLATE = "src/font/%s"
+FONT_LOAD_TEMPLATE = "data/font/%s"
 DEFAULT_FONT_KEY = "__DEFAULT__"
 FONT_COLOR_KEY = "current_font_color"
 FONT_KEY_KEY = "current_font_key"

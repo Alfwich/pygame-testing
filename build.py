@@ -1,6 +1,6 @@
 from cx_Freeze import setup, Executable
 
-DEBUG = False
+DEBUG = True 
 company_name = "arthurwut"
 product_name = "pygametest"
 
@@ -11,7 +11,7 @@ bdist_msi_options = {
 }
 
 buildOptions = {
-    "include_files" : ['src/'],
+    "include_files" : ['data/'],
     "packages" : ["source"]
 }
 execs = [Executable("main.py", base = None if DEBUG else "Win32GUI", shortcutName = product_name, shortcutDir = "DesktopFolder")]
