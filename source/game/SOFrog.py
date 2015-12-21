@@ -1,12 +1,13 @@
-import pygame, StaticObject as SO, images, events, random
-
+import pygame, random
+from ..awgl.objs import *
+from ..awgl.modules import *
 
 images.addToGlobalLoadList([
     ("frog", "frog-face.png"),
     ("frog2", "funny-frog-face.png")
 ])
 
-class SOFrog(SO.StaticObject):
+class SOFrog(StaticObject.StaticObject):
     def __init__(self):
         super(SOFrog, self).__init__()
         self.setBitmap(images.getImage("frog"))

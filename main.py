@@ -1,14 +1,14 @@
 import pygame, sys, os, math, random, time
-import colors, images, fonts, sounds, events, gradient, joysticks
-import StaticObject, RenderList, Camera, AnimatedObject
-import SOFrog, SOStaticText, AOWalkingGuy
-from pygame.locals import *
 
 # If we are running in the executable dist then make sure that python is
 # using the executable path as the orgin for file requests.
 if not "__file__" in locals():
     newPath = "\\".join(str(sys.executable).split("\\")[:-1])
     os.chdir(newPath)
+
+from source.awgl.modules import *
+from source.awgl.objs import *
+from source.game import *
 
 FPS = 60
 SCREEN_SIZE = (1000, 1000)
@@ -69,11 +69,8 @@ def main():
 
     events.bindQuitEvent(quitApplication)
     events.bindKeyDownEvent(["q"], quitApplication)
-
     events.bindJoystickAxisMotionEvent(0, 3, lambda e, v: updateCameraVelocityY(v))
     events.bindJoystickAxisMotionEvent(0, 4, lambda e, v: updateCameraVelocityX(v))
-    #events.bindMouseDownEvent([1], lambda e: mainCamera.unlock())
-    #events.bindMouseUpEvent([1], lambda e: mainCamera.lock())
     events.bindKeyDownEvent(["g"], lambda e: sounds.playSoundOnce("startup"))
     while True:
         # Limit framerate to the desired FPS

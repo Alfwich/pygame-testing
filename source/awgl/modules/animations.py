@@ -1,4 +1,5 @@
-import pygame, Animation
+import pygame
+from ..objs import *
 
 _cachedAnimations  = {}
 

@@ -1,5 +1,6 @@
-import pygame, AnimatedObject, animations, images, events, math, random
-
+import pygame, random
+from ..awgl.modules import *
+from ..awgl.objs import *
 
 animations.addAnimation("walking-guy-walk-left", [(64*i, 64, 64, 64) for i in range(9)])
 animations.addAnimation("walking-guy-walk-up", [(64*i, 0, 64, 64) for i in range(9)])

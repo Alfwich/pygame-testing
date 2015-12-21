@@ -10,13 +10,19 @@ bdist_msi_options = {
     'initial_target_dir': r'[ProgramFilesFolder]\%s\%s' % (company_name, product_name),
 }
 
-buildOptions = dict(include_files = ['src/'])
+buildOptions = {
+    "include_files" : ['src/'],
+    "packages" : ["source"]
+}
 execs = [Executable("main.py", base = None if DEBUG else "Win32GUI", shortcutName = product_name, shortcutDir = "DesktopFolder")]
 
 setup(
     name = "pygame-testing",
     version = "0.1",
     description = "Testing for pygame",
-    options = dict(build_exe = buildOptions, bdist_msi = bdist_msi_options),
+    options = {
+        "build_exe" : buildOptions,
+        "bdist_msi" : bdist_msi_options
+    },
     executables = execs
 )

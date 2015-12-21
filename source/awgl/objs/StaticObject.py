@@ -1,4 +1,5 @@
-import pygame, events
+import pygame
+from ..modules import events
 
 class StaticObject(object):
 
