@@ -25,8 +25,9 @@ class AOWalkingGuy(AnimatedObject.AnimatedObject):
         self.setFrameRate(self.walkingFPS)
         self.play()
 
-        events.bindKeyAxis("a", "d", self.moveRight)
-        events.bindKeyAxis("w", "s", self.moveDown)
+        #if controllerId == 0:
+        b = events.bindKeyAxis("a", "d", self.moveRight)
+        a = events.bindKeyAxis("w", "s", self.moveDown)
 
         events.bindJoystickAxisMotionEvent(controllerId, 0, self.moveRight)
         events.bindJoystickAxisMotionEvent(controllerId, 1, self.moveDown)

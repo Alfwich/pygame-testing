@@ -2,6 +2,7 @@ import pygame, types
 from pygame.locals import *
 
 _callbacks = {}
+_createdEventHandlers = set()
 _tickableObjects = []
 
 LEFT_MOUSE_BUTTON = 1
@@ -41,10 +42,8 @@ def _processButtonsArray(buttons):
 
     return set(buttonOrds)
 
-def _copyFunction(f):
-    return types.FunctionType(f.func_code, f.func_globals, f.func_name, f.func_defaults, f.func_closure)
-
 def _bindEvent(action, callback):
+    _createdEventHandlers.add(id(callback))
     if action not in _callbacks:
         _callbacks[action] = []
     _callbacks[action].append(callback)
@@ -189,6 +188,21 @@ def bindJoystickButtonAxis(joystick, downButtons, upButtons, callback, obj=None)
     _bindEvent(JOYBUTTONDOWN, joystickButtonAxisWrapper)
     return id(joystickButtonAxisWrapper)
 
-def unbindEvents(action):
-    if action in _callbacks:
-        _callbacks[action] = []
+def _removeEventFromBoundEvents(eventHandle):
+    for eventType in _callbacks:
+        for event in _callbacks[eventType]:
+            if id(event) == eventHandle:
+                _callbacks[eventType].remove(event)
+                _createdEventHandlers.remove(eventHandle)
+                return True
+
+def unbindEvent(eventHandles):
+    if not isinstance(eventHandles, list):
+        eventHandles = [eventHandles]
+
+    for eventHandle in eventHandles:
+        if eventHandle in _createdEventHandlers:
+            _removeEventFromBoundEvents(eventHandle)
+
+
+    return False
