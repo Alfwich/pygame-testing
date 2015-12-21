@@ -76,13 +76,15 @@ def handleEvents():
 
 def tick(delta=0.0):
     for obj in _tickableObjects:
-        if obj._shouldTick and obj._isValid:
-            obj.tick(delta)
+        obj.tick(delta)
 
     _handleTimers(delta)
 
 def registerTickableObject(obj):
     _tickableObjects.append(obj)
+
+def deregisterTickableObject(obj):
+    _tickableObjects.remove(obj)
 
 def bindQuitEvent(callback, obj=None):
     def quitEventWrapper(event):

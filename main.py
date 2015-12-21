@@ -47,7 +47,7 @@ def main():
         print("Could not create screen or clock object.", screen, clock)
         return
 
-    mainRenderList = RenderList.RenderList("main")
+    playerRenderList = RenderList.RenderList("player")
     worldRenderList = RenderList.RenderList("world")
     particleRenderList = RenderList.RenderList("particle")
     mainCamera = Camera.Camera()
@@ -56,21 +56,35 @@ def main():
     coolText = SOStaticText.SOStaticText("Hello World!")
     worldRenderList.addObject(coolText)
 
-    for i in range(8):
-        animatedGuy = AOWalkingGuy.AOWalkingGuy(i)
-        animatedGuy.addPosition(i*(SCREEN_SIZE[0]/8), 0)
-        mainRenderList.addObject(animatedGuy)
+    tileSize = 10
+    for x in range(0, SCREEN_SIZE[0], tileSize):
+        for y in range(0, SCREEN_SIZE[1], tileSize):
+            newMetalTile = SOMetalTile.SOMetalTile(tileSize, tileSize)
+            newMetalTile.setPosition(x, y)
+            worldRenderList.addObject(newMetalTile)
 
     def quitApplication(event):
         pygame.quit()
         sys.exit()
 
-    def doNothing():
-        print("I do shit!")
+    players = []
+    def updatePlayers():
+        numberOfPlayers = joysticks.updateJoysticks()
+        while len(players):
+            players[0].disable()
+            players.pop(0)
+        playerRenderList.removeAll()
+        for i in range(0, numberOfPlayers):
+            animatedGuy = AOWalkingGuy.AOWalkingGuy(i)
+            animatedGuy.addPosition(i*(SCREEN_SIZE[0]/numberOfPlayers), 0)
+            playerRenderList.addObject(animatedGuy)
+            players.append(animatedGuy)
 
     events.bindQuitEvent(quitApplication)
     events.bindKeyDownEvent(["q"], quitApplication)
     events.bindKeyDownEvent(["g"], lambda e: sounds.playSoundOnce("startup"))
+    events.bindKeyDownEvent(["l"], lambda e: updatePlayers())
+    updatePlayers()
     while True:
         # Limit framerate to the desired FPS
         delta = frameLimit(clock, FPS)
@@ -82,7 +96,7 @@ def main():
         # Draw screen
         screen.fill(colors.BLACK)
         worldRenderList.render(screen, mainCamera)
-        mainRenderList.render(screen, mainCamera)
+        playerRenderList.render(screen, mainCamera)
         particleRenderList.render(screen, mainCamera)
         pygame.display.update()
 

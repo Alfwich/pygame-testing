@@ -15,8 +15,8 @@ images.addToGlobalLoadList([
 class AOWalkingGuy(AnimatedObject.AnimatedObject):
     def __init__(self, controllerId=0):
         super(AOWalkingGuy, self).__init__()
-        self.walkingSpeed = random.randint(100, 150)
-        self.walkingFPS = random.randint(30, 45)
+        self.walkingSpeed = 150
+        self.walkingFPS = 30
         self.currentSpeed = self.walkingSpeed
         self.maxFPS = self.walkingFPS
 
@@ -27,12 +27,17 @@ class AOWalkingGuy(AnimatedObject.AnimatedObject):
         self.play()
 
         if controllerId == 0:
-            events.bindKeyAxis("a", "d", self.moveRight)
-            events.bindKeyAxis("w", "s", self.moveDown)
+            self.addEvents([
+                events.bindKeyAxis("a", "d", self.moveRight),
+                events.bindKeyAxis("w", "s", self.moveDown)
+            ])
 
-        events.bindJoystickAxisMotionEvent(controllerId, 0, self.moveRight)
-        events.bindJoystickAxisMotionEvent(controllerId, 1, self.moveDown)
-        events.bindJoystickButtonAxis(controllerId, 1, 0, lambda e, v: self.modifyWalkingSpeed(v))
+
+        self.addEvents([
+            events.bindJoystickAxisMotionEvent(controllerId, 0, self.moveRight),
+            events.bindJoystickAxisMotionEvent(controllerId, 1, self.moveDown),
+            events.bindJoystickButtonAxis(controllerId, 1, 0, lambda e, v: self.modifyWalkingSpeed(v))
+        ])
 
     def moveRight(self, e, value):
         self.setXVelocity(value)
@@ -65,5 +70,5 @@ class AOWalkingGuy(AnimatedObject.AnimatedObject):
             self.position[0] += self.velocity[0] * delta * self.currentSpeed
             self.position[1] += self.velocity[1] * delta * self.currentSpeed
         else:
-            #self.setAnimation(animations.getAnimation("walking-guy-standing"))
+            self.setFrame(0)
             self.setFrameRate(0)

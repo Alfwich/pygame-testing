@@ -32,6 +32,9 @@ class AnimatedObject(StaticObject.StaticObject):
     def setFrameRate(self, fps):
         self.fps = int(fps)
 
+    def setFrame(self, frame):
+        self.frame = frame
+
     def tick(self, delta):
         super(AnimatedObject, self).tick(delta)
         if self.isPlaying:

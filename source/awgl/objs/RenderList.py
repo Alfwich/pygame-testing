@@ -20,17 +20,21 @@ class RenderList():
 
     def removeObject(self, removeObj):
         if id(removeObj) in self.objectIds:
-            self.objectIds.pop(id(remove))
+            self.objectIds.pop(id(removeObj))
             for idx, obj in enumerate(self.objects):
                 if obj is removeObj:
                     self.objects[idx] = None
                     break
             self.objects = filter(lambda y: y, self.objects)
 
+    def removeAll(self):
+        self.objects = []
+        self.objectIds = {}
+
     def render(self, screen, camera=None):
         shouldCameraTransform = not camera is None
         for obj in self.objects:
-            if obj._isValid:
+            if obj.isVisible():
                 objectBitmap = obj.getBitmap()
                 objectPosition = obj.getPosition()
                 objectRenderRect = obj.getRenderRect()

@@ -8,10 +8,36 @@ class StaticObject(object):
         self.position = [0,0]
         self.size = [0,0]
         self.velocity = [0,0]
+        self._isVisible = True
         self._isValid = True
-        self._shouldTick = True
+        self._boundEvents = []
+        self.enableTick()
 
+    def isVisible(self):
+        return self._isVisible
+
+    def setVisibility(self, visibility):
+        self._isVisible = visibility
+
+    def addEvents(self, eventIds):
+        if not isinstance(eventIds, list):
+            eventIds = [eventIds]
+
+        for eventId in eventIds:
+            self._boundEvents.append(eventId)
+
+    def disable(self):
+        print self._boundEvents
+        for eventId in self._boundEvents:
+            events.unbindEvent(eventId)
+        self._isValid = False
+        self.disableTick()
+
+    def enableTick(self):
         events.registerTickableObject(self)
+
+    def disableTick(self):
+        events.deregisterTickableObject(self)
 
     def setBitmap(self, surface):
         self.size = [surface.get_width(), surface.get_height()]

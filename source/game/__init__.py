@@ -1,3 +1,3 @@
 
 
-__all__ = ["AOWalkingGuy", "SOFrog", "SOStaticText"]
+__all__ = ["AOWalkingGuy", "SOFrog", "SOStaticText", "SOMetalTile"]
