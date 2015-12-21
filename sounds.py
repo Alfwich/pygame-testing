@@ -1,6 +1,6 @@
 import pygame
 
-SOUND_LOAD_TEMPLATE = "src\sound\%s"
+SOUND_LOAD_TEMPLATE = "src/sound/%s"
 _loadedSounds = {}
 _globalSoundLoadList = []
 

@@ -180,7 +180,7 @@ def bindJoystickButtonAxis(joystick, downButtons, upButtons, callback, obj=None)
     combinedOrds = downButtonOrds | upButtonOrds
 
     def joystickButtonAxisWrapper(event):
-        if event.button in combinedOrds:
+        if event.joy == joystick and event.button in combinedOrds:
             val = 0 if event.type == JOYBUTTONUP else 1 if event.button in upButtonOrds else -1
             pramList = (event, val) if obj is None else (event, val, obj)
             callback(*pramList)

@@ -1,5 +1,7 @@
 import pygame, colors
 
+
+FONT_LOAD_TEMPLATE = "src/font/%s"
 DEFAULT_FONT_KEY = "__DEFAULT__"
 FONT_COLOR_KEY = "current_font_color"
 FONT_KEY_KEY = "current_font_key"
@@ -11,9 +13,11 @@ _config = {
 
 def init():
     pygame.init()
-    _loadedFonts[DEFAULT_FONT_KEY] = loadFont('freesansbold.ttf', 32)
+    _loadedFonts[DEFAULT_FONT_KEY] = loadFont('freesans.ttf', 32)
 
-def loadFont(fontPath, fontSize):
+def loadFont(fontName, fontSize):
+    fontPath = FONT_LOAD_TEMPLATE % fontName
+    print(fontPath)
     return pygame.font.Font(fontPath, fontSize)
 
 def setCurrentRenderColor(color):

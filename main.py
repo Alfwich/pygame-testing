@@ -46,7 +46,7 @@ def main():
     coolText = SOStaticText.SOStaticText("Fuck you man!")
     mainRenderList.addObject(coolText)
 
-    for i in xrange(8):
+    for i in range(8):
         animatedGuy = AOWalkingGuy.AOWalkingGuy(i)
         animatedGuy.addPosition(i*(SCREEN_SIZE[0]/8), 0)
         mainRenderList.addObject(animatedGuy)

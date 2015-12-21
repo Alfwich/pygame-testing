@@ -17,7 +17,6 @@ class AOWalkingGuy(AnimatedObject.AnimatedObject):
         self.walkingSpeed = random.randint(100, 150)
         self.walkingFPS = random.randint(30, 45)
         self.currentSpeed = self.walkingSpeed
-        self.isSprinting = False
         self.maxFPS = self.walkingFPS
 
         self.setBitmap(images.getImage("walking-guy"))

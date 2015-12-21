@@ -10,7 +10,7 @@ def _unbindAllJoysticks():
         js.quit()
 
 def _bindAllJoysticks():
-    _joysticks["joys"] = [pygame.joystick.Joystick(x) for x in xrange(pygame.joystick.get_count())]
+    _joysticks["joys"] = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())]
     for js in _joysticks["joys"]:
         js.init()
 
