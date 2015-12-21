@@ -27,9 +27,9 @@ class StaticObject(object):
             self._boundEvents.append(eventId)
 
     def disable(self):
-        print self._boundEvents
         for eventId in self._boundEvents:
             events.unbindEvent(eventId)
+        self._boundEvents = []
         self._isValid = False
         self.disableTick()
 
