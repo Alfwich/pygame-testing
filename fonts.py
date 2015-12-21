@@ -17,7 +17,6 @@ def init():
 
 def loadFont(fontName, fontSize):
     fontPath = FONT_LOAD_TEMPLATE % fontName
-    print(fontPath)
     return pygame.font.Font(fontPath, fontSize)
 
 def setCurrentRenderColor(color):

@@ -1,5 +1,6 @@
 from cx_Freeze import setup, Executable
 
+DEBUG = False
 company_name = "arthurwut"
 product_name = "pygametest"
 
@@ -10,11 +11,12 @@ bdist_msi_options = {
 }
 
 buildOptions = dict(include_files = ['src/'])
+execs = [Executable("main.py", base = None if DEBUG else "Win32GUI", shortcutName = product_name, shortcutDir = "DesktopFolder")]
 
 setup(
     name = "pygame-testing",
     version = "0.1",
     description = "Testing for pygame",
     options = dict(build_exe = buildOptions, bdist_msi = bdist_msi_options),
-    executables = [Executable("main.py")]
+    executables = execs
 )

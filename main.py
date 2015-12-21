@@ -4,6 +4,12 @@ import StaticObject, RenderList, Camera, AnimatedObject
 import SOFrog, SOStaticText, AOWalkingGuy
 from pygame.locals import *
 
+# If we are running in the executable dist then make sure that python is
+# using the executable path as the orgin for file requests.
+if not "__file__" in locals():
+    newPath = "\\".join(str(sys.executable).split("\\")[:-1])
+    os.chdir(newPath)
+
 FPS = 60
 SCREEN_SIZE = (1000, 1000)
 TITLE = "Test Game"
