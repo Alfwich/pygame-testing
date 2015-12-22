@@ -13,7 +13,8 @@ from source.game import *
 TITLE = "Test Game"
 
 images.addToGlobalLoadList([
-    ("mc-tile-map", "minecraft-tile-map.png")
+    ("mc-tile-map", "minecraft-tile-map.png"),
+    ("tile-map-1", "tile-map-1.png")
 ])
 
 sounds.addToGlobalLoadList([
@@ -69,10 +70,9 @@ def main():
     events.bindKeyDownEvent(["l"], updatePlayers)
     updatePlayers()
 
-    tileMap = TileMap.TileMap(images.getImage("mc-tile-map"), 16, 16)
-    tileMap.scaleTiles(4, 4)
+    tileMap = TileMap.TileMap(images.getImage("tile-map-1"), 32, 32)
     tileMap.setupDefaultTiles()
-    tileMap.loadMap("default.map")
+    tileMap.loadMap("default.csv")
     worldRenderList.addObject(tileMap)
 
     events.bindKeyDownEvent(["f"], lambda e: display.toggleFullscreen())
@@ -93,7 +93,7 @@ def main():
 
         # Draw screen
         screen = display.getScreen()
-        screen.fill(colors.BLACK)
+        #screen.fill(colors.BLACK)
         worldRenderList.render(screen, mainCamera)
         playerRenderList.render(screen, mainCamera)
         particleRenderList.render(screen, mainCamera)

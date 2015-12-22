@@ -16,8 +16,8 @@ class TileMap(StaticObject.StaticObject):
 
 
     def setupDefaultTiles(self):
-        for x in range(0, self.getWidth(), self.tileWidth):
-            for y in range(0, self.getWidth(), self.tileWidth):
+        for y in range(0, self.getWidth(), self.tileWidth):
+            for x in range(0, self.getHeight(), self.tileHeight):
                 self.addTileRect(x, y)
 
     def scaleTiles(self, xScale, yScale):
@@ -54,9 +54,11 @@ class TileMap(StaticObject.StaticObject):
 
         objectPosition[0] = int(objectPosition[0])
         objectPosition[1] = int(objectPosition[1])
-        
-        for x in range(len(self.map)):
-            for y in range(len(self.map[x])):
-                tilePosition = (objectPosition[0] + y * self.tileWidth, objectPosition[1] + x * self.tileHeight)
-                if tilePosition[0] >= -self.tileWidth and tilePosition[0] < display.getScreenWidth() and tilePosition[1] >= -self.tileHeight and tilePosition[1] < display.getScreenHeight():
-                    screen.blit(self.bitmap, tilePosition, self.getTileRect(self.map[x][y]))
+
+        for rowIdx, row in enumerate(self.map):
+            tileYPosition = objectPosition[1] + rowIdx * self.tileHeight
+            if tileYPosition >= -self.tileHeight and tileYPosition < display.getScreenHeight():
+                for colIdx, tile in enumerate(row):
+                    tileXPosition = objectPosition[0] + colIdx * self.tileWidth
+                    if tileXPosition >= -self.tileWidth and tileXPosition < display.getScreenWidth():
+                        screen.blit(self.bitmap, (tileXPosition, tileYPosition), self.getTileRect(tile))
