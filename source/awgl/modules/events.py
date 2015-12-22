@@ -65,11 +65,9 @@ def _handleTimers(delta):
         if shouldFilterTimers:
             _timers = filter(lambda x: x, _timers)
 
-def init():
-    pygame.init()
-
 def handleEvents():
     for e in pygame.event.get():
+        #print e
         if e.type in _callbacks:
             for callback in _callbacks[e.type]:
                 callback(e)
@@ -205,6 +203,14 @@ def bindJoystickButtonAxis(joystick, downButtons, upButtons, callback, obj=None)
     _bindEvent(JOYBUTTONUP, joystickButtonAxisWrapper)
     _bindEvent(JOYBUTTONDOWN, joystickButtonAxisWrapper)
     return id(joystickButtonAxisWrapper)
+
+def bindVideoChangeEvent(callback, obj=None):
+    def videoExposeEventWrapper(event):
+        pramList = (event,) if obj is None else (event, obj)
+        callback(*pramList)
+
+    _bindEvent(VIDEOEXPOSE, videoExposeEventWrapper)
+    return id(videoExposeEventWrapper)
 
 def _removeEventFromBoundEvents(eventHandle):
     for eventType in _callbacks:

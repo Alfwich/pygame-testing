@@ -1,0 +1,76 @@
+import pygame
+
+_screen = None
+_screenModes = None
+_fps = 60
+_title = "PyGame Testing"
+_fullscreen = False
+_screenSize = [600, 480]
+_currentScreenSize = 0
+_screenFlags = pygame.DOUBLEBUF | pygame.HWSURFACE | pygame.NOFRAME
+
+def _updateScreen():
+    global _screen
+    _screen = pygame.display.set_mode(_screenSize, _screenFlags | (pygame.FULLSCREEN if _fullscreen else 0))
+
+def _updateTitle():
+    pygame.display.set_caption(_title)
+
+def init():
+    global _screenModes
+    pygame.display.init()
+    pygame.mouse.set_visible(False)
+    _screenModes = pygame.display.list_modes()[::-1]
+    _updateScreen()
+    _updateTitle()
+
+def getScreen():
+    return _screen
+
+def getScreenModesAvailable():
+    return _screenModes
+
+def increaseScreenMode():
+    global _currentScreenSize
+    modes = getScreenModesAvailable()
+    if _currentScreenSize < len(modes)-1:
+        _currentScreenSize += 1
+        setScreenSize(modes[_currentScreenSize])
+
+def decreaseScreenMode():
+    global _currentScreenSize
+    modes = getScreenModesAvailable()
+    if _currentScreenSize > 1:
+        _currentScreenSize -= 1
+        setScreenSize(modes[_currentScreenSize])
+
+def setScreenSize(screenMode):
+    global _screenSize
+    _screenSize = screenMode
+    _updateScreen()
+
+def getScreenSize():
+    return _screenSize
+
+def getScreenWidth():
+    return _screenSize[0]
+
+def getScreenHeight():
+    return _screenSize[1]
+
+def setWindowTitle(newTitle):
+    global _title
+    _title = newTitle
+    _updateTitle()
+
+def setFPS(newFPS):
+    global _fps
+    _fps = newFPS
+
+def getDesiredFPS():
+    return _fps
+
+def toggleFullscreen():
+    global _fullscreen
+    _fullscreen = not _fullscreen
+    _updateScreen()
