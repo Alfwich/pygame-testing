@@ -13,7 +13,11 @@ class StaticObject(object):
         self._isValid = True
         self._canTick = False
         self._boundEvents = []
+        self.renderRect = None
         self.enableTick()
+
+    def _updateRenderRect(self):
+        self.renderRect = self.bitmap.get_rect()
 
     def isVisible(self):
         return self._isVisible
@@ -51,12 +55,13 @@ class StaticObject(object):
     def setBitmap(self, surface):
         self.size = [surface.get_width(), surface.get_height()]
         self.bitmap = surface
+        self._updateRenderRect()
 
     def getBitmap(self):
         return self.bitmap
 
     def getRenderRect(self):
-        return self.bitmap.get_rect() if self.bitmap else None
+        return self.renderRect
 
     def getPosition(self):
         return list(self.position)

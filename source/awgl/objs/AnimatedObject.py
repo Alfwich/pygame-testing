@@ -15,7 +15,7 @@ class AnimatedObject(StaticObject.StaticObject):
             self.animation = animation
 
     def getRenderRect(self):
-        return self.animation.getFrameRect(int(self.frame)) if self.animation else self.bitmap.get_rect() if self.bitmap else None
+        return self.animation.getFrameRect(int(self.frame)) if self.animation else self.renderRect if self.bitmap else None
 
     def setNumberOfLoops(self, loops):
         self.numLoops = loops
