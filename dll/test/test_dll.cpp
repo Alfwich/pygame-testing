@@ -1,4 +1,4 @@
-
+#include <string>
 //test.cpp
 #define DLLEXPORT extern "C" __declspec(dllexport)
 
