@@ -24,20 +24,16 @@ def initScreen():
     return pygame.display.set_mode(SCREEN_SIZE, SCREEN_FLAGS)
 
 def init():
-    [ mod.init() for mod in [pygame, images, fonts, joysticks, display] ]
+    [ mod.init() for mod in [pygame, images, fonts, joysticks, display, clock] ]
     display.setFPS(30)
+    clock.setGlobalTimeModifier(0.1)
     # Init images from their respective lists. This allows game classes
     # to define images and sounds that will be used at declaration time
     images.loadGlobalImageList()
     sounds.loadGlobalSoundList()
 
-def frameLimit(clock, busy=False):
-    return clock.tick(display.getDesiredFPS())/1000.0
-
 def main():
     init()
-    clock = pygame.time.Clock()
-
     hudRenderList = RenderList.RenderList("hud")
     playerRenderList = SortedRenderList.SortedRenderList("player")
     worldRenderList = RenderList.RenderList("world")
@@ -78,7 +74,7 @@ def main():
     events.bindKeyDownEvent(["o"], lambda e: sounds.playSoundOnce("startup"))
     while True:
         # Limit framerate to the desired FPS
-        delta = frameLimit(clock)
+        delta = clock.tick()
 
         # Handle game events through the event queue and tick all game constructs
         events.handleEvents()

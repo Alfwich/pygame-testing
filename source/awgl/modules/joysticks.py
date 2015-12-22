@@ -26,7 +26,7 @@ def updateJoysticks():
     return numberOfJoysticks()
 
 def numberOfJoysticks():
-    return 10#_joysticks["count"]
+    return _joysticks["count"]
 
 def getControllerName(controllerId):
     return _joysticks["joys"][controllerId].get_name()

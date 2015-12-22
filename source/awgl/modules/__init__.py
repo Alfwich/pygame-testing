@@ -1,2 +1,13 @@
 
-__all__ = ["animations", "colors", "events", "fonts", "gradient", "images", "sounds", "joysticks", "display"]
+__all__ = [
+    "animations",
+    "colors",
+    "events",
+    "fonts",
+    "gradient",
+    "images",
+    "sounds",
+    "joysticks",
+    "display",
+    "clock"
+]
