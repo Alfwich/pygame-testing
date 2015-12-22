@@ -26,7 +26,6 @@ def initScreen():
 def init():
     [ mod.init() for mod in [pygame, images, fonts, joysticks, display, clock] ]
     display.setFPS(30)
-    clock.setGlobalTimeModifier(0.1)
     # Init images from their respective lists. This allows game classes
     # to define images and sounds that will be used at declaration time
     images.loadGlobalImageList()
