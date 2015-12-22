@@ -38,12 +38,6 @@ class AnimatedObject(StaticObject.StaticObject):
     def getSize(self):
         return (self.animation.getFrameRect(int(self.frame)).w, self.animation.getFrameRect(int(self.frame)).h)
 
-    def getWidth(self):
-        return self.animation.getFrameRect(int(self.frame)).w
-
-    def getHeight(self):
-        return self.animation.getFrameRect(int(self.frame)).h
-
     def tick(self, delta):
         super(AnimatedObject, self).tick(delta)
         if self.isPlaying:

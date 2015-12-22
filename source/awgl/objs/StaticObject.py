@@ -1,6 +1,11 @@
 import pygame
 from ..modules import events
 
+class alignment:
+    TOP = LEFT = 0
+    CENTER = 1
+    BOTTOM = RIGHT = 2
+
 class StaticObject(object):
 
     def __init__(self):
@@ -14,10 +19,52 @@ class StaticObject(object):
         self._canTick = False
         self._boundEvents = []
         self.renderRect = None
+        self.alignment = [alignment.CENTER, alignment.CENTER]
         self.enableTick()
 
     def _updateRenderRect(self):
         self.renderRect = self.bitmap.get_rect()
+
+    def _alignAxis(self, axisValue, dimSize, align):
+        if align == alignment.CENTER:
+            return axisValue - dimSize/2
+        elif align == alignment.BOTTOM:
+            return axisValue - dimSize
+        else:
+            return axisValue
+
+    def _alignPosition(self, position):
+        size = self.getSize()
+        for axis, align in enumerate(self.alignment):
+            position[axis] = self._alignAxis(position[axis], size[axis], align)
+
+    def setAlignment(self, alignX, alignY):
+        self.alignment = [alignX, alignY]
+
+    def setAlignmentX(self, alignX):
+        self.alignment[0] = alignX
+
+    def setAlignmentY(self, alignY):
+        self.alignment[1] = alignY
+
+    def isVisible(self):
+        return self._isVisible
+
+    def setVisibility(self, visibility):
+        self._isVisible = visibility
+
+    def addEvents(self, eventIds):
+        if not isinstance(eventIds, list):
+            eventIds = [eventIds]
+
+        for eventId in eventIds:
+            self._boundEvents.append(eventId)
+
+    def disable(self):
+        for eventId in self._boundEvents:
+            events.unbindEvent(eventId)
+        self._boundEvents = []
+        self._isValid = False
 
     def isVisible(self):
         return self._isVisible
@@ -122,6 +169,7 @@ class StaticObject(object):
             objectPosition[0] += offset[0]
             objectPosition[1] += offset[1]
 
+        self._alignPosition(objectPosition)
         screen.blit(self.bitmap, objectPosition, self.getRenderRect())
 
     def render(self, screen, camera=None, offset=None):

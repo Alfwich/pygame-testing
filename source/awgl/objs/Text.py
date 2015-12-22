@@ -1,10 +1,10 @@
 import pygame
-from ..awgl.modules import *
-from ..awgl.objs import *
+import StaticObject
+from ..modules import fonts
 
-class SOStaticText(StaticObject.StaticObject):
+class Text(StaticObject.StaticObject):
     def __init__(self, text):
-        super(SOStaticText, self).__init__()
+        super(Text, self).__init__()
         self.setBitmap(fonts.renderTextSurface(str(text)))
         self.disableTick()
 

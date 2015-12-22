@@ -39,10 +39,10 @@ def main():
     worldRenderList = RenderList.RenderList("world")
     particleRenderList = RenderList.RenderList("particle")
     mainCamera = Camera.Camera()
-    #mainCamera.setOffset(-100, -200)
     hudCamera = Camera.Camera()
 
-    coolText = SOStaticText.SOStaticText(display.getScreenSize())
+    coolText = Text.Text(display.getScreenSize())
+    coolText.setAlignment(StaticObject.alignment.LEFT, StaticObject.alignment.TOP)
     hudRenderList.addObject(coolText)
     events.bindVideoChangeEvent(lambda e: coolText.updateText(display.getScreenSize()))
 
@@ -70,7 +70,7 @@ def main():
     updatePlayers()
 
     tileMap = TileMap.TileMap(images.getImage("mc-tile-map"), 16, 16)
-    tileMap.scaleTiles(3, 3)
+    tileMap.scaleTiles(4, 4)
     tileMap.setupDefaultTiles()
     tileMap.loadMap("default.map")
     worldRenderList.addObject(tileMap)

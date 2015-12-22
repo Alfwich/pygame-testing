@@ -33,7 +33,10 @@ class TileMap(StaticObject.StaticObject):
         return self.tiles[tileIndex]
 
     def getTileAtPosition(self, x, y):
-        return 0
+        return self.map[y][x]
+
+    def getTileAtWorldPosition(self, worldX, worldY):
+        return self.getTileAtPosition(int(worldX/self.tileWidth), int(worldY/self.tileHeight))
 
     def loadMap(self, filePath):
         with open(DEFAULT_MAP_TEMPLATE%filePath, "r") as f:
@@ -49,8 +52,11 @@ class TileMap(StaticObject.StaticObject):
             objectPosition[0] += offset[0]
             objectPosition[1] += offset[1]
 
+        objectPosition[0] = int(objectPosition[0])
+        objectPosition[1] = int(objectPosition[1])
+        
         for x in range(len(self.map)):
             for y in range(len(self.map[x])):
                 tilePosition = (objectPosition[0] + y * self.tileWidth, objectPosition[1] + x * self.tileHeight)
-                if tilePosition[0] >= 0 and tilePosition[0] < display.getScreenWidth() and tilePosition[1] >= 0 and tilePosition[1] < display.getScreenHeight():
+                if tilePosition[0] >= -self.tileWidth and tilePosition[0] < display.getScreenWidth() and tilePosition[1] >= -self.tileHeight and tilePosition[1] < display.getScreenHeight():
                     screen.blit(self.bitmap, tilePosition, self.getTileRect(self.map[x][y]))

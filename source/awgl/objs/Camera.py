@@ -24,7 +24,6 @@ class Camera():
 
     def centerOnObject(self, obj):
         objectPosition = obj.getPosition()
-        objectSize = obj.getSize()
         screenSize = display.getScreenSize()
-        self.offset[0] = screenSize[0]/2 - objectPosition[0] - objectSize[0]/2
-        self.offset[1] = screenSize[1]/2 - objectPosition[1] - objectSize[1]/2
+        self.offset[0] = screenSize[0]/2 - objectPosition[0]
+        self.offset[1] = screenSize[1]/2 - objectPosition[1]

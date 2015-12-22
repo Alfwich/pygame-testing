@@ -40,8 +40,8 @@ class AOWalkingGuy(AnimatedObject.AnimatedObject):
             events.bindJoystickButtonAxis(controllerId, 1, 0, lambda e, v: self.modifyWalkingSpeed(v))
         ])
 
-        playerTag = SOStaticText.SOStaticText("P%d"%(controllerId+1))
-        playerTag.movePosition(0, self.getHeight())
+        playerTag = Text.Text("P%d"%(controllerId+1))
+        playerTag.movePosition(0, -self.getHeight()/2)
         self.children.append(playerTag)
 
         events.bindTimer(playerTag.disable, 3000)
