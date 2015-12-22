@@ -3,9 +3,14 @@
  <tileset firstgid="1" name="tile-map-1" tilewidth="32" tileheight="32" tilecount="256">
   <image source="../image/tile-map-1.png" width="512" height="512"/>
  </tileset>
- <layer name="Tile Layer 1" width="100" height="100">
+ <layer name="default-world" width="100" height="100">
   <data encoding="base64" compression="zlib">
-   eJzt11EOwUAUhtHBCrACrBzdgFoBVoANmXmvpE1Jb6bn4bz3z5dMc5uUUgMAAABfHLPTCOcAG2pyyRbZcqBV1mbXABtqUnqss81AWz30mAE9Yik9dtl+oIMef+vRjqBHrB6PABtq0rfHvUNp8Q6woSZ9epQ36dVBi2l6FG7zWD38y/WYIz1i0SMWPWK5pe7bog+34O89R5r6+wEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACo0wc0dO75
+   eJzt18FNwzAUgGEXJmg7AXQC2KAwKdAFoBNQJgAW4lnQC3JKosqJFb7Dd2lyqPPLfvIupbQDAACADg/h8QxPDaxhTp7DIlwMdBlewr6BNcxJ7rEMq55uwm1Y6zF6j/vCb+uf9/UYv0fJNtzpUbXHVfo+g7rOp+uCjR7VeuTv2rVHjvugix51e/yeGX/1eGtgDXPSd38cCnKLzwbWMCd9euQz6aNAi2l65Ofu5tP2OM6RU/PDLB+vR595bpbX65HvIKfuGaUW5ke9HkNo0U4PLep6TeW7hfvGNN4Hmvr/AgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPA/fAFQzMzl
+  </data>
+ </layer>
+ <layer name="default-objects" width="100" height="100">
+  <data encoding="base64" compression="zlib">
+   eJzt1bkNgEAMRUH3XwMphXE0sEABuAECAtYrNCO9/CeWIwAAAAAAgJ6m6gEwMPcBz97cx/zZChiT/wEA0M+SrdmW7cVbiGjZkZ3ZVbwFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/uYG1oMKag==
   </data>
  </layer>
 </map>

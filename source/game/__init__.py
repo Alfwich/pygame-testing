@@ -1,3 +1,3 @@
 
 
-__all__ = ["AOPlayerCharacter"]
+__all__ = ["AOPlayerCharacter", "TMDefaultWorld"]

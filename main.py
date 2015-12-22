@@ -13,8 +13,6 @@ from source.game import *
 TITLE = "Test Game"
 
 images.addToGlobalLoadList([
-    ("mc-tile-map", "minecraft-tile-map.png"),
-    ("tile-map-1", "tile-map-1.png")
 ])
 
 sounds.addToGlobalLoadList([
@@ -64,16 +62,13 @@ def main():
         playerRenderList.removeAll()
         for i in range(0, numberOfPlayers):
             animatedGuy = AOPlayerCharacter.AOPlayerCharacter(i)
-            animatedGuy.movePosition(i*(display.getScreenWidth()/numberOfPlayers) + 800, 730)
+            animatedGuy.movePosition(i*64+ 800, 730)
             playerRenderList.addObject(animatedGuy)
             players.append(animatedGuy)
     events.bindKeyDownEvent(["l"], updatePlayers)
     updatePlayers()
 
-    tileMap = TileMap.TileMap(images.getImage("tile-map-1"), 32, 32)
-    tileMap.scaleTiles(2, 2)
-    tileMap.setupDefaultTiles()
-    tileMap.loadMap("default.csv")
+    tileMap = TMDefaultWorld.TMDefaultWorld()
     worldRenderList.addObject(tileMap)
 
     events.bindKeyDownEvent(["f"], lambda e: display.toggleFullscreen())
