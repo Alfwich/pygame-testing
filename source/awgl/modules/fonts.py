@@ -12,4 +12,6 @@ def loadFont(name, fontPath, fontSize):
     _cachedFonts[name] = pygame.font.Font(FONT_LOAD_TEMPLATE % fontPath, fontSize)
 
 def renderTextSurface(text, fontKey="default", color=colors.WHITE):
+    if fontKey is None:
+        fontKey = "default"
     return _cachedFonts[fontKey].render(text, True, color) if fontKey in _cachedFonts else None

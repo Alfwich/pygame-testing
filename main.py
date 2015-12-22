@@ -64,13 +64,14 @@ def main():
         playerRenderList.removeAll()
         for i in range(0, numberOfPlayers):
             animatedGuy = AOPlayerCharacter.AOPlayerCharacter(i)
-            animatedGuy.movePosition(i*(display.getScreenWidth()/numberOfPlayers), 0)
+            animatedGuy.movePosition(i*(display.getScreenWidth()/numberOfPlayers) + 800, 730)
             playerRenderList.addObject(animatedGuy)
             players.append(animatedGuy)
     events.bindKeyDownEvent(["l"], updatePlayers)
     updatePlayers()
 
     tileMap = TileMap.TileMap(images.getImage("tile-map-1"), 32, 32)
+    tileMap.scaleTiles(2, 2)
     tileMap.setupDefaultTiles()
     tileMap.loadMap("default.csv")
     worldRenderList.addObject(tileMap)

@@ -185,7 +185,7 @@ class StaticObject(object):
             offset[0] += self.getPositionX()
             offset[1] += self.getPositionY()
             for child in self.children:
-                child.render(screen, None, offset)
+                child.render(screen, None, list(offset))
 
     def tick(self, delta):
         pass
