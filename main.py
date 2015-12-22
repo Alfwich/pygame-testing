@@ -62,7 +62,7 @@ def main():
             players.pop(0)
         playerRenderList.removeAll()
         for i in range(0, numberOfPlayers):
-            animatedGuy = AOWalkingGuy.AOWalkingGuy(i)
+            animatedGuy = AOPlayerCharacter.AOPlayerCharacter(i)
             animatedGuy.movePosition(i*(display.getScreenWidth()/numberOfPlayers), 0)
             playerRenderList.addObject(animatedGuy)
             players.append(animatedGuy)

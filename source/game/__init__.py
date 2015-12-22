@@ -1,3 +1,3 @@
 
 
-__all__ = ["AOWalkingGuy", "SOMetalTile"]
+__all__ = ["AOPlayerCharacter"]

@@ -13,9 +13,9 @@ images.addToGlobalLoadList([
     ("walking-guy", "guy-walk.png")
 ])
 
-class AOWalkingGuy(AnimatedObject.AnimatedObject):
+class AOPlayerCharacter(AnimatedObject.AnimatedObject):
     def __init__(self, controllerId=0):
-        super(AOWalkingGuy, self).__init__()
+        super(AOPlayerCharacter, self).__init__()
         self.walkingSpeed = 150
         self.walkingFPS = 30
         self.currentSpeed = self.walkingSpeed
@@ -71,7 +71,7 @@ class AOWalkingGuy(AnimatedObject.AnimatedObject):
                 self.setAnimation(animations.getAnimation("walking-guy-walk-up"))
 
     def tick(self, delta):
-        super(AOWalkingGuy, self).tick(delta)
+        super(AOPlayerCharacter, self).tick(delta)
         if not self.velocity[0] == 0 or not self.velocity[1] == 0:
             self.updateMoveAnimation()
             self.position[0] += self.velocity[0] * delta * self.currentSpeed
