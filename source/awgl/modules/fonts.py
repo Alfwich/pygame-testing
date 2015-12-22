@@ -1,33 +1,15 @@
 import pygame, colors
 
-
 FONT_LOAD_TEMPLATE = "data/font/%s"
-DEFAULT_FONT_KEY = "__DEFAULT__"
-FONT_COLOR_KEY = "current_font_color"
-FONT_KEY_KEY = "current_font_key"
-_loadedFonts = {}
-_config = {
-    FONT_COLOR_KEY: colors.WHITE,
-    FONT_KEY_KEY: DEFAULT_FONT_KEY,
-}
+DEFAULT_FONT = "freesansbold.ttf"
+_cachedFonts = {}
 
 def init():
-    pygame.init()
-    _loadedFonts[DEFAULT_FONT_KEY] = loadFont('freesans.ttf', 32)
+    pygame.font.init()
+    loadFont("default", DEFAULT_FONT, 24)
 
-def loadFont(fontName, fontSize):
-    fontPath = FONT_LOAD_TEMPLATE % fontName
-    return pygame.font.Font(fontPath, fontSize)
+def loadFont(name, fontPath, fontSize):
+    _cachedFonts[name] = pygame.font.Font(FONT_LOAD_TEMPLATE % fontPath, fontSize)
 
-def setCurrentRenderColor(color):
-    _config[FONT_COLOR_KEY] = color
-
-def setCurrentFont(fontKey):
-    if fontKey in _loadedFonts:
-        _config[FONT_KEY_KEY] = fontKey
-
-def renderTextSurface(text):
-    font = _loadedFonts[_config[FONT_KEY_KEY]]
-    fontColor = _config[FONT_COLOR_KEY]
-
-    return font.render(text, True, fontColor)
+def renderTextSurface(text, fontKey="default", color=colors.WHITE):
+    return _cachedFonts[fontKey].render(text, True, color) if fontKey in _cachedFonts else None

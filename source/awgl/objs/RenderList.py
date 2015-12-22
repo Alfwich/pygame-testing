@@ -35,12 +35,3 @@ class RenderList(object):
         shouldCameraTransform = not camera is None
         for obj in self.objects:
             obj.render(screen, camera)
-            if obj.isVisible():
-                objectBitmap = obj.getBitmap()
-                objectPosition = obj.getPosition()
-                objectRenderRect = obj.getRenderRect()
-
-                if shouldCameraTransform:
-                    camera.transformWorldPosition(objectPosition)
-
-                screen.blit(objectBitmap, objectPosition, objectRenderRect)

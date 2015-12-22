@@ -5,8 +5,8 @@ _screenModes = None
 _fps = 60
 _title = "PyGame Testing"
 _fullscreen = False
-_screenSize = [600, 480]
-_currentScreenSize = 0
+_screenSize = [1280, 800]
+_currentScreenSize = 8
 _screenFlags = pygame.DOUBLEBUF | pygame.HWSURFACE | pygame.NOFRAME
 
 def _updateScreen():
@@ -35,6 +35,7 @@ def increaseScreenMode():
     modes = getScreenModesAvailable()
     if _currentScreenSize < len(modes)-1:
         _currentScreenSize += 1
+        print _currentScreenSize
         setScreenSize(modes[_currentScreenSize])
 
 def decreaseScreenMode():

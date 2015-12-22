@@ -1,32 +1,27 @@
 import pygame
 import events
 
-_joysticks = {
-    "count": 0,
-    "joys": []
-}
-
-def _unbindAllJoysticks():
-    for js in _joysticks["joys"]:
-        js.quit()
+_joystickCount = 0
+_joysticks = []
 
 def _bindAllJoysticks():
-    _joysticks["joys"] = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())]
-    [js.init() for js  in _joysticks["joys"]]
+    global _joysticks
+    _joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())]
+    [js.init() for js  in _joysticks]
 
 def init():
     pygame.joystick.init()
 
 def updateJoysticks():
-    #_unbindAllJoysticks()
+    global _joystickCount
     pygame.joystick.quit()
     pygame.joystick.init()
     _bindAllJoysticks()
-    _joysticks["count"] = len(_joysticks["joys"])
-    return numberOfJoysticks()
+    _joystickCount = len(_joysticks)
+    return _joystickCount
 
 def numberOfJoysticks():
-    return _joysticks["count"]
+    return _joystickCount
 
 def getControllerName(controllerId):
-    return _joysticks["joys"][controllerId].get_name()
+    return _joysticks[controllerId].get_name()

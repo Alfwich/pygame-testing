@@ -35,6 +35,9 @@ class AnimatedObject(StaticObject.StaticObject):
     def setFrame(self, frame):
         self.frame = frame
 
+    def getSize(self):
+        return (self.animation.getFrameRect(int(self.frame)).w, self.animation.getFrameRect(int(self.frame)).h)
+
     def getWidth(self):
         return self.animation.getFrameRect(int(self.frame)).w
 

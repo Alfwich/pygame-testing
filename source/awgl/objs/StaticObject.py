@@ -57,6 +57,9 @@ class StaticObject(object):
         self.bitmap = surface
         self._updateRenderRect()
 
+    def scaleBitmap(self, xScale, yScale):
+        self.setBitmap(pygame.transform.scale(self.bitmap, (self.bitmap.get_width()*int(xScale), self.bitmap.get_height()*int(yScale))))
+
     def getBitmap(self):
         return self.bitmap
 
@@ -92,10 +95,10 @@ class StaticObject(object):
         return list(self.size)
 
     def getWidth(self):
-        return self.size[0]
+        return self.getSize()[0]
 
     def getHeight(self):
-        return self.size[1]
+        return self.getSize()[1]
 
     def setVelocity(self, velocityX, velocityY):
         self.velocity = [velocityX, velocityY]
@@ -113,20 +116,28 @@ class StaticObject(object):
     def getVelocity(self):
         return list(self.velocity)
 
+    def draw(self, screen, offset=None):
+        objectPosition = self.getPosition()
+        if not offset is None:
+            objectPosition[0] += offset[0]
+            objectPosition[1] += offset[1]
+
+        screen.blit(self.bitmap, objectPosition, self.getRenderRect())
+
     def render(self, screen, camera=None, offset=None):
         if self._isVisible:
-            objectPosition = self.getPosition()
+            if offset is None:
+                offset = [0, 0]
+
             if not camera is None:
-                camera.transformWorldPosition(objectPosition)
+                camera.transformWorldPosition(offset)
 
-            if not offset is None:
-                objectPosition[0] += offset[0]
-                objectPosition[1] += offset[1]
+            self.draw(screen, offset)
 
-            screen.blit(self.bitmap, objectPosition, self.getRenderRect())
-
+            offset[0] += self.getPositionX()
+            offset[1] += self.getPositionY()
             for child in self.children:
-                child.render(screen, camera, objectPosition)
+                child.render(screen, None, offset)
 
     def tick(self, delta):
         pass

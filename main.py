@@ -13,6 +13,7 @@ from source.game import *
 TITLE = "Test Game"
 
 images.addToGlobalLoadList([
+    ("mc-tile-map", "minecraft-tile-map.png")
 ])
 
 sounds.addToGlobalLoadList([
@@ -38,6 +39,7 @@ def main():
     worldRenderList = RenderList.RenderList("world")
     particleRenderList = RenderList.RenderList("particle")
     mainCamera = Camera.Camera()
+    #mainCamera.setOffset(-100, -200)
     hudCamera = Camera.Camera()
 
     coolText = SOStaticText.SOStaticText(display.getScreenSize())
@@ -53,6 +55,8 @@ def main():
     players = []
     def updatePlayers(event=None):
         numberOfPlayers = joysticks.updateJoysticks()
+        if numberOfPlayers == 0:
+            numberOfPlayers = 1
         while len(players):
             players[0].disable()
             players.pop(0)
@@ -64,6 +68,12 @@ def main():
             players.append(animatedGuy)
     events.bindKeyDownEvent(["l"], updatePlayers)
     updatePlayers()
+
+    tileMap = TileMap.TileMap(images.getImage("mc-tile-map"), 16, 16)
+    tileMap.scaleTiles(3, 3)
+    tileMap.setupDefaultTiles()
+    tileMap.loadMap("default.map")
+    worldRenderList.addObject(tileMap)
 
     events.bindKeyDownEvent(["f"], lambda e: display.toggleFullscreen())
     events.bindKeyDownEvent(["g"], lambda e: display.decreaseScreenMode())
@@ -79,10 +89,12 @@ def main():
         events.handleEvents()
         events.tick(delta)
 
+        mainCamera.centerOnObject(players[0])
+
         # Draw screen
         screen = display.getScreen()
-        screen.fill(colors.PURPLE)
-        #worldRenderList.render(screen, mainCamera)
+        screen.fill(colors.BLACK)
+        worldRenderList.render(screen, mainCamera)
         playerRenderList.render(screen, mainCamera)
         particleRenderList.render(screen, mainCamera)
         hudRenderList.render(screen, hudCamera)

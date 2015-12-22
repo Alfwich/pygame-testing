@@ -29,9 +29,9 @@ def getLineColor(pos):
     colorElement = map(lambda x: int(x), colorElement)
     return pygame.Color(*colorElement)
 
-def renderGradientToScreen(screen, screenWidth, screenHeight):
+def renderGradientToScreen(surface, screenWidth, screenHeight):
     for i in range(screenWidth):
         color = gradient.getLineColor((i/float(screenWidth))*(len(COLOR_FRAMES)-1))
         startPos = (i, 0)
         endPos = (i, screenHeight)
-        pygame.draw.line(screen, color, startPos, endPos)
+        pygame.draw.line(surface, color, startPos, endPos)
