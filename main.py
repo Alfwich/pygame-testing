@@ -45,7 +45,7 @@ def main():
     mainCamera = Camera.Camera()
     mainCamera.locked = False
 
-    tileSize = 20
+    tileSize = 100
     tiles = []
     def updateRandomTiles():
         for tile in tiles:
@@ -106,7 +106,7 @@ def main():
 
         # Draw screen
         screen = display.getScreen()
-        #screen.fill(colors.PURPLE)
+        screen.fill(colors.PURPLE)
         worldRenderList.render(screen, mainCamera)
         playerRenderList.render(screen, mainCamera)
         particleRenderList.render(screen, mainCamera)

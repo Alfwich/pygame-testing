@@ -12,7 +12,7 @@ class SOMetalTile(StaticObject.StaticObject):
         self.setBitmap(images.getImage("metal-tile-texture"))
         self.setSize(tileWidth, tileHeight)
         self._setupRenderRect(tileWidth, tileHeight)
-        #self.disableTick()
+        self.disableTick()
 
     def _setupRenderRect(self, tileWidth, tileHeight):
         bitmapRect = self.bitmap.get_rect()
@@ -22,6 +22,3 @@ class SOMetalTile(StaticObject.StaticObject):
 
     def getRenderRect(self):
         return self.renderRect
-
-    def tick(self, delta):
-        self.addPosition(random.randint(-1,1)*delta*20, random.randint(-1,1)*delta*20)

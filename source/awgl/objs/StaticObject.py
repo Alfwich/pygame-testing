@@ -10,6 +10,7 @@ class StaticObject(object):
         self.velocity = [0,0]
         self._isVisible = True
         self._isValid = True
+        self._canTick = False
         self._boundEvents = []
         self.enableTick()
 
@@ -34,10 +35,14 @@ class StaticObject(object):
         self.disableTick()
 
     def enableTick(self):
-        events.registerTickableObject(self)
+        if not self._canTick:
+            self._canTick = True
+            events.registerTickableObject(self)
 
     def disableTick(self):
-        events.deregisterTickableObject(self)
+        if self._canTick:
+            self._canTick = False
+            events.deregisterTickableObject(self)
 
     def setBitmap(self, surface):
         self.size = [surface.get_width(), surface.get_height()]
