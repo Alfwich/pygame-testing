@@ -66,6 +66,12 @@ class StaticObject(object):
     def getPosition(self):
         return list(self.position)
 
+    def getPositionX(self):
+        return self.position[0]
+
+    def getPositionY(self):
+        return self.position[1]
+
     def setPosition(self, x, y):
         self.position = [x, y]
 

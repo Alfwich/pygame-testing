@@ -1,1 +1,1 @@
-__all__ = ["AnimatedObject", "RenderList", "Camera", "Animation", "StaticObject"]
+__all__ = ["AnimatedObject", "RenderList", "Camera", "Animation", "StaticObject", "SortedRenderList"]

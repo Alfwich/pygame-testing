@@ -1,6 +1,6 @@
 import pygame
 
-class RenderList():
+class RenderList(object):
     lists = {}
 
     def getList(name):

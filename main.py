@@ -39,7 +39,7 @@ def main():
     clock = pygame.time.Clock()
 
     hudRenderList = RenderList.RenderList("hud")
-    playerRenderList = RenderList.RenderList("player")
+    playerRenderList = SortedRenderList.SortedRenderList("player", lambda x: x.getPositionY())
     worldRenderList = RenderList.RenderList("world")
     particleRenderList = RenderList.RenderList("particle")
     mainCamera = Camera.Camera()
