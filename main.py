@@ -43,27 +43,7 @@ def main():
     worldRenderList = RenderList.RenderList("world")
     particleRenderList = RenderList.RenderList("particle")
     mainCamera = Camera.Camera()
-    mainCamera.locked = False
-
-    tileSize = 100
-    tiles = []
-    def updateRandomTiles():
-        for tile in tiles:
-            tile.disable()
-
-        while len(tiles):
-            tiles.pop(0)
-
-        worldRenderList.removeAll()
-        for x in range(0, display.getScreenWidth(), tileSize):
-            for y in range(0, display.getScreenHeight(), tileSize):
-                newMetalTile = SOMetalTile.SOMetalTile(tileSize, tileSize)
-                newMetalTile.setPosition(x, y)
-                tiles.append(newMetalTile)
-                worldRenderList.addObject(newMetalTile)
-    updateRandomTiles()
-    events.bindVideoChangeEvent(lambda e: updateRandomTiles())
-
+    hudCamera = Camera.Camera()
 
     coolText = SOStaticText.SOStaticText(display.getScreenSize())
     hudRenderList.addObject(coolText)
@@ -84,7 +64,7 @@ def main():
         playerRenderList.removeAll()
         for i in range(0, numberOfPlayers):
             animatedGuy = AOWalkingGuy.AOWalkingGuy(i)
-            animatedGuy.addPosition(i*(500/numberOfPlayers), 0)
+            animatedGuy.movePosition(i*(display.getScreenWidth()/numberOfPlayers), 0)
             playerRenderList.addObject(animatedGuy)
             players.append(animatedGuy)
     events.bindKeyDownEvent(["l"], updatePlayers)
@@ -107,10 +87,10 @@ def main():
         # Draw screen
         screen = display.getScreen()
         screen.fill(colors.PURPLE)
-        worldRenderList.render(screen, mainCamera)
+        #worldRenderList.render(screen, mainCamera)
         playerRenderList.render(screen, mainCamera)
         particleRenderList.render(screen, mainCamera)
-        hudRenderList.render(screen, mainCamera)
+        hudRenderList.render(screen, hudCamera)
         pygame.display.update()
 
 if __name__ == "__main__":

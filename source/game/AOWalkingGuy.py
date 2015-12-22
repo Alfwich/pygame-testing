@@ -1,12 +1,13 @@
 import pygame, random
 from ..awgl.modules import *
 from ..awgl.objs import *
+import SOStaticText
 
-animations.addAnimation("walking-guy-walk-left", [(64*i, 64, 64, 64) for i in range(9)])
-animations.addAnimation("walking-guy-walk-up", [(64*i, 0, 64, 64) for i in range(9)])
-animations.addAnimation("walking-guy-walk-right", [(64*i, 192, 64, 64) for i in range(9)])
-animations.addAnimation("walking-guy-walk-down", [(64*i, 128, 64, 64) for i in range(9)])
-animations.addAnimation("walking-guy-standing", [(64*i, 128, 64, 64) for i in range(1)])
+GUY_DIM = 64
+animations.addAnimation("walking-guy-walk-left", [(GUY_DIM*i, GUY_DIM, GUY_DIM, GUY_DIM) for i in range(9)])
+animations.addAnimation("walking-guy-walk-up", [(GUY_DIM*i, 0, GUY_DIM, GUY_DIM) for i in range(9)])
+animations.addAnimation("walking-guy-walk-right", [(GUY_DIM*i, GUY_DIM*3, GUY_DIM, GUY_DIM) for i in range(9)])
+animations.addAnimation("walking-guy-walk-down", [(GUY_DIM*i, GUY_DIM*2, GUY_DIM, GUY_DIM) for i in range(9)])
 
 images.addToGlobalLoadList([
     ("walking-guy", "guy-walk.png")
@@ -38,6 +39,12 @@ class AOWalkingGuy(AnimatedObject.AnimatedObject):
             events.bindJoystickAxisMotionEvent(controllerId, 1, self.moveDown),
             events.bindJoystickButtonAxis(controllerId, 1, 0, lambda e, v: self.modifyWalkingSpeed(v))
         ])
+
+        playerTag = SOStaticText.SOStaticText("P%d"%(controllerId+1))
+        playerTag.movePosition(0, self.getHeight())
+        self.children.append(playerTag)
+
+        events.bindTimer(playerTag.disable, 3000)
 
     def moveRight(self, e, value):
         self.setXVelocity(value)

@@ -8,6 +8,7 @@ class StaticObject(object):
         self.position = [0,0]
         self.size = [0,0]
         self.velocity = [0,0]
+        self.children = []
         self._isVisible = True
         self._isValid = True
         self._canTick = False
@@ -32,7 +33,10 @@ class StaticObject(object):
             events.unbindEvent(eventId)
         self._boundEvents = []
         self._isValid = False
+        self._isVisible = False
         self.disableTick()
+        for child in self.children:
+            child.disable()
 
     def enableTick(self):
         if not self._canTick:
@@ -66,7 +70,7 @@ class StaticObject(object):
     def setPositionY(self, y):
         self.position[1] = y
 
-    def addPosition(self, deltaX, deltaY):
+    def movePosition(self, deltaX, deltaY):
         self.position[0] += deltaX
         self.position[1] += deltaY
 
@@ -75,6 +79,12 @@ class StaticObject(object):
 
     def getSize(self):
         return list(self.size)
+
+    def getWidth(self):
+        return self.size[0]
+
+    def getHeight(self):
+        return self.size[1]
 
     def setVelocity(self, velocityX, velocityY):
         self.velocity = [velocityX, velocityY]
@@ -91,6 +101,21 @@ class StaticObject(object):
 
     def getVelocity(self):
         return list(self.velocity)
+
+    def render(self, screen, camera=None, offset=None):
+        if self._isVisible:
+            objectPosition = self.getPosition()
+            if not camera is None:
+                camera.transformWorldPosition(objectPosition)
+
+            if not offset is None:
+                objectPosition[0] += offset[0]
+                objectPosition[1] += offset[1]
+
+            screen.blit(self.bitmap, objectPosition, self.getRenderRect())
+
+            for child in self.children:
+                child.render(screen, camera, objectPosition)
 
     def tick(self, delta):
         pass
