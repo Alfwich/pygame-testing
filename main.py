@@ -25,7 +25,7 @@ def initScreen():
 
 def init():
     [ mod.init() for mod in [pygame, images, fonts, joysticks, display] ]
-    display.setFPS(10)
+    display.setFPS(30)
     # Init images from their respective lists. This allows game classes
     # to define images and sounds that will be used at declaration time
     images.loadGlobalImageList()
@@ -38,6 +38,7 @@ def main():
     init()
     clock = pygame.time.Clock()
 
+    hudRenderList = RenderList.RenderList("hud")
     playerRenderList = RenderList.RenderList("player")
     worldRenderList = RenderList.RenderList("world")
     particleRenderList = RenderList.RenderList("particle")
@@ -45,20 +46,34 @@ def main():
     mainCamera.locked = False
 
     tileSize = 20
-    for x in range(0, display.getScreenWidth(), tileSize):
-        for y in range(0, display.getScreenHeight(), tileSize):
-            newMetalTile = SOMetalTile.SOMetalTile(tileSize, tileSize)
-            newMetalTile.setPosition(x, y)
-            worldRenderList.addObject(newMetalTile)
+    tiles = []
+    def updateRandomTiles():
+        for tile in tiles:
+            tile.disable()
+
+        while len(tiles):
+            tiles.pop(0)
+
+        worldRenderList.removeAll()
+        for x in range(0, display.getScreenWidth(), tileSize):
+            for y in range(0, display.getScreenHeight(), tileSize):
+                newMetalTile = SOMetalTile.SOMetalTile(tileSize, tileSize)
+                newMetalTile.setPosition(x, y)
+                tiles.append(newMetalTile)
+                worldRenderList.addObject(newMetalTile)
+    updateRandomTiles()
+    events.bindVideoChangeEvent(lambda e: updateRandomTiles())
+
 
     coolText = SOStaticText.SOStaticText(display.getScreenSize())
-    worldRenderList.addObject(coolText)
+    hudRenderList.addObject(coolText)
+    events.bindVideoChangeEvent(lambda e: coolText.updateText(display.getScreenSize()))
 
-    def quitApplication(event):
+    def quitApplication():
         pygame.quit()
         sys.exit()
-    events.bindQuitEvent(quitApplication)
-    events.bindKeyDownEvent(["q"], quitApplication)
+    events.bindQuitEvent(lambda e: quitApplication())
+    events.bindKeyDownEvent(["q"], lambda e: quitApplication())
 
     players = []
     def updatePlayers(event=None):
@@ -78,7 +93,8 @@ def main():
     events.bindKeyDownEvent(["f"], lambda e: display.toggleFullscreen())
     events.bindKeyDownEvent(["g"], lambda e: display.decreaseScreenMode())
     events.bindKeyDownEvent(["h"], lambda e: display.increaseScreenMode())
-    events.bindVideoChangeEvent(lambda e: coolText.updateText(display.getScreenSize()))
+    events.bindKeyDownEvent(["t"], lambda e: display.setSmallestResolution())
+    events.bindKeyDownEvent(["y"], lambda e: display.setLargestResolution())
     events.bindKeyDownEvent(["o"], lambda e: sounds.playSoundOnce("startup"))
     while True:
         # Limit framerate to the desired FPS
@@ -90,10 +106,11 @@ def main():
 
         # Draw screen
         screen = display.getScreen()
-        screen.fill(colors.PURPLE)
+        #screen.fill(colors.PURPLE)
         worldRenderList.render(screen, mainCamera)
         playerRenderList.render(screen, mainCamera)
         particleRenderList.render(screen, mainCamera)
+        hudRenderList.render(screen, mainCamera)
         pygame.display.update()
 
 if __name__ == "__main__":

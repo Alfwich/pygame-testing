@@ -44,6 +44,18 @@ def decreaseScreenMode():
         _currentScreenSize -= 1
         setScreenSize(modes[_currentScreenSize])
 
+def setLargestResolution():
+    global _currentScreenSize
+    modes = getScreenModesAvailable()
+    _currentScreenSize = len(modes)
+    setScreenSize(modes[-1])
+
+def setSmallestResolution():
+    global _currentScreenSize
+    modes = getScreenModesAvailable()
+    _currentScreenSize = 0
+    setScreenSize(modes[0])
+
 def setScreenSize(screenMode):
     global _screenSize
     _screenSize = screenMode
