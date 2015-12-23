@@ -39,6 +39,7 @@ def init():
     images.loadGlobalImageList()
     sounds.loadGlobalSoundList()
 
+
 class ColorTwist(StaticObject.StaticObject):
 
     def __init__(self, colorList):
@@ -56,40 +57,41 @@ class ColorTwist(StaticObject.StaticObject):
             objectPosition[1] += offset[1]
 
         self._alignPosition(objectPosition)
+
         pygame.draw.circle(
-            screen, self.color, (300 + objectPosition[0], 300 + objectPosition[1]), 100)
-
-    def _vecTimesScalar(self, vector, scalar):
-        return [i * scalar for i in vector]
-
-    def _vecPlusVec(self, vector1, vector2):
-        return [x + y for x, y in zip(vector1, vector2)]
-
-    def _lerp(self, vector1, vector2, scalarBetween0and1):
-        return self._vecPlusVec(self._vecTimesScalar(vector1, 1 - scalarBetween0and1), self._vecTimesScalar(vector2, scalarBetween0and1))
-
-    def _timeForStage(self, discreteStage):
-        timeForEachStage = 0.97
-        return discreteStage * timeForEachStage
+            screen, self.color, (int(34 + objectPosition[0]), int(34 + objectPosition[1])), 100)
 
     def tick(self, delta):
+        def lerp(vector1, vector2, scalarBetween0and1):
+            def vecTimesScalar(vector, scalar):
+                return [i * scalar for i in vector]
+
+            def vecPlusVec(vector1, vector2):
+                return [x + y for x, y in zip(vector1, vector2)]
+
+            return vecPlusVec(vecTimesScalar(vector1, 1 - scalarBetween0and1), vecTimesScalar(vector2, scalarBetween0and1))
+
+        def timeForStage(discreteStage):
+            timeForEachStage = 0.21
+            return discreteStage * timeForEachStage
+
         colorSeq = [(255, 0, 0), (255, 255, 0), (255, 0, 0),
                     (255, 0, 255), (255, 0, 0)]
         self.timeAsThisColor += delta
-        if self.timeAsThisColor < self._timeForStage(1):
-            self.color = self._lerp(colorSeq[0], colorSeq[
-                                    1], (self.timeAsThisColor - self._timeForStage(0)) / (self._timeForStage(1) - self._timeForStage(0)))
-        elif self.timeAsThisColor < self._timeForStage(2):
-            self.color = self._lerp(colorSeq[1], colorSeq[
-                                    2], (self.timeAsThisColor - self._timeForStage(1)) / (self._timeForStage(2) - self._timeForStage(1)))
-        elif self.timeAsThisColor < self._timeForStage(3):
-            self.color = self._lerp(colorSeq[2], colorSeq[
-                                    3], (self.timeAsThisColor - self._timeForStage(2)) / (self._timeForStage(3) - self._timeForStage(2)))
-        elif self.timeAsThisColor < self._timeForStage(4):
-            self.color = self._lerp(colorSeq[3], colorSeq[
-                                    4], (self.timeAsThisColor - self._timeForStage(3)) / (self._timeForStage(4) - self._timeForStage(3)))
+        if self.timeAsThisColor < timeForStage(1):
+            self.color = lerp(colorSeq[0], colorSeq[
+                1], (self.timeAsThisColor - timeForStage(0)) / (timeForStage(1) - timeForStage(0)))
+        elif self.timeAsThisColor < timeForStage(2):
+            self.color = lerp(colorSeq[1], colorSeq[
+                2], (self.timeAsThisColor - timeForStage(1)) / (timeForStage(2) - timeForStage(1)))
+        elif self.timeAsThisColor < timeForStage(3):
+            self.color = lerp(colorSeq[2], colorSeq[
+                3], (self.timeAsThisColor - timeForStage(2)) / (timeForStage(3) - timeForStage(2)))
+        elif self.timeAsThisColor < timeForStage(4):
+            self.color = lerp(colorSeq[3], colorSeq[
+                4], (self.timeAsThisColor - timeForStage(3)) / (timeForStage(4) - timeForStage(3)))
         else:
-            self.timeAsThisColor -= self._timeForStage(len(colorSeq) - 1)
+            self.timeAsThisColor -= timeForStage(len(colorSeq) - 1)
             self.tick(0)
 
 
@@ -125,6 +127,7 @@ class ColorFlasher(StaticObject.StaticObject):
                 self.currentIndex += 1
 
             self.color = self.colorList[self.currentIndex]
+
 
 def main():
     init()
