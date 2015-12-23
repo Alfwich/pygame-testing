@@ -43,7 +43,7 @@ class GameObject(object):
         self.alignment[1] = alignY
 
     def getPosition(self):
-        return list(self.position)
+        return [int(self.position[0]), int(self.position[1])]
 
     def getPositionX(self):
         return self.getPosition()[0]
