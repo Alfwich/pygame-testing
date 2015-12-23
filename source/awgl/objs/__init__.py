@@ -7,5 +7,6 @@ __all__ = [
     "SortedRenderList",
     "TileMap",
     "TileSet",
-    "Text"
+    "Text",
+    "GameObject"
 ]

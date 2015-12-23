@@ -39,7 +39,6 @@ def init():
     images.loadGlobalImageList()
     sounds.loadGlobalSoundList()
 
-
 class ColorTwist(StaticObject.StaticObject):
 
     def __init__(self, colorList):
@@ -127,7 +126,6 @@ class ColorFlasher(StaticObject.StaticObject):
 
             self.color = self.colorList[self.currentIndex]
 
-
 def main():
     init()
     hudRenderList = RenderList.RenderList("hud")
@@ -138,8 +136,7 @@ def main():
     hudCamera = Camera.Camera()
 
     coolText = Text.Text(display.getScreenSize())
-    coolText.setAlignment(StaticObject.alignment.LEFT,
-                          StaticObject.alignment.TOP)
+    coolText.setAlignment(GameObject.alignment.LEFT, GameObject.alignment.TOP)
     hudRenderList.addObject(coolText)
     events.bindVideoChangeEvent(
         lambda e: coolText.updateText(display.getScreenSize()))
@@ -201,7 +198,7 @@ def main():
         events.handleEvents()
         events.tick(delta)
 
-        mainCamera.centerOnObject(hihi)
+        mainCamera.centerOnObject(players[0])
 
         # Draw screen
         screen = display.getScreen()
