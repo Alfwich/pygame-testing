@@ -31,37 +31,6 @@ def init():
     images.loadGlobalImageList()
     sounds.loadGlobalSoundList()
 
-class ColorFlasher(StaticObject.StaticObject):
-    def __init__(self, colorList):
-        super(ColorFlasher, self).__init__()
-        assert(len(colorList) >= 1)
-        self.color = colorList[0]
-        self.timeAsThisColor = 0
-        self.colorList = colorList
-        self.currentIndex = 0
-
-    def draw(self, screen, offset=None):
-        objectPosition = self.getPosition()
-        if not offset is None:
-            objectPosition[0] += offset[0]
-            objectPosition[1] += offset[1]
-
-        self._alignPosition(objectPosition)
-        verts = [(0,0), (0,200),(200,200), (200,0)]
-        pygame.draw.polygon(screen, self.color, map( lambda x: (x[0] + objectPosition[0],x[1] + objectPosition[1]), verts))
-
-    def tick(self, delta):
-        self.timeAsThisColor += delta
-        secondsToBeColor = 0.3
-        if self.timeAsThisColor >= secondsToBeColor:
-            self.timeAsThisColor -= secondsToBeColor
-            if self.currentIndex + 1 == len(self.colorList):
-                self.currentIndex = 0
-            else:
-                self.currentIndex += 1
-
-            self.color = self.colorList[self.currentIndex]
-
 def main():
     init()
     hudRenderList = RenderList.RenderList("hud")
