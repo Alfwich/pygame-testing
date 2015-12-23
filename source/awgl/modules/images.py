@@ -5,7 +5,8 @@ _cachedImages = {}
 _globalImageLoadList = []
 
 def init():
-    pygame.init()
+    pygame.display.init()
+    loadGlobalImageList()
 
 def addToGlobalLoadList(newList):
     for asset in newList:

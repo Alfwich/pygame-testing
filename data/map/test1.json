@@ -39,7 +39,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":1,
+ "nextobjectid":12,
  "orientation":"orthogonal",
  "properties":
     {
@@ -60,6 +60,11 @@
 
             },
          "spacing":0,
+         "terrains":[
+                {
+                 "name":"New Terrain",
+                 "tile":-1
+                }],
          "tilecount":256,
          "tileheight":32,
          "tilewidth":32

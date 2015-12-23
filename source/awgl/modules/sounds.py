@@ -5,7 +5,8 @@ _loadedSounds = {}
 _globalSoundLoadList = []
 
 def init():
-    pygame.init()
+    pygame.mixer.init()
+    sounds.loadGlobalSoundList()
 
 def addToGlobalLoadList(newList):
     for asset in newList:

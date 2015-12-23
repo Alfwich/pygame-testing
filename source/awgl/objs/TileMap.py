@@ -19,21 +19,29 @@ class TileMap(StaticObject.StaticObject):
         self.tileSets = []
         self.cachedMapSurfaces = {}
 
-    def _setupCachedSurface(self, layerId):
-        tileLayer = self.map[layerId]
-        tileSetBase = self.tileSets[0]
-        self.cachedMapSurfaces[layerId] = pygame.Surface((len(tileLayer[0])*tileSetBase.getTileWidth(), len(tileLayer)*tileSetBase.getTileHeight()), pygame.SRCALPHA, 32)
-        self.cachedMapSurfaces[layerId] = self.cachedMapSurfaces[layerId].convert_alpha()
+    def _createCachedSurface(self, tileLayer):
+        newSurface = pygame.Surface((len(tileLayer[0])*self.tileSets[0].getTileWidth(), len(tileLayer)*self.tileSets[0].getTileHeight()), pygame.SRCALPHA, 32)
+        return newSurface.convert_alpha()
         """
         self.cachedMapSurfaces[layerId].set_colorkey((255,0,255))
         self.cachedMapSurfaces[layerId].fill(colors.TRANSPARENT)
         """
+
+    def _setupCachedSurface(self, layerId):
+        tileLayer = self.map[layerId]
+        cachedSurface = self._createCachedSurface(tileLayer)
+        self._drawLayerToSurface(tileLayer, cachedSurface)
+        self.cachedMapSurfaces[layerId] = cachedSurface
+
+    def _drawLayerToSurface(self, tileLayer, surface, offset=None):
+        if offset is None:
+            offset = (0, 0)
         for rowIdx, row in enumerate(tileLayer):
-            tileYPosition = rowIdx * tileSetBase.getTileHeight()
+            tileYPosition = rowIdx * self.tileSets[0].getTileHeight() + offset[1]
             for colIdx, tile in enumerate(row):
-                tileXPosition = colIdx * tileSetBase.getTileWidth()
+                tileXPosition = colIdx * self.tileSets[0].getTileWidth() + offset[0]
                 if not tile == 0:
-                    self.cachedMapSurfaces[layerId].blit(self._getTileBitmap(tile), (tileXPosition, tileYPosition), self._getTileRect(tile))
+                    surface.blit(self._getTileBitmap(tile), (tileXPosition, tileYPosition), self._getTileRect(tile))
 
     def _decodeMapLayerData(self, data):
         FLIPPED_HORIZONTALLY_FLAG = 0x80000000
@@ -52,7 +60,11 @@ class TileMap(StaticObject.StaticObject):
             self.map[layerId].append([])
             for y in range(0, layer["height"]):
                 self.map[layerId][-1].append(layerData.pop(0))
-        self._setupCachedSurface(layerId)
+        if self._shouldCacheLayer(layerId):
+            self._setupCachedSurface(layerId)
+
+    def _shouldCacheLayer(self, layerId):
+        return True
 
     def _getCorrectTileSet(self, tileIndex):
         index = len(self.tileSets)-1
@@ -86,6 +98,7 @@ class TileMap(StaticObject.StaticObject):
                 tileIndexes = (int(tileSet["firstgid"]), int(tileSet["tilecount"])+int(tileSet["firstgid"]))
                 scaleModifier = int(tileSet["properties"]["scale"]) if "scale" in tileSet["properties"] else self.globalScale
                 self.tileSets.append(TileSet.TileSet(tileSetImage, tileSize, tileIndexes, scaleModifier))
+
             for idx, layer in enumerate(cfg["layers"]):
                 self._loadMapLayer(layer, idx)
 
@@ -99,5 +112,8 @@ class TileMap(StaticObject.StaticObject):
         objectPosition[1] = int(objectPosition[1])
 
         for layer, tileLayer in self.map.iteritems():
-            renderRect = pygame.Rect(-objectPosition[0], -objectPosition[1], display.getScreenWidth(), display.getScreenHeight())
-            screen.blit(self.cachedMapSurfaces[layer], (0, 0), renderRect)
+            if layer in self.cachedMapSurfaces:
+                renderRect = pygame.Rect(-objectPosition[0], -objectPosition[1], display.getScreenWidth(), display.getScreenHeight())
+                screen.blit(self.cachedMapSurfaces[layer], (0, 0), renderRect)
+            else:
+                self._drawLayerToSurface(tileLayer, screen, offset)

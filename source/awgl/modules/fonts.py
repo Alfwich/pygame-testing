@@ -1,17 +1,32 @@
 import pygame, colors
 
 FONT_LOAD_TEMPLATE = "data/font/%s"
-DEFAULT_FONT = "freesansbold.ttf"
 _cachedFonts = {}
+_globalFontLoadList = [
+    ("default", "freesansbold.ttf", 24)
+]
 
 def init():
     pygame.font.init()
-    loadFont("default", DEFAULT_FONT, 24)
+    loadGlobalFontList()
+
+def addToGlobalLoadList(newList):
+    for asset in newList:
+        _globalFontLoadList.append(asset)
+
+def loadGlobalFontList():
+    loadFontList(_globalFontLoadList)
+
+def loadFontList(fontList):
+    for asset in fontList:
+        loadFont(*asset)
+
+def getFont(name):
+    return _cachedFonts[name] if name in _cachedFonts else None
 
 def loadFont(name, fontPath, fontSize):
     _cachedFonts[name] = pygame.font.Font(FONT_LOAD_TEMPLATE % fontPath, fontSize)
 
-def renderTextSurface(text, fontKey="default", color=colors.WHITE):
-    if fontKey is None:
-        fontKey = "default"
-    return _cachedFonts[fontKey].render(text, True, color) if fontKey in _cachedFonts else None
+def renderTextSurface(text, font=None, color=colors.WHITE, backgroundColor=colors.TRANSPARENT):
+    prams = (text, True, color) if backgroundColor is colors.TRANSPARENT else (text, True, color, backgroundColor)
+    return font.render(*prams) if not font is None else _cachedFonts["default"].render(*prams)
