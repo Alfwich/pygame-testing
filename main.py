@@ -33,12 +33,7 @@ def initScreen():
 
 def init():
     [mod.init() for mod in [pygame, images, fonts, joysticks, display, clock]]
-    display.setFPS(30)
-    # Init images from their respective lists. This allows game classes
-    # to define images and sounds that will be used at declaration time
-    images.loadGlobalImageList()
-    sounds.loadGlobalSoundList()
-
+    # display.setFPS(30)
 
 class ColorTwist(StaticObject.StaticObject):
 
@@ -128,7 +123,6 @@ class ColorFlasher(StaticObject.StaticObject):
 
             self.color = self.colorList[self.currentIndex]
 
-
 def main():
     init()
     hudRenderList = RenderList.RenderList("hud")
@@ -138,11 +132,8 @@ def main():
     mainCamera = Camera.Camera()
     hudCamera = Camera.Camera()
 
-    coolText = Text.Text(display.getScreenSize())
-    coolText.setAlignment(GameObject.alignment.LEFT, GameObject.alignment.TOP)
-    hudRenderList.addObject(coolText)
-    events.bindVideoChangeEvent(
-        lambda e: coolText.updateText(display.getScreenSize()))
+    infoText = TInfoText.TInfoText()
+    hudRenderList.addObject(infoText)
 
     def quitApplication():
         pygame.quit()

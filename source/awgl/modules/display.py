@@ -2,7 +2,7 @@ import pygame
 
 _screen = None
 _screenModes = None
-_fps = 60
+_fps = 1000
 _title = "PyGame Testing"
 _fullscreen = False
 _screenSize = [1280, 800]
@@ -79,6 +79,9 @@ def setWindowTitle(newTitle):
 def setFPS(newFPS):
     global _fps
     _fps = newFPS
+
+def getFPS():
+    return
 
 def getDesiredFPS():
     return _fps

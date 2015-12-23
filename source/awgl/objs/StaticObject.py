@@ -14,9 +14,10 @@ class StaticObject(GameObject.GameObject):
         self.renderRect = self.bitmap.get_rect()
 
     def setBitmap(self, surface):
-        self.setSize(surface.get_width(), surface.get_height())
-        self.bitmap = surface
-        self._updateRenderRect()
+        if not surface is None:
+            self.setSize(surface.get_width(), surface.get_height())
+            self.bitmap = surface
+            self._updateRenderRect()
 
     def scaleBitmap(self, xScale, yScale):
         self.setBitmap(pygame.transform.scale(self.bitmap, (self.bitmap.get_width()*int(xScale), self.bitmap.get_height()*int(yScale))))
