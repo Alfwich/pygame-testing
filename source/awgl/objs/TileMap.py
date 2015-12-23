@@ -9,7 +9,7 @@ class TileMap(StaticObject.StaticObject):
         super(TileMap, self).__init__()
         self.map = {}
         self.tileSets = []
-        self.cachedMapSurfaces = {}
+        self.cachedLayers = {}
         self.globalScale = globalScale
         self.disableTick()
         self.loadMap(mapFile)
@@ -17,7 +17,7 @@ class TileMap(StaticObject.StaticObject):
     def _clearTileMap(self):
         self.map = {}
         self.tileSets = []
-        self.cachedMapSurfaces = {}
+        self.cachedLayers = {}
 
     def _createCachedSurface(self, tileLayer):
         newSurface = pygame.Surface((len(tileLayer[0])*self.tileSets[0].getTileWidth(), len(tileLayer)*self.tileSets[0].getTileHeight()), pygame.SRCALPHA, 32)
@@ -26,12 +26,41 @@ class TileMap(StaticObject.StaticObject):
         self.cachedMapSurfaces[layerId].set_colorkey((255,0,255))
         self.cachedMapSurfaces[layerId].fill(colors.TRANSPARENT)
         """
+    def _mapFilledPercentage(self, layer):
+        filled = sum([sum(map(lambda y: 0 if y == 0 else 1,x)) for x in layer])
+        size = sum([sum([1 for y in x ]) for x in layer])
+        return filled/float(size)
+
+    def _shouldSurfaceCache(self, layerId):
+        return True
+        tileLayer = self.map[layerId]
+        if self._mapFilledPercentage(tileLayer) > 0.25:
+            return True
+        return False
+
+    def _setupCachedLayer(self, layerId):
+        if self._shouldSurfaceCache(layerId):
+            self._setupCachedSurface(layerId)
+        else:
+            self._setupCachedList(layerId)
 
     def _setupCachedSurface(self, layerId):
         tileLayer = self.map[layerId]
         cachedSurface = self._createCachedSurface(tileLayer)
         self._drawLayerToSurface(tileLayer, cachedSurface)
-        self.cachedMapSurfaces[layerId] = cachedSurface
+        self.cachedLayers[layerId] = cachedSurface
+
+    def _setupCachedList(self, layerId):
+        tileLayer = self.map[layerId]
+        cacheList = []
+
+        for rowIdx, row in enumerate(tileLayer):
+            tileYPosition = rowIdx * self.tileSets[0].getTileHeight()
+            for colIdx, tile in enumerate(row):
+                tileXPosition = colIdx * self.tileSets[0].getTileWidth()
+                if not tile == 0:
+                    cacheList.append((tile, (tileXPosition, tileYPosition)))
+        self.cachedLayers[layerId] = cacheList
 
     def _drawLayerToSurface(self, tileLayer, surface, offset=None):
         if offset is None:
@@ -60,11 +89,7 @@ class TileMap(StaticObject.StaticObject):
             self.map[layerId].append([])
             for y in range(0, layer["height"]):
                 self.map[layerId][-1].append(layerData.pop(0))
-        if self._shouldCacheLayer(layerId):
-            self._setupCachedSurface(layerId)
-
-    def _shouldCacheLayer(self, layerId):
-        return True
+        self._setupCachedLayer(layerId)
 
     def _getCorrectTileSet(self, tileIndex):
         index = len(self.tileSets)-1
@@ -112,8 +137,14 @@ class TileMap(StaticObject.StaticObject):
         objectPosition[1] = int(objectPosition[1])
 
         for layer, tileLayer in self.map.iteritems():
-            if layer in self.cachedMapSurfaces:
-                renderRect = pygame.Rect(-objectPosition[0], -objectPosition[1], display.getScreenWidth(), display.getScreenHeight())
-                screen.blit(self.cachedMapSurfaces[layer], (0, 0), renderRect)
+            if layer in self.cachedLayers:
+                cachedLayer = self.cachedLayers[layer]
+                if isinstance(cachedLayer, pygame.Surface):
+                    renderRect = pygame.Rect(-objectPosition[0], -objectPosition[1], display.getScreenWidth(), display.getScreenHeight())
+                    screen.blit(cachedLayer, (0, 0), renderRect)
+                elif isinstance(cachedLayer, list):
+                    for tile in cachedLayer:
+                        tilePosition = [tile[1][0] + objectPosition[0], tile[1][1] + objectPosition[1]]
+                        screen.blit(self._getTileBitmap(tile[0]), tilePosition, self._getTileRect(tile[0]))
             else:
                 self._drawLayerToSurface(tileLayer, screen, offset)

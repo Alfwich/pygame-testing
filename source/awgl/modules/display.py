@@ -35,7 +35,6 @@ def increaseScreenMode():
     modes = getScreenModesAvailable()
     if _currentScreenSize < len(modes)-1:
         _currentScreenSize += 1
-        print _currentScreenSize
         setScreenSize(modes[_currentScreenSize])
 
 def decreaseScreenMode():
