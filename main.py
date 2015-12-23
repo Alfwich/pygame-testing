@@ -41,7 +41,7 @@ def main():
     hudCamera = Camera.Camera()
 
     coolText = Text.Text(display.getScreenSize())
-    coolText.setAlignment(StaticObject.alignment.LEFT, StaticObject.alignment.TOP)
+    coolText.setAlignment(GameObject.alignment.LEFT, GameObject.alignment.TOP)
     hudRenderList.addObject(coolText)
     events.bindVideoChangeEvent(lambda e: coolText.updateText(display.getScreenSize()))
 
@@ -68,12 +68,8 @@ def main():
     events.bindKeyDownEvent(["l"], updatePlayers)
     updatePlayers()
 
-    hihi = ColorFlasher([colors.BLUE, colors.RED, colors.GREEN])
-
-
     tileMap = TileMap.TileMap("test1.json", 2)
     worldRenderList.addObject(tileMap)
-    worldRenderList.addObject(hihi)
 
     def loadLevel1():
         tileMap.loadMap("default.json")
@@ -99,7 +95,7 @@ def main():
         events.handleEvents()
         events.tick(delta)
 
-        mainCamera.centerOnObject(hihi)
+        mainCamera.centerOnObject(players[0])
 
         # Draw screen
         screen = display.getScreen()

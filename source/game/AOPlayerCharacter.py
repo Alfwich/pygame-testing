@@ -19,7 +19,6 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
         self.walkingFPS = 30
         self.currentSpeed = self.walkingSpeed
         self.maxFPS = self.walkingFPS
-
         self.setBitmap(images.getImage("walking-guy"))
         self.setAnimation(animations.getAnimation("walking-guy-walk-left"))
         self.setNumberOfLoops(-1)
@@ -40,16 +39,16 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
         ])
 
 
+
         playerTagBG = Text.Text("P%d"%(controllerId+1), None, colors.BLACK)
-        playerTagBG.movePosition(-2, (-self.getHeight()/2)+2)
+        playerTagBG.movePosition(-2, -(self.getHeight()/2)+2)
         self.children.append(playerTagBG)
         events.bindTimer(playerTagBG.disable, 3000)
 
         playerTag = Text.Text("P%d"%(controllerId+1), None, colors.WHITE)
-        playerTag.movePosition(0, -self.getHeight()/2)
+        playerTag.movePosition(0, -(self.getHeight()/2))
         self.children.append(playerTag)
         events.bindTimer(playerTag.disable, 3000)
-
 
     def moveRight(self, e, value):
         self.setXVelocity(value)

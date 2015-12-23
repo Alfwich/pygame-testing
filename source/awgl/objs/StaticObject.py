@@ -1,106 +1,20 @@
 import pygame
-from ..modules import events
+from ..modules import events, colors
+import GameObject
 
-class alignment:
-    TOP = LEFT = 0
-    CENTER = 1
-    BOTTOM = RIGHT = 2
-
-class StaticObject(object):
+class StaticObject(GameObject.GameObject):
 
     def __init__(self):
+        super(StaticObject, self).__init__()
         self.bitmap = None
-        self.position = [0,0]
-        self.size = [0,0]
         self.velocity = [0,0]
-        self.children = []
-        self._isVisible = True
-        self._isValid = True
-        self._canTick = False
-        self._boundEvents = []
         self.renderRect = None
-        self.alignment = [alignment.CENTER, alignment.CENTER]
-        self.enableTick()
 
     def _updateRenderRect(self):
         self.renderRect = self.bitmap.get_rect()
 
-    def _alignAxis(self, axisValue, dimSize, align):
-        if align == alignment.CENTER:
-            return axisValue - dimSize/2
-        elif align == alignment.BOTTOM:
-            return axisValue - dimSize
-        else:
-            return axisValue
-
-    def _alignPosition(self, position):
-        size = self.getSize()
-        for axis, align in enumerate(self.alignment):
-            position[axis] = self._alignAxis(position[axis], size[axis], align)
-
-    def setAlignment(self, alignX, alignY):
-        self.alignment = [alignX, alignY]
-
-    def setAlignmentX(self, alignX):
-        self.alignment[0] = alignX
-
-    def setAlignmentY(self, alignY):
-        self.alignment[1] = alignY
-
-    def isVisible(self):
-        return self._isVisible
-
-    def setVisibility(self, visibility):
-        self._isVisible = visibility
-
-    def addEvents(self, eventIds):
-        if not isinstance(eventIds, list):
-            eventIds = [eventIds]
-
-        for eventId in eventIds:
-            self._boundEvents.append(eventId)
-
-    def disable(self):
-        for eventId in self._boundEvents:
-            events.unbindEvent(eventId)
-        self._boundEvents = []
-        self._isValid = False
-
-    def isVisible(self):
-        return self._isVisible
-
-    def setVisibility(self, visibility):
-        self._isVisible = visibility
-
-    def addEvents(self, eventIds):
-        if not isinstance(eventIds, list):
-            eventIds = [eventIds]
-
-        for eventId in eventIds:
-            self._boundEvents.append(eventId)
-
-    def disable(self):
-        for eventId in self._boundEvents:
-            events.unbindEvent(eventId)
-        self._boundEvents = []
-        self._isValid = False
-        self._isVisible = False
-        self.disableTick()
-        for child in self.children:
-            child.disable()
-
-    def enableTick(self):
-        if not self._canTick:
-            self._canTick = True
-            events.registerTickableObject(self)
-
-    def disableTick(self):
-        if self._canTick:
-            self._canTick = False
-            events.deregisterTickableObject(self)
-
     def setBitmap(self, surface):
-        self.size = [surface.get_width(), surface.get_height()]
+        self.setSize(surface.get_width(), surface.get_height())
         self.bitmap = surface
         self._updateRenderRect()
 
@@ -112,40 +26,6 @@ class StaticObject(object):
 
     def getRenderRect(self):
         return self.renderRect
-
-    def getPosition(self):
-        return list(self.position)
-
-    def getPositionX(self):
-        return self.position[0]
-
-    def getPositionY(self):
-        return self.position[1]
-
-    def setPosition(self, x, y):
-        self.position = [x, y]
-
-    def setPositionX(self, x):
-        self.position[0] = x
-
-    def setPositionY(self, y):
-        self.position[1] = y
-
-    def movePosition(self, deltaX, deltaY):
-        self.position[0] += deltaX
-        self.position[1] += deltaY
-
-    def setSize(self, width, height):
-        self.size = [width, height]
-
-    def getSize(self):
-        return list(self.size)
-
-    def getWidth(self):
-        return self.getSize()[0]
-
-    def getHeight(self):
-        return self.getSize()[1]
 
     def setVelocity(self, velocityX, velocityY):
         self.velocity = [velocityX, velocityY]
@@ -165,27 +45,9 @@ class StaticObject(object):
 
     def draw(self, screen, offset=None):
         objectPosition = self.getPosition()
+
         if not offset is None:
             objectPosition[0] += offset[0]
             objectPosition[1] += offset[1]
 
-        self._alignPosition(objectPosition)
         screen.blit(self.bitmap, objectPosition, self.getRenderRect())
-
-    def render(self, screen, camera=None, offset=None):
-        if self._isVisible:
-            if offset is None:
-                offset = [0, 0]
-
-            if not camera is None:
-                camera.transformWorldPosition(offset)
-
-            self.draw(screen, offset)
-
-            offset[0] += self.getPositionX()
-            offset[1] += self.getPositionY()
-            for child in self.children:
-                child.render(screen, None, list(offset))
-
-    def tick(self, delta):
-        pass
