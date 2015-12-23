@@ -1,7 +1,6 @@
 import pygame, random
 from ..awgl.modules import *
 from ..awgl.objs import *
-import SOStaticText
 
 GUY_DIM = 64
 animations.addAnimation("walking-guy-walk-left", [(GUY_DIM*i, GUY_DIM, GUY_DIM, GUY_DIM) for i in range(9)])

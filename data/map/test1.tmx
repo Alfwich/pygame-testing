@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="32" tileheight="32" nextobjectid="1">
+ <tileset firstgid="1" name="layer-1" tilewidth="32" tileheight="32" tilecount="256">
+  <image source="../image/tile-map-1.png" width="512" height="512"/>
+ </tileset>
+ <tileset firstgid="257" name="tileset-2" tilewidth="32" tileheight="32" tilecount="256">
+  <image source="../image/trees.png" width="512" height="512"/>
+ </tileset>
+ <tileset firstgid="513" name="tileset-3" tilewidth="32" tileheight="32" tilecount="256">
+  <image source="../image/trees_plants_rocks.png" width="512" height="512"/>
+ </tileset>
+ <tileset firstgid="769" name="tileset-4" tilewidth="32" tileheight="32" tilecount="256">
+  <image source="../image/town.png" width="512" height="512"/>
+ </tileset>
+ <layer name="world" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJztzLEBABAQA8Dffwv8ApgAE2AhGSGNhhTXnpuZfypAJCTyy1AIVZ++C1+DThjkN2ERNvnJew7hPQhO
+  </data>
+ </layer>
+ <layer name="objects" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFAwUeAvEjIH4MxE+oYN5HIP4ExJ+B+AsVzKM2GPUvZWDUv4MLjDT/YgMALd0kpQ==
+  </data>
+ </layer>
+ <layer name="trees" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJy90jkOgkAUxnEY0B5FewXtXXvX3rWycjuA2wm0t9DeRG+gB/RvYiKSjAxuL/kVDLwv74XRtODSdU0TMGAigqiu0Cgpi94Y4rCRQFIhTxfMAQOmeJyn6E3DgYsMsgp5FhkxxGF78nL05lFAESWUFfJSZKThwPXkVeitooY6Gmj68gaGPDcnnp9b9LbRQRc99EP8j4ovr8DzkP4Rxphg+sH/rZE3o3+OBZZYhdj3VR3JPong7/yVl/ScOb943m0V56p6emT38laHe16YfWX38t2S3ctf1qt918yw+eIcO7L2P94raGb/vkHfh535Hzu+U1dbExpO
+  </data>
+ </layer>
+</map>

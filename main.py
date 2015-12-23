@@ -68,9 +68,19 @@ def main():
     events.bindKeyDownEvent(["l"], updatePlayers)
     updatePlayers()
 
-    tileMap = TMDefaultWorld.TMDefaultWorld()
+    tileMap = TileMap.TileMap("test1.json", 2)
     worldRenderList.addObject(tileMap)
 
+    def loadLevel1():
+        tileMap.loadMap("default.json")
+        updatePlayers()
+
+    def loadLevel2():
+        tileMap.loadMap("test1.json")
+        updatePlayers()
+
+    events.bindKeyDownEvent(["1"], lambda e: loadLevel1())
+    events.bindKeyDownEvent(["2"], lambda e: loadLevel2())
     events.bindKeyDownEvent(["f"], lambda e: display.toggleFullscreen())
     events.bindKeyDownEvent(["g"], lambda e: display.decreaseScreenMode())
     events.bindKeyDownEvent(["h"], lambda e: display.increaseScreenMode())

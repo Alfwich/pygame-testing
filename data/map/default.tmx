@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="32" tileheight="32" nextobjectid="1">
  <tileset firstgid="1" name="tile-map-1" tilewidth="32" tileheight="32" tilecount="256">
+  <properties>
+   <property name="scale" value="2"/>
+  </properties>
   <image source="../image/tile-map-1.png" width="512" height="512"/>
  </tileset>
  <layer name="default-world" width="100" height="100">

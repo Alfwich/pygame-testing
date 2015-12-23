@@ -6,5 +6,6 @@ __all__ = [
     "StaticObject",
     "SortedRenderList",
     "TileMap",
+    "TileSet",
     "Text"
 ]

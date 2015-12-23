@@ -44,7 +44,7 @@
          "name":"tile-map-1",
          "properties":
             {
-
+             "scale":"2"
             },
          "spacing":0,
          "tilecount":256,
