@@ -6,18 +6,32 @@ class StaticObject(GameObject.GameObject):
 
     def __init__(self):
         super(StaticObject, self).__init__()
+        self._bitmap = None
         self.bitmap = None
-        self.velocity = [0,0]
         self.renderRect = None
+        self.alpha = 255
 
     def _updateRenderRect(self):
         self.renderRect = self.bitmap.get_rect()
 
+    def _updateAlpha(self):
+        if not self._bitmap is None and self.alpha < 255:
+            self.bitmap = self._bitmap.copy()
+            self.bitmap.fill((255, 255, 255, self.alpha), None, pygame.BLEND_RGBA_MULT)
+
     def setBitmap(self, surface):
         if not surface is None:
             self.setSize(surface.get_width(), surface.get_height())
-            self.bitmap = surface
+            self._bitmap = self.bitmap = surface
+            self._updateAlpha()
             self._updateRenderRect()
+
+    def setAlpha(self, newAlpha):
+        self.alpha = newAlpha
+        self._updateAlpha()
+
+    def getAlpha(self):
+        return self.alpha
 
     def scaleBitmap(self, xScale, yScale):
         self.setBitmap(pygame.transform.scale(self.bitmap, (self.bitmap.get_width()*int(xScale), self.bitmap.get_height()*int(yScale))))
@@ -27,22 +41,6 @@ class StaticObject(GameObject.GameObject):
 
     def getRenderRect(self):
         return self.renderRect
-
-    def setVelocity(self, velocityX, velocityY):
-        self.velocity = [velocityX, velocityY]
-
-    def setXVelocity(self, velocityX):
-        self.velocity[0] = velocityX
-
-    def setYVelocity(self, velocityY):
-        self.velocity[1] = velocityY
-
-    def addVelocity(self, deltaX, deltaY):
-        self.velocity[0] += deltaX
-        self.velocity[1] += deltaY
-
-    def getVelocity(self):
-        return list(self.velocity)
 
     def draw(self, screen, offset=None):
         objectPosition = self.getPosition()

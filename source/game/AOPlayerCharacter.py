@@ -22,9 +22,11 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
         self.gameState = gameState
         self.setBitmap(images.getImage("walking-guy"))
         self.setAnimation(animations.getAnimation("walking-guy-walk-left"))
+        self.setAlpha(128)
         self.setAlignmentY(GameObject.alignment.BOTTOM)
         self.setNumberOfLoops(-1)
         self.setFrameRate(self.walkingFPS)
+        self.velocity = [0,0]
         self.play()
 
         gameWorld = gameState.getMap()
@@ -33,7 +35,6 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
             spawnLocation[0] = (spawnLocation[0]*gameWorld.getTileWidth()) + gameWorld.getTileWidth()/2
             spawnLocation[1] = (spawnLocation[1]*gameWorld.getTileHeight()) + gameWorld.getTileHeight()/2
             self.setPosition(spawnLocation[0], spawnLocation[1])
-            print gameWorld.getTiles()
 
         if controllerId == 0:
             self.addEvents([
@@ -67,6 +68,22 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
     def modifyWalkingSpeed(self, value):
         self.currentSpeed = self.walkingSpeed + 80 * value
         self.maxFPS = self.walkingFPS + 15 * value
+
+    def setVelocity(self, velocityX, velocityY):
+        self.velocity = [velocityX, velocityY]
+
+    def setXVelocity(self, velocityX):
+        self.velocity[0] = velocityX
+
+    def setYVelocity(self, velocityY):
+        self.velocity[1] = velocityY
+
+    def addVelocity(self, deltaX, deltaY):
+        self.velocity[0] += deltaX
+        self.velocity[1] += deltaY
+
+    def getVelocity(self):
+        return list(self.velocity)
 
     def updateMoveAnimation(self):
         if abs(self.velocity[0]) > abs(self.velocity[1]):
