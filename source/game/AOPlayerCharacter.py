@@ -22,11 +22,11 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
         self.gameState = gameState
         self.setBitmap(images.getImage("walking-guy"))
         self.setAnimation(animations.getAnimation("walking-guy-walk-left"))
-        self.setAlpha(128)
         self.setAlignmentY(GameObject.alignment.BOTTOM)
         self.setNumberOfLoops(-1)
         self.setFrameRate(self.walkingFPS)
         self.velocity = [0,0]
+        self.collisionSize = [20, 20]
         self.play()
 
         gameWorld = gameState.getMap()
@@ -41,7 +41,6 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
                 events.bindKeyAxis("a", "d", self.moveRight),
                 events.bindKeyAxis("w", "s", self.moveDown)
             ])
-
 
         self.addEvents([
             events.bindJoystickAxisMotionEvent(controllerId, 0, self.moveRight),
@@ -60,30 +59,14 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
         events.bindTimer(playerTag.disable, 3000)
 
     def moveRight(self, e, value):
-        self.setXVelocity(value)
+        self.velocity[0] = value
 
     def moveDown(self, e, value):
-        self.setYVelocity(value)
+        self.velocity[1] = value
 
     def modifyWalkingSpeed(self, value):
         self.currentSpeed = self.walkingSpeed + 80 * value
         self.maxFPS = self.walkingFPS + 15 * value
-
-    def setVelocity(self, velocityX, velocityY):
-        self.velocity = [velocityX, velocityY]
-
-    def setXVelocity(self, velocityX):
-        self.velocity[0] = velocityX
-
-    def setYVelocity(self, velocityY):
-        self.velocity[1] = velocityY
-
-    def addVelocity(self, deltaX, deltaY):
-        self.velocity[0] += deltaX
-        self.velocity[1] += deltaY
-
-    def getVelocity(self):
-        return list(self.velocity)
 
     def updateMoveAnimation(self):
         if abs(self.velocity[0]) > abs(self.velocity[1]):
@@ -103,15 +86,19 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
         super(AOPlayerCharacter, self).tick(delta)
         if not self.velocity[0] == 0 or not self.velocity[1] == 0:
             self.updateMoveAnimation()
-            deltaX = self.velocity[0] * delta * self.currentSpeed
-            self.position[0] += deltaX
-            if len(self.gameState.getMap().getTilesAtPosition(self.position[0], self.position[1], "collision")) > 0:
-                self.position[0] -= deltaX
+            if not self.velocity[0] == 0:
+                deltaX = self.velocity[0] * delta * self.currentSpeed
+                self.position[0] += deltaX
+                sign = 1 if deltaX > 0 else -1
+                if len(self.gameState.getMap().getTilesAtPosition(self.position[0] + self.collisionSize[0] * sign, self.position[1], "collision")) > 0:
+                    self.position[0] -= deltaX
 
-            deltaY = self.velocity[1] * delta * self.currentSpeed
-            self.position[1] += deltaY
-            if len(self.gameState.getMap().getTilesAtPosition(self.position[0], self.position[1], "collision")) > 0:
-                self.position[1] -= deltaY
+            if not self.velocity[1] == 0:
+                deltaY = self.velocity[1] * delta * self.currentSpeed
+                sign = 1 if deltaY > 0 else -1
+                self.position[1] += deltaY
+                if len(self.gameState.getMap().getTilesAtPosition(self.position[0], self.position[1] + self.collisionSize[1] * sign, "collision")) > 0:
+                    self.position[1] -= deltaY
         else:
             self.setFrame(0)
             self.setFrameRate(0)

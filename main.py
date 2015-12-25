@@ -13,7 +13,8 @@ from source.game import *
 TITLE = "Test Game"
 
 images.addToGlobalLoadList([
-    ("test-image", "test.png")
+    ("test-image", "test.png"),
+    ("tracer", "tracer.png")
 ])
 
 sounds.addToGlobalLoadList([
@@ -47,7 +48,7 @@ def main():
     events.bindQuitEvent(lambda e: quitApplication())
     events.bindKeyDownEvent(["q"], lambda e: quitApplication())
 
-    tileMap = TileMap.TileMap("test1.json", 1)
+    tileMap = TileMap.TileMap("test1.json")
     worldRenderList.addObject(tileMap)
     gs.setMap(tileMap)
 
@@ -85,6 +86,7 @@ def main():
     events.bindKeyDownEvent(["t"], lambda e: display.setSmallestResolution())
     events.bindKeyDownEvent(["y"], lambda e: display.setLargestResolution())
     events.bindKeyDownEvent(["o"], lambda e: sounds.playSoundOnce("startup"))
+
     while True:
         # Limit framerate to the desired FPS
         delta = clock.tick()
