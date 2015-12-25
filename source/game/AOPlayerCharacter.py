@@ -13,9 +13,15 @@ images.addToGlobalLoadList([
 ])
 
 class AOPlayerCharacter(AnimatedObject.AnimatedObject):
+    playerCharacters = []
+
+    @staticmethod
+    def clearPlayerCharacters():
+        AOPlayerCharacter.playerCharacters = []
+
     def __init__(self, controllerId=0, gameState=None):
         super(AOPlayerCharacter, self).__init__()
-        self.walkingSpeed = 150
+        self.walkingSpeed = random.randint(100, 150)
         self.walkingFPS = 30
         self.currentSpeed = self.walkingSpeed
         self.maxFPS = self.walkingFPS
@@ -31,17 +37,21 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
 
         gameWorld = gameState.getMap()
         if not gameWorld is None:
-            spawnLocation = list(random.choice(gameWorld.getTiles("spawn")).position)
-            spawnLocation[0] = (spawnLocation[0]*gameWorld.getTileWidth()) + gameWorld.getTileWidth()/2
-            spawnLocation[1] = (spawnLocation[1]*gameWorld.getTileHeight()) + gameWorld.getTileHeight()/2
-            self.setPosition(spawnLocation[0], spawnLocation[1])
+            while True:
+                spawnLocation = list(random.choice(gameWorld.getTiles("spawn")).position)
+                spawnLocation[0] = (spawnLocation[0]*gameWorld.getTileWidth()) + gameWorld.getTileWidth()/2
+                spawnLocation[1] = (spawnLocation[1]*gameWorld.getTileHeight()) + gameWorld.getTileHeight()/2
+                self.setPosition(spawnLocation[0], spawnLocation[1])
+                if not self._hasCollision(self.position):
+                    break
 
         if controllerId == 0:
             self.addEvents([
-                events.bindKeyAxis("a", "d", self.moveRight),
-                events.bindKeyAxis("w", "s", self.moveDown)
+                events.bindKeyAxis("i", "l", self.moveRight),
+                events.bindKeyAxis("k", "o", self.moveDown)
             ])
 
+        controllerId = 0
         self.addEvents([
             events.bindJoystickAxisMotionEvent(controllerId, 0, self.moveRight),
             events.bindJoystickAxisMotionEvent(controllerId, 1, self.moveDown),
@@ -57,6 +67,23 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
         playerTag.movePosition(0, -(self.getHeight()))
         self.children.append(playerTag)
         events.bindTimer(playerTag.disable, 3000)
+
+        collRect = StaticObject.StaticObject()
+        collRectSurface = pygame.Surface(self.collisionSize)
+        collRectSurface.fill(colors.RED)
+        collRect.setBitmap(collRectSurface)
+        #self.children.append(collRect)
+
+        AOPlayerCharacter.playerCharacters.append(self)
+
+    def _hasCollision(self, newPosition):
+        selfRect = pygame.Rect(newPosition[0]-self.collisionSize[0], newPosition[1]-self.collisionSize[1]/2, self.collisionSize[0], self.collisionSize[1])
+        for player in AOPlayerCharacter.playerCharacters:
+            if not player is self:
+                otherRect = pygame.Rect(player.getPositionX()-player.collisionSize[0]/2, player.getPositionY()-player.collisionSize[1]/2, player.collisionSize[0], player.collisionSize[1])
+                if selfRect.colliderect(otherRect):
+                    return True
+
 
     def moveRight(self, e, value):
         self.velocity[0] = value
@@ -90,14 +117,14 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
                 deltaX = self.velocity[0] * delta * self.currentSpeed
                 self.position[0] += deltaX
                 sign = 1 if deltaX > 0 else -1
-                if len(self.gameState.getMap().getTilesAtPosition(self.position[0] + self.collisionSize[0] * sign, self.position[1], "collision")) > 0:
+                if len(self.gameState.getMap().getTilesAtPosition(self.position[0] + self.collisionSize[0] * sign, self.position[1], "collision")) > 0 or self._hasCollision(self.position):
                     self.position[0] -= deltaX
 
             if not self.velocity[1] == 0:
                 deltaY = self.velocity[1] * delta * self.currentSpeed
                 sign = 1 if deltaY > 0 else -1
                 self.position[1] += deltaY
-                if len(self.gameState.getMap().getTilesAtPosition(self.position[0], self.position[1] + self.collisionSize[1] * sign, "collision")) > 0:
+                if len(self.gameState.getMap().getTilesAtPosition(self.position[0], self.position[1] + self.collisionSize[1] * sign, "collision")) > 0 or self._hasCollision(self.position):
                     self.position[1] -= deltaY
         else:
             self.setFrame(0)

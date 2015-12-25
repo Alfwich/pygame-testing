@@ -6,8 +6,9 @@ DEFAULT_MAP_TEMPLATE = "data/map/%s"
 
 class TileMap(StaticObject.StaticObject):
     class Tile():
-        def __init__(self, position, value):
+        def __init__(self, position, value, realPosition=None):
             self.position = position
+            self.realPosition = realPosition
             self.value = value
 
     class MapLayer():
@@ -172,10 +173,12 @@ class TileMap(StaticObject.StaticObject):
             if mapType in self.mapLayerTypes:
                 modifiedX = int(x/self.tileSets[0].getTileWidth())
                 modifiedY = int(y/self.tileSets[0].getTileHeight())
+                floatX = x/self.tileSets[0].getTileWidth()
+                floatY = y/self.tileSets[0].getTileHeight()
                 for layer in self.mapLayerTypes[mapType]:
                     tileValue = layer.map[modifiedY][modifiedX]
                     if not tileValue == 0:
-                        result.append(TileMap.Tile((modifiedY,modifiedX), tileValue))
+                        result.append(TileMap.Tile((modifiedY,modifiedX), tileValue, (floatX - modifiedX, floatY - modifiedY)))
         except:
             print("Could not get tile information for TileMap at position: (%d,%d), type: %s, (%s)" % (x, y, mapType, sys.exc_info()[0]))
 
