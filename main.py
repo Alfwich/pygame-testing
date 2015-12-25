@@ -13,6 +13,7 @@ from source.game import *
 TITLE = "Test Game"
 
 images.addToGlobalLoadList([
+    ("test-image", "test.png")
 ])
 
 sounds.addToGlobalLoadList([
@@ -26,9 +27,10 @@ def initScreen():
 def init():
     [mod.init() for mod in [pygame, images, fonts, joysticks, display, clock]]
     #display.setFPS(30)
-    
+
 def main():
     init()
+    gs = GameState.GameState()
     hudRenderList = RenderList.RenderList("hud")
     playerRenderList = SortedRenderList.SortedRenderList("player")
     worldRenderList = RenderList.RenderList("world")
@@ -45,6 +47,10 @@ def main():
     events.bindQuitEvent(lambda e: quitApplication())
     events.bindKeyDownEvent(["q"], lambda e: quitApplication())
 
+    tileMap = TileMap.TileMap("test1.json", 1)
+    worldRenderList.addObject(tileMap)
+    gs.setMap(tileMap)
+
     players = []
     def updatePlayers(event=None):
         numberOfPlayers = joysticks.updateJoysticks()
@@ -55,15 +61,13 @@ def main():
             players.pop(0)
         playerRenderList.removeAll()
         for i in range(0, numberOfPlayers):
-            animatedGuy = AOPlayerCharacter.AOPlayerCharacter(i)
-            animatedGuy.movePosition(i*64+ 800, 730)
+            animatedGuy = AOPlayerCharacter.AOPlayerCharacter(i, gs)
             playerRenderList.addObject(animatedGuy)
             players.append(animatedGuy)
     events.bindKeyDownEvent(["l"], updatePlayers)
+    events.bindJoystickButtonUpEvent(0, 5, updatePlayers)
     updatePlayers()
 
-    tileMap = TileMap.TileMap("test1.json", 2)
-    worldRenderList.addObject(tileMap)
 
     def loadLevel1():
         tileMap.loadMap("default.json")

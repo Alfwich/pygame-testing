@@ -8,5 +8,6 @@ __all__ = [
     "TileMap",
     "TileSet",
     "Text",
-    "GameObject"
+    "GameObject",
+    "GameState"
 ]

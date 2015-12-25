@@ -13,17 +13,27 @@ images.addToGlobalLoadList([
 ])
 
 class AOPlayerCharacter(AnimatedObject.AnimatedObject):
-    def __init__(self, controllerId=0):
+    def __init__(self, controllerId=0, gameState=None):
         super(AOPlayerCharacter, self).__init__()
         self.walkingSpeed = 150
         self.walkingFPS = 30
         self.currentSpeed = self.walkingSpeed
         self.maxFPS = self.walkingFPS
+        self.gameState = gameState
         self.setBitmap(images.getImage("walking-guy"))
         self.setAnimation(animations.getAnimation("walking-guy-walk-left"))
+        self.setAlignmentY(GameObject.alignment.BOTTOM)
         self.setNumberOfLoops(-1)
         self.setFrameRate(self.walkingFPS)
         self.play()
+
+        gameWorld = gameState.getMap()
+        if not gameWorld is None:
+            spawnLocation = list(random.choice(gameWorld.getTiles("spawn")).position)
+            spawnLocation[0] = (spawnLocation[0]*gameWorld.getTileWidth()) + gameWorld.getTileWidth()/2
+            spawnLocation[1] = (spawnLocation[1]*gameWorld.getTileHeight()) + gameWorld.getTileHeight()/2
+            self.setPosition(spawnLocation[0], spawnLocation[1])
+            print gameWorld.getTiles()
 
         if controllerId == 0:
             self.addEvents([
@@ -38,15 +48,13 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
             events.bindJoystickButtonAxis(controllerId, 1, 0, lambda e, v: self.modifyWalkingSpeed(v))
         ])
 
-
-
         playerTagBG = Text.Text("P%d"%(controllerId+1), None, colors.BLACK)
-        playerTagBG.movePosition(-2, -(self.getHeight()/2)+2)
+        playerTagBG.movePosition(-2, -(self.getHeight())+2)
         self.children.append(playerTagBG)
         events.bindTimer(playerTagBG.disable, 3000)
 
         playerTag = Text.Text("P%d"%(controllerId+1), None, colors.WHITE)
-        playerTag.movePosition(0, -(self.getHeight()/2))
+        playerTag.movePosition(0, -(self.getHeight()))
         self.children.append(playerTag)
         events.bindTimer(playerTag.disable, 3000)
 
@@ -78,8 +86,15 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
         super(AOPlayerCharacter, self).tick(delta)
         if not self.velocity[0] == 0 or not self.velocity[1] == 0:
             self.updateMoveAnimation()
-            self.position[0] += self.velocity[0] * delta * self.currentSpeed
-            self.position[1] += self.velocity[1] * delta * self.currentSpeed
+            deltaX = self.velocity[0] * delta * self.currentSpeed
+            self.position[0] += deltaX
+            if len(self.gameState.getMap().getTilesAtPosition(self.position[0], self.position[1], "collision")) > 0:
+                self.position[0] -= deltaX
+
+            deltaY = self.velocity[1] * delta * self.currentSpeed
+            self.position[1] += deltaY
+            if len(self.gameState.getMap().getTilesAtPosition(self.position[0], self.position[1], "collision")) > 0:
+                self.position[1] -= deltaY
         else:
             self.setFrame(0)
             self.setFrameRate(0)

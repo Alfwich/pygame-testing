@@ -2,7 +2,7 @@
  "layers":[
         {
          "compression":"zlib",
-         "data":"eJztzLEBABAQA8Dffwv8ApgAE2AhGSGNhhTXnpuZfypAJCTyy1AIVZ++C1+DThjkN2ERNvnJew7hPQhO",
+         "data":"eJzVlNsRgjAQRfdHqYBQAVIBdqBUCtIAWgFagdqOl9EM646bmMUfP85MyE5OHnOXnoj6H9OCbiEH5hvAEazA2kAGTh98OXAGCsVXgk0i24DPQv6HvhGcDWi+K7gZGBSfNc+x90vNcxbxTbWanplq6D2z\/tvXfY5jvh3YMw9f70Tdj0M+2UvS78ReU49UEZ92Z3nWguYchnzamfh884Uv9X9QKT5rf3AutLw\/OPeX6wE5icAs",
          "encoding":"base64",
          "height":20,
          "name":"world",
@@ -15,7 +15,7 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJxjYBgFAwUeAvEjIH4MxE+oYN5HIP4ExJ+B+AsVzKM2GPUvZWDUv4MLjDT\/YgMALd0kpQ==",
+         "data":"eJxjYBgFIwG8ZmZgeMNMHhsb+A2U+8NMHnsUjIJRMDwAAKEuE0M=",
          "encoding":"base64",
          "height":20,
          "name":"objects",
@@ -28,13 +28,26 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJxjYCAMGBkZGJgYiVAIBBxMEMzGhMlmhWKYODsWNehsCSgWw8IWhWKYuDgB9SCsAcVqWNiqUAwTVyegHoQtoNgMC9sUimHi5gTUgzA2YIgmHoglLsKIjB8QcEQzzxiLvWkkmIcOnLGYV4ZmXgwzeWYvBpq9BEc44QNGOPRsBopvQZKbQKS7nJD0MALZTEDMDMQsaPYsgJpHin8FgWYIAbEwEIuQ4Vd0oAg0QwmIlYFYhQrmEQPw+bcF6IZWKrpjCtCsqTT2FyE3o\/uXkHpS3UwPP5IDAHKxGmU=",
+         "data":"eJxjZGBgYKQyphYYNY965lHCpod51ADUTrdDKX5HzRs1j1jzqIkBdJsAbw==",
          "encoding":"base64",
          "height":20,
-         "name":"trees",
+         "name":"collision",
          "opacity":1,
          "type":"tilelayer",
-         "visible":true,
+         "visible":false,
+         "width":20,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "compression":"zlib",
+         "data":"eJxjYKA+YKISHjWPeuZRwqaHedT0L7lgKMfvqHmj5hFrHjUBAPRCAkU=",
+         "encoding":"base64",
+         "height":20,
+         "name":"spawn",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":false,
          "width":20,
          "x":0,
          "y":0
@@ -50,6 +63,22 @@
  "tilesets":[
         {
          "firstgid":1,
+         "image":"..\/image\/control-tiles.png",
+         "imageheight":64,
+         "imagewidth":64,
+         "margin":0,
+         "name":"control-tiles",
+         "properties":
+            {
+
+            },
+         "spacing":0,
+         "tilecount":4,
+         "tileheight":32,
+         "tilewidth":32
+        }, 
+        {
+         "firstgid":5,
          "image":"..\/image\/tile-map-1.png",
          "imageheight":512,
          "imagewidth":512,
@@ -70,7 +99,7 @@
          "tilewidth":32
         }, 
         {
-         "firstgid":257,
+         "firstgid":261,
          "image":"..\/image\/trees.png",
          "imageheight":512,
          "imagewidth":512,
@@ -86,7 +115,7 @@
          "tilewidth":32
         }, 
         {
-         "firstgid":513,
+         "firstgid":517,
          "image":"..\/image\/trees_plants_rocks.png",
          "imageheight":512,
          "imagewidth":512,
@@ -102,7 +131,7 @@
          "tilewidth":32
         }, 
         {
-         "firstgid":769,
+         "firstgid":773,
          "image":"..\/image\/town.png",
          "imageheight":512,
          "imagewidth":512,

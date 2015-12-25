@@ -2,7 +2,7 @@
  "layers":[
         {
          "compression":"zlib",
-         "data":"eJzt18FNwzAUgGEXJmg7AXQC2KAwKdAFoBNQJgAW4lnQC3JKosqJFb7Dd2lyqPPLfvIupbQDAACADg\/h8QxPDaxhTp7DIlwMdBlewr6BNcxJ7rEMq55uwm1Y6zF6j\/vCb+uf9\/UYv0fJNtzpUbXHVfo+g7rOp+uCjR7VeuTv2rVHjvugix51e\/yeGX\/1eGtgDXPSd38cCnKLzwbWMCd9euQz6aNAi2l65Ofu5tP2OM6RU\/PDLB+vR595bpbX65HvIKfuGaUW5ke9HkNo0U4PLep6TeW7hfvGNN4Hmvr\/AgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPA\/fAFQzMzl",
+         "data":"eJzt18FNwzAUgGFfChO0nQA6AWxQmBToAtAJKBMA6\/As6AU5JVHlxArf4bs0OdT5ZT95l1LaAQAAQIeH8HiGpwbWMCfPYREuBroML2HfwBrmJPdYhlVPN+E2rPUYvcd94bf1z\/t6jN+jZBvu9Kja4yp9n0Fd59N1wUaPaj3yd+3aI8d90EWPuj1+z4y\/erw1sIY56bs\/DgW5xWcDa5iTPj3ymfRRoMU0PfJzd\/NpexznyKn5YZaP16PPPDfL6\/XId5BT94xSC\/OjXo8htGinhxZ1vaby3cJ9YxrvA039fwEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD4H74AXMlpNA==",
          "encoding":"base64",
          "height":100,
          "name":"default-world",
@@ -15,13 +15,39 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJzt1bkNgEAMRUH3XwMphXE0sEABuAECAtYrNCO9\/CeWIwAAAAAAgJ6m6gEwMPcBz97cx\/zZChiT\/wEA0M+SrdmW7cVbiGjZkZ3ZVbwFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\/uYG1oMKag==",
+         "data":"eJztzrkRhFAMREHlH4XcDQzYBDhMlAIG6Bd0Vz1vjIkAAAAAAACelN0HYGDZfQAGlhe2v7tOwKCy+wAAwIdM1Vwt1b\/5CxFrtVV7dTR\/AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgLc5Ae9LCp4=",
          "encoding":"base64",
          "height":100,
          "name":"default-objects",
          "opacity":1,
          "type":"tilelayer",
          "visible":true,
+         "width":100,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "compression":"zlib",
+         "data":"eJzt0EEKgDAQBMH4\/097FzxoFkeGaqhjYDbHWusAAACAGxOlb2gyUfqGJhOlb2gyUfqGJhOlb2gyUfqGJhOlb2gyUfqGJrul97fx7\/\/ytOub9P42u6X3t9ktvb\/NTuntjd6W3t3qTenNzZ6W3gsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAfO8EsOUmCg==",
+         "encoding":"base64",
+         "height":100,
+         "name":"collision",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":false,
+         "width":100,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "compression":"zlib",
+         "data":"eJzt1MEJACAMADFx\/6GdQARRuEcCXaBHOwYAAADszQfDO3q06NGiR4seLXq06NGiR4sWLfbecnMPOv3jX7Xo0aJFixYtWrRoAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACcLPjtAg8=",
+         "encoding":"base64",
+         "height":100,
+         "name":"spawn",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":false,
          "width":100,
          "x":0,
          "y":0
@@ -37,6 +63,22 @@
  "tilesets":[
         {
          "firstgid":1,
+         "image":"..\/image\/control-tiles.png",
+         "imageheight":64,
+         "imagewidth":64,
+         "margin":0,
+         "name":"control",
+         "properties":
+            {
+
+            },
+         "spacing":0,
+         "tilecount":4,
+         "tileheight":32,
+         "tilewidth":32
+        }, 
+        {
+         "firstgid":5,
          "image":"..\/image\/tile-map-1.png",
          "imageheight":512,
          "imagewidth":512,
@@ -44,7 +86,7 @@
          "name":"tile-map-1",
          "properties":
             {
-             "scale":"2"
+
             },
          "spacing":0,
          "tilecount":256,

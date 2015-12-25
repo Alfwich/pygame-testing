@@ -1,33 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="32" tileheight="32" nextobjectid="12">
- <tileset firstgid="1" name="layer-1" tilewidth="32" tileheight="32" tilecount="256">
+ <tileset firstgid="1" name="control-tiles" tilewidth="32" tileheight="32" tilecount="4">
+  <image source="../image/control-tiles.png" width="64" height="64"/>
+ </tileset>
+ <tileset firstgid="5" name="layer-1" tilewidth="32" tileheight="32" tilecount="256">
   <image source="../image/tile-map-1.png" width="512" height="512"/>
   <terraintypes>
    <terrain name="New Terrain" tile="-1"/>
   </terraintypes>
  </tileset>
- <tileset firstgid="257" name="tileset-2" tilewidth="32" tileheight="32" tilecount="256">
+ <tileset firstgid="261" name="tileset-2" tilewidth="32" tileheight="32" tilecount="256">
   <image source="../image/trees.png" width="512" height="512"/>
  </tileset>
- <tileset firstgid="513" name="tileset-3" tilewidth="32" tileheight="32" tilecount="256">
+ <tileset firstgid="517" name="tileset-3" tilewidth="32" tileheight="32" tilecount="256">
   <image source="../image/trees_plants_rocks.png" width="512" height="512"/>
  </tileset>
- <tileset firstgid="769" name="tileset-4" tilewidth="32" tileheight="32" tilecount="256">
+ <tileset firstgid="773" name="tileset-4" tilewidth="32" tileheight="32" tilecount="256">
   <image source="../image/town.png" width="512" height="512"/>
  </tileset>
  <layer name="world" width="20" height="20">
   <data encoding="base64" compression="zlib">
-   eJztzLEBABAQA8Dffwv8ApgAE2AhGSGNhhTXnpuZfypAJCTyy1AIVZ++C1+DThjkN2ERNvnJew7hPQhO
+   eJzVlNsRgjAQRfdHqYBQAVIBdqBUCtIAWgFagdqOl9EM646bmMUfP85MyE5OHnOXnoj6H9OCbiEH5hvAEazA2kAGTh98OXAGCsVXgk0i24DPQv6HvhGcDWi+K7gZGBSfNc+x90vNcxbxTbWanplq6D2z/tvXfY5jvh3YMw9f70Tdj0M+2UvS78ReU49UEZ92Z3nWguYchnzamfh884Uv9X9QKT5rf3AutLw/OPeX6wE5icAs
   </data>
  </layer>
  <layer name="objects" width="20" height="20">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFAwUeAvEjIH4MxE+oYN5HIP4ExJ+B+AsVzKM2GPUvZWDUv4MLjDT/YgMALd0kpQ==
+   eJxjYBgFIwG8ZmZgeMNMHhsb+A2U+8NMHnsUjIJRMDwAAKEuE0M=
   </data>
  </layer>
- <layer name="trees" width="20" height="20">
+ <layer name="collision" width="20" height="20" visible="0">
   <data encoding="base64" compression="zlib">
-   eJxjYCAMGBkZGJgYiVAIBBxMEMzGhMlmhWKYODsWNehsCSgWw8IWhWKYuDgB9SCsAcVqWNiqUAwTVyegHoQtoNgMC9sUimHi5gTUgzA2YIgmHoglLsKIjB8QcEQzzxiLvWkkmIcOnLGYV4ZmXgwzeWYvBpq9BEc44QNGOPRsBopvQZKbQKS7nJD0MALZTEDMDMQsaPYsgJpHin8FgWYIAbEwEIuQ4Vd0oAg0QwmIlYFYhQrmEQPw+bcF6IZWKrpjCtCsqTT2FyE3o/uXkHpS3UwPP5IDAHKxGmU=
+   eJxjZGBgYKQyphYYNY965lHCpod51ADUTrdDKX5HzRs1j1jzqIkBdJsAbw==
+  </data>
+ </layer>
+ <layer name="spawn" width="20" height="20" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJxjYKA+YKISHjWPeuZRwqaHedT0L7lgKMfvqHmj5hFrHjUBAPRCAkU=
   </data>
  </layer>
 </map>
