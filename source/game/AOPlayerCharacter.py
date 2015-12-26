@@ -33,7 +33,7 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
 
     def __init__(self, controllerId=0, gameState=None, spawnLocation=(0,0)):
         super(AOPlayerCharacter, self).__init__()
-        self.walkingSpeed = random.randint(100, 150)
+        self.walkingSpeed = 125
         self.walkingFPS = 30
         self.currentSpeed = self.walkingSpeed
         self.maxFPS = self.walkingFPS
@@ -46,8 +46,10 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
         self.setAlignmentY(GameObject.alignment.BOTTOM)
         self.setNumberOfLoops(-1)
         self.setFrameRate(self.walkingFPS)
-        self.setPosition(spawnLocation[0]*32+20, spawnLocation[1]*32+20)
         self.play()
+
+        gameWorld = gameState.getMap()
+        self.setPosition(spawnLocation[0]*gameWorld.getTileWidth() + self.collisionSize[0]/2, spawnLocation[1]*gameWorld.getTileHeight() + self.collisionSize[1]/2)
 
         if controllerId == 0:
             self.addEvents([
@@ -55,6 +57,11 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
                 events.bindKeyAxis("w", "s", self.moveUp)
             ])
 
+        self.addEvents([
+            events.bindJoystickAxisMotionEvent(controllerId, 0, self.moveLeft),
+            events.bindJoystickAxisMotionEvent(controllerId, 1, self.moveUp),
+            events.bindJoystickButtonAxis(controllerId, 1, 0, lambda e, v: self.modifyWalkingSpeed(v))
+        ])
 
         playerTagBG = Text.Text("P%d"%(controllerId+1), None, colors.BLACK)
         playerTagBG.movePosition(-2, -(self.getHeight())+2)
@@ -70,14 +77,9 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
         collRectSurface = pygame.Surface(self.collisionSize)
         collRectSurface.fill(colors.RED)
         collRect.setBitmap(collRectSurface)
+        collRect.disableTick()
         #self.children.append(collRect)
 
-        controllerId = 0
-        self.addEvents([
-            events.bindJoystickAxisMotionEvent(controllerId, 0, self.moveLeft),
-            events.bindJoystickAxisMotionEvent(controllerId, 1, self.moveUp),
-            events.bindJoystickButtonAxis(controllerId, 1, 0, lambda e, v: self.modifyWalkingSpeed(v))
-        ])
 
         AOPlayerCharacter.playerCharacters.append(self)
 

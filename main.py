@@ -56,7 +56,6 @@ def main():
     def updatePlayers(event=None):
         numberOfPlayers = joysticks.updateJoysticks()
         spawnLocations = gs.getMap().getTiles("spawn")
-        numberOfPlayers = 30
         random.shuffle(spawnLocations)
         AOPlayerCharacter.AOPlayerCharacter.clearPlayerCharacters()
         if numberOfPlayers == 0:
@@ -73,7 +72,6 @@ def main():
     events.bindJoystickButtonUpEvent(0, 5, updatePlayers)
     updatePlayers()
 
-
     def loadLevel1():
         tileMap.loadMap("default.json")
         updatePlayers()
@@ -82,8 +80,13 @@ def main():
         tileMap.loadMap("test1.json")
         updatePlayers()
 
+    def loadLevel3():
+        tileMap.loadMap("test2.json")
+        updatePlayers()
+
     events.bindKeyDownEvent(["1"], lambda e: loadLevel1())
     events.bindKeyDownEvent(["2"], lambda e: loadLevel2())
+    events.bindKeyDownEvent(["3"], lambda e: loadLevel3())
     events.bindKeyDownEvent(["f"], lambda e: display.toggleFullscreen())
     events.bindKeyDownEvent(["g"], lambda e: display.decreaseScreenMode())
     events.bindKeyDownEvent(["h"], lambda e: display.increaseScreenMode())

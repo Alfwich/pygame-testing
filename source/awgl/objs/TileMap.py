@@ -27,8 +27,7 @@ class TileMap(StaticObject.StaticObject):
                 for x in range(0, self.layerData["width"]):
                     self.map.append([])
                     for y in range(0, self.layerData["height"]):
-                        tile = TileMap.Tile(pygame.Rect(y*32, x*32, 32, 32), data.pop(0))
-                        self.map[-1].append(tile.value)
+                        self.map[-1].append(data.pop(0))
 
 
         def _decodeMapLayerData(self):
@@ -189,8 +188,8 @@ class TileMap(StaticObject.StaticObject):
         result = set()
         layerContainer = self.mapLayerTypes[mapType] if (not mapType is None and mapType in self.mapLayerTypes) else [layer for layerList in self.mapLayerTypes.values() for layer in layerList]
         for mapLayer in layerContainer:
-            for x in range((rect.x-rect.w/2)/self.getTileWidth(), (rect.x+rect.w/2)/self.getTileWidth()+1):
-                for y in range((rect.y-rect.h/2)/self.getTileHeight(), (rect.y+rect.h/2)/self.getTileHeight()+1):
+            for x in range(rect.x/self.getTileWidth(), (rect.x+rect.w)/self.getTileWidth()+1):
+                for y in range(rect.y/self.getTileHeight(), (rect.y+rect.h)/self.getTileHeight()+1):
                     tile = mapLayer.map[y][x];
                     if tile > 0:
                         result.add(tile)
