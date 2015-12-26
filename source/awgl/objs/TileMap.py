@@ -1,14 +1,13 @@
 import pygame, json, zlib, base64, sys
 from ..modules import images, display, colors
-import StaticObject, TileSet
+import StaticObject, TileSet, QuadTree
 
 DEFAULT_MAP_TEMPLATE = "data/map/%s"
 
 class TileMap(StaticObject.StaticObject):
     class Tile():
-        def __init__(self, position, value, realPosition=None):
-            self.position = position
-            self.realPosition = realPosition
+        def __init__(self, rect, value):
+            self.rect = rect
             self.value = value
 
     class MapLayer():
@@ -28,7 +27,9 @@ class TileMap(StaticObject.StaticObject):
                 for x in range(0, self.layerData["width"]):
                     self.map.append([])
                     for y in range(0, self.layerData["height"]):
-                        self.map[-1].append(data.pop(0))
+                        tile = TileMap.Tile(pygame.Rect(y*32, x*32, 32, 32), data.pop(0))
+                        self.map[-1].append(tile.value)
+
 
         def _decodeMapLayerData(self):
             FLIPPED_HORIZONTALLY_FLAG = 0x80000000
@@ -171,17 +172,28 @@ class TileMap(StaticObject.StaticObject):
 
         try:
             if mapType in self.mapLayerTypes:
-                modifiedX = int(x/self.tileSets[0].getTileWidth())
-                modifiedY = int(y/self.tileSets[0].getTileHeight())
-                floatX = x/self.tileSets[0].getTileWidth()
-                floatY = y/self.tileSets[0].getTileHeight()
+                tileWidth = self.getTileWidth()
+                tileHeight = self.getTileHeight()
+                modifiedX = int(x/tileWidth)
+                modifiedY = int(y/tileHeight)
                 for layer in self.mapLayerTypes[mapType]:
                     tileValue = layer.map[modifiedY][modifiedX]
                     if not tileValue == 0:
-                        result.append(TileMap.Tile((modifiedY,modifiedX), tileValue, (floatX - modifiedX, floatY - modifiedY)))
+                        result.append(TileMap.Tile(pygame.Rect(modifiedY, modifiedX, tileWidth, tileHeight), tileValue))
         except:
             print("Could not get tile information for TileMap at position: (%d,%d), type: %s, (%s)" % (x, y, mapType, sys.exc_info()[0]))
 
+        return result
+
+    def getTilesOnRect(self, rect, mapType=None):
+        result = set()
+        layerContainer = self.mapLayerTypes[mapType] if (not mapType is None and mapType in self.mapLayerTypes) else [layer for layerList in self.mapLayerTypes.values() for layer in layerList]
+        for mapLayer in layerContainer:
+            for x in range((rect.x-rect.w/2)/self.getTileWidth(), (rect.x+rect.w/2)/self.getTileWidth()+1):
+                for y in range((rect.y-rect.h/2)/self.getTileHeight(), (rect.y+rect.h/2)/self.getTileHeight()+1):
+                    tile = mapLayer.map[y][x];
+                    if tile > 0:
+                        result.add(tile)
         return result
 
     def getTilesOfType(self, tileTypes, mapType=None):
@@ -200,7 +212,7 @@ class TileMap(StaticObject.StaticObject):
             for x in range(mapLayer.getWidth()):
                 for y in range(mapLayer.getHeight()):
                     if not mapLayer.map[x][y] == 0:
-                        result.append(TileMap.Tile((y,x), mapLayer.map[x][y]))
+                        result.append(((y,x), mapLayer.map[x][y]))
 
         return result
 

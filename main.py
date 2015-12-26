@@ -55,7 +55,9 @@ def main():
     players = []
     def updatePlayers(event=None):
         numberOfPlayers = joysticks.updateJoysticks()
-        numberOfPlayers = 2
+        spawnLocations = gs.getMap().getTiles("spawn")
+        numberOfPlayers = 30
+        random.shuffle(spawnLocations)
         AOPlayerCharacter.AOPlayerCharacter.clearPlayerCharacters()
         if numberOfPlayers == 0:
             numberOfPlayers = 1
@@ -64,7 +66,7 @@ def main():
             players.pop(0)
         playerRenderList.removeAll()
         for i in range(0, numberOfPlayers):
-            animatedGuy = AOPlayerCharacter.AOPlayerCharacter(i, gs)
+            animatedGuy = AOPlayerCharacter.AOPlayerCharacter(i, gs, spawnLocations.pop()[0])
             playerRenderList.addObject(animatedGuy)
             players.append(animatedGuy)
     events.bindKeyDownEvent(["l"], updatePlayers)
@@ -95,13 +97,14 @@ def main():
 
         # Handle game events through the event queue and tick all game constructs
         events.handleEvents()
+        AOPlayerCharacter.AOPlayerCharacter.setupQuadTree()
         events.tick(delta)
 
         mainCamera.centerOnObject(players[0])
 
         # Draw screen
         screen = display.getScreen()
-        screen.fill(colors.BLACK)
+        #screen.fill(colors.BLACK)
         worldRenderList.render(screen, mainCamera)
         playerRenderList.render(screen, mainCamera)
         particleRenderList.render(screen, mainCamera)

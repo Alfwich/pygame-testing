@@ -14,49 +14,47 @@ images.addToGlobalLoadList([
 
 class AOPlayerCharacter(AnimatedObject.AnimatedObject):
     playerCharacters = []
+    playerCharactersQuadTree = QuadTree.QuadTree([])
+
+    @staticmethod
+    def setupQuadTree():
+        for player in AOPlayerCharacter.playerCharacters:
+            player.rect = player.getRect()
+
+        AOPlayerCharacter.playerCharactersQuadTree = QuadTree.QuadTree(AOPlayerCharacter.playerCharacters)
+
+    @staticmethod
+    def getCollideObjects(rect):
+        return AOPlayerCharacter.playerCharactersQuadTree.hit(rect) if not AOPlayerCharacter.playerCharactersQuadTree is None else []
 
     @staticmethod
     def clearPlayerCharacters():
         AOPlayerCharacter.playerCharacters = []
 
-    def __init__(self, controllerId=0, gameState=None):
+    def __init__(self, controllerId=0, gameState=None, spawnLocation=(0,0)):
         super(AOPlayerCharacter, self).__init__()
         self.walkingSpeed = random.randint(100, 150)
         self.walkingFPS = 30
         self.currentSpeed = self.walkingSpeed
         self.maxFPS = self.walkingFPS
         self.gameState = gameState
+        self.velocity = [0,0]
+        self.collisionSize = [20, 20]
+        self.rect = None
         self.setBitmap(images.getImage("walking-guy"))
         self.setAnimation(animations.getAnimation("walking-guy-walk-left"))
         self.setAlignmentY(GameObject.alignment.BOTTOM)
         self.setNumberOfLoops(-1)
         self.setFrameRate(self.walkingFPS)
-        self.velocity = [0,0]
-        self.collisionSize = [20, 20]
+        self.setPosition(spawnLocation[0]*32+20, spawnLocation[1]*32+20)
         self.play()
-
-        gameWorld = gameState.getMap()
-        if not gameWorld is None:
-            while True:
-                spawnLocation = list(random.choice(gameWorld.getTiles("spawn")).position)
-                spawnLocation[0] = (spawnLocation[0]*gameWorld.getTileWidth()) + gameWorld.getTileWidth()/2
-                spawnLocation[1] = (spawnLocation[1]*gameWorld.getTileHeight()) + gameWorld.getTileHeight()/2
-                self.setPosition(spawnLocation[0], spawnLocation[1])
-                if not self._hasCollision(self.position):
-                    break
 
         if controllerId == 0:
             self.addEvents([
-                events.bindKeyAxis("i", "l", self.moveRight),
-                events.bindKeyAxis("k", "o", self.moveDown)
+                events.bindKeyAxis("a", "d", self.moveLeft),
+                events.bindKeyAxis("w", "s", self.moveUp)
             ])
 
-        controllerId = 0
-        self.addEvents([
-            events.bindJoystickAxisMotionEvent(controllerId, 0, self.moveRight),
-            events.bindJoystickAxisMotionEvent(controllerId, 1, self.moveDown),
-            events.bindJoystickButtonAxis(controllerId, 1, 0, lambda e, v: self.modifyWalkingSpeed(v))
-        ])
 
         playerTagBG = Text.Text("P%d"%(controllerId+1), None, colors.BLACK)
         playerTagBG.movePosition(-2, -(self.getHeight())+2)
@@ -74,21 +72,33 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
         collRect.setBitmap(collRectSurface)
         #self.children.append(collRect)
 
+        controllerId = 0
+        self.addEvents([
+            events.bindJoystickAxisMotionEvent(controllerId, 0, self.moveLeft),
+            events.bindJoystickAxisMotionEvent(controllerId, 1, self.moveUp),
+            events.bindJoystickButtonAxis(controllerId, 1, 0, lambda e, v: self.modifyWalkingSpeed(v))
+        ])
+
         AOPlayerCharacter.playerCharacters.append(self)
 
     def _hasCollision(self, newPosition):
-        selfRect = pygame.Rect(newPosition[0]-self.collisionSize[0], newPosition[1]-self.collisionSize[1]/2, self.collisionSize[0], self.collisionSize[1])
+        selfRect = pygame.Rect(newPosition[0]-self.collisionSize[0]/2, newPosition[1]-self.collisionSize[1]/2, self.collisionSize[0], self.collisionSize[1])
+        hits = AOPlayerCharacter.getCollideObjects(selfRect) | self.gameState.getMap().getTilesOnRect(selfRect, "collision")
+        return len(hits) > 1
+        """
         for player in AOPlayerCharacter.playerCharacters:
             if not player is self:
                 otherRect = pygame.Rect(player.getPositionX()-player.collisionSize[0]/2, player.getPositionY()-player.collisionSize[1]/2, player.collisionSize[0], player.collisionSize[1])
                 if selfRect.colliderect(otherRect):
                     return True
+        """
+    def getRect(self):
+        return pygame.Rect(self.getPositionX()-self.collisionSize[0]/2, self.getPositionY()-self.collisionSize[1]/2, self.collisionSize[0], self.collisionSize[1])
 
-
-    def moveRight(self, e, value):
+    def moveLeft(self, e, value):
         self.velocity[0] = value
 
-    def moveDown(self, e, value):
+    def moveUp(self, e, value):
         self.velocity[1] = value
 
     def modifyWalkingSpeed(self, value):
@@ -116,15 +126,13 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
             if not self.velocity[0] == 0:
                 deltaX = self.velocity[0] * delta * self.currentSpeed
                 self.position[0] += deltaX
-                sign = 1 if deltaX > 0 else -1
-                if len(self.gameState.getMap().getTilesAtPosition(self.position[0] + self.collisionSize[0] * sign, self.position[1], "collision")) > 0 or self._hasCollision(self.position):
+                if self._hasCollision(self.position):
                     self.position[0] -= deltaX
 
             if not self.velocity[1] == 0:
                 deltaY = self.velocity[1] * delta * self.currentSpeed
-                sign = 1 if deltaY > 0 else -1
                 self.position[1] += deltaY
-                if len(self.gameState.getMap().getTilesAtPosition(self.position[0], self.position[1] + self.collisionSize[1] * sign, "collision")) > 0 or self._hasCollision(self.position):
+                if self._hasCollision(self.position):
                     self.position[1] -= deltaY
         else:
             self.setFrame(0)

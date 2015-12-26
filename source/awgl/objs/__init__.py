@@ -9,5 +9,6 @@ __all__ = [
     "TileSet",
     "Text",
     "GameObject",
-    "GameState"
+    "GameState",
+    "QuadTree"
 ]
