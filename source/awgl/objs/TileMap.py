@@ -187,12 +187,14 @@ class TileMap(StaticObject.StaticObject):
     def getTilesOnRect(self, rect, mapType=None):
         result = set()
         layerContainer = self.mapLayerTypes[mapType] if (not mapType is None and mapType in self.mapLayerTypes) else [layer for layerList in self.mapLayerTypes.values() for layer in layerList]
+        tileWidth = self.getTileWidth()
+        tileHeight = self.getTileHeight()
         for mapLayer in layerContainer:
             for x in range(rect.x/self.getTileWidth(), (rect.x+rect.w)/self.getTileWidth()+1):
                 for y in range(rect.y/self.getTileHeight(), (rect.y+rect.h)/self.getTileHeight()+1):
                     tile = mapLayer.map[y][x];
                     if tile > 0:
-                        result.add(tile)
+                        result.add((x*tileWidth,y*tileHeight,tileWidth,tileHeight))
         return result
 
     def getTilesOfType(self, tileTypes, mapType=None):

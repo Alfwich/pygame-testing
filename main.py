@@ -58,6 +58,7 @@ def main():
         spawnLocations = gs.getMap().getTiles("spawn")
         random.shuffle(spawnLocations)
         AOPlayerCharacter.AOPlayerCharacter.clearPlayerCharacters()
+        #numberOfPlayers = 20
         if numberOfPlayers == 0:
             numberOfPlayers = 1
         while len(players):
@@ -115,4 +116,13 @@ def main():
         pygame.display.update()
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) > 1 and sys.argv[1] == "debug":
+        import cProfile, pstats
+        cProfile.run("main()", "profile.log")
+        p = pstats.Stats('profile.log')
+        p.strip_dirs().sort_stats(-1).print_stats()
+        p.sort_stats('tottime')
+        p.print_stats()
+
+    else:
+        main()

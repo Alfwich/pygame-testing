@@ -24,10 +24,6 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
         AOPlayerCharacter.playerCharactersQuadTree = QuadTree.QuadTree(AOPlayerCharacter.playerCharacters)
 
     @staticmethod
-    def getCollideObjects(rect):
-        return AOPlayerCharacter.playerCharactersQuadTree.hit(rect) if not AOPlayerCharacter.playerCharactersQuadTree is None else []
-
-    @staticmethod
     def clearPlayerCharacters():
         AOPlayerCharacter.playerCharacters = []
 
@@ -39,10 +35,13 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
         self.maxFPS = self.walkingFPS
         self.gameState = gameState
         self.velocity = [0,0]
+        self.collisionOffset = [0, 10]
         self.collisionSize = [20, 20]
         self.rect = None
+        self.playerId = controllerId
         self.setBitmap(images.getImage("walking-guy"))
         self.setAnimation(animations.getAnimation("walking-guy-walk-left"))
+        self.showPlayerTag()
         self.setAlignmentY(GameObject.alignment.BOTTOM)
         self.setNumberOfLoops(-1)
         self.setFrameRate(self.walkingFPS)
@@ -57,21 +56,12 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
                 events.bindKeyAxis("w", "s", self.moveUp)
             ])
 
+        controllerId = 0
         self.addEvents([
             events.bindJoystickAxisMotionEvent(controllerId, 0, self.moveLeft),
             events.bindJoystickAxisMotionEvent(controllerId, 1, self.moveUp),
             events.bindJoystickButtonAxis(controllerId, 1, 0, lambda e, v: self.modifyWalkingSpeed(v))
         ])
-
-        playerTagBG = Text.Text("P%d"%(controllerId+1), None, colors.BLACK)
-        playerTagBG.movePosition(-2, -(self.getHeight())+2)
-        self.children.append(playerTagBG)
-        events.bindTimer(playerTagBG.disable, 3000)
-
-        playerTag = Text.Text("P%d"%(controllerId+1), None, colors.WHITE)
-        playerTag.movePosition(0, -(self.getHeight()))
-        self.children.append(playerTag)
-        events.bindTimer(playerTag.disable, 3000)
 
         collRect = StaticObject.StaticObject()
         collRectSurface = pygame.Surface(self.collisionSize)
@@ -80,22 +70,56 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
         collRect.disableTick()
         #self.children.append(collRect)
 
-
         AOPlayerCharacter.playerCharacters.append(self)
 
-    def _hasCollision(self, newPosition):
+
+
+    def _getCollideObjects(self, rect):
+        collidePlayers = AOPlayerCharacter.playerCharactersQuadTree.hit(rect) if not AOPlayerCharacter.playerCharactersQuadTree is None else []
+        if self in collidePlayers:
+            collidePlayers.remove(self)
+        collidePlayers = set(map(lambda p: p.getRawRect(), collidePlayers))
+
+        return collidePlayers
+
+    def _getCollisionObjects(self, newPosition):
         selfRect = pygame.Rect(newPosition[0]-self.collisionSize[0]/2, newPosition[1]-self.collisionSize[1]/2, self.collisionSize[0], self.collisionSize[1])
-        hits = AOPlayerCharacter.getCollideObjects(selfRect) | self.gameState.getMap().getTilesOnRect(selfRect, "collision")
-        return len(hits) > 1
-        """
-        for player in AOPlayerCharacter.playerCharacters:
-            if not player is self:
-                otherRect = pygame.Rect(player.getPositionX()-player.collisionSize[0]/2, player.getPositionY()-player.collisionSize[1]/2, player.collisionSize[0], player.collisionSize[1])
-                if selfRect.colliderect(otherRect):
-                    return True
-        """
+        hits = self._getCollideObjects(selfRect) | self.gameState.getMap().getTilesOnRect(selfRect, "collision")
+        return hits
+
+    def _hasCollision(self, newPosition):
+        return len(self._getCollisionObjects(newPosition)) > 1
+
+
+    def _safeMoveAdjust(self, newPosition):
+        collideObjectsX = self._getCollisionObjects((newPosition[0], self.position[1]))
+        collideObjectsY = self._getCollisionObjects((self.position[0], newPosition[1]))
+
+        if len(collideObjectsX) > 0:
+            newPosition[0] = self.position[0]
+
+        if len(collideObjectsY) > 0:
+            newPosition[1] = self.position[1]
+
+        return True
+
+    def showPlayerTag(self):
+        playerTagBG = Text.Text("P%d"%(self.playerId+1), None, colors.BLACK)
+        playerTagBG.movePosition(-2, -(self.getHeight())+2)
+        self.children.append(playerTagBG)
+        events.bindTimer(playerTagBG.disable, 3000)
+
+        playerTag = Text.Text("P%d"%(self.playerId+1), None, colors.WHITE)
+        playerTag.movePosition(0, -(self.getHeight()))
+        self.children.append(playerTag)
+        events.bindTimer(playerTag.disable, 3000)
+
     def getRect(self):
         return pygame.Rect(self.getPositionX()-self.collisionSize[0]/2, self.getPositionY()-self.collisionSize[1]/2, self.collisionSize[0], self.collisionSize[1])
+
+    def getRawRect(self):
+        rect = self.getRect()
+        return (rect.x, rect.y, rect.w, rect.h)
 
     def moveLeft(self, e, value):
         self.velocity[0] = value
@@ -125,10 +149,13 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
         super(AOPlayerCharacter, self).tick(delta)
         if not self.velocity[0] == 0 or not self.velocity[1] == 0:
             self.updateMoveAnimation()
+            newPosition = [self.position[0] + self.velocity[0] * self.currentSpeed * delta, self.position[1] + self.velocity[1] * self.currentSpeed * delta]
+            if self._safeMoveAdjust(newPosition):
+                self.setPosition(newPosition[0], newPosition[1])
+            """
             if not self.velocity[0] == 0:
                 deltaX = self.velocity[0] * delta * self.currentSpeed
                 self.position[0] += deltaX
-                if self._hasCollision(self.position):
                     self.position[0] -= deltaX
 
             if not self.velocity[1] == 0:
@@ -136,6 +163,7 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
                 self.position[1] += deltaY
                 if self._hasCollision(self.position):
                     self.position[1] -= deltaY
+            """
         else:
             self.setFrame(0)
             self.setFrameRate(0)
