@@ -13,7 +13,7 @@ class RenderList(object):
         self.objects = []
         RenderList.lists[name] = self
 
-    def addObject(self, obj):
+    def add(self, obj):
         if not id(obj) in self.objectIds:
             self.objectIds[id(obj)] = True
             self.objects.append(obj)

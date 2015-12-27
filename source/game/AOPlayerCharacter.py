@@ -13,7 +13,7 @@ images.addToGlobalLoadList([
 ])
 
 class AOPlayerCharacter(AnimatedObject.AnimatedObject):
-    def __init__(self, controllerId=0, spawnLocation=(0, 0)):
+    def __init__(self, **configuration):
         super(AOPlayerCharacter, self).__init__()
         self.walkingSpeed = 125
         self.walkingFPS = 30
@@ -22,8 +22,7 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
         self.velocity = [0,0]
         self.collisionOffset = [0, 10]
         self.collisionSize = [20, 25]
-        self.canCollide = True
-        self.playerId = controllerId
+        self.playerId = configuration["player"]
         self.bitmap = images.getImage("walking-guy")
         self.setAnimation(animations.getAnimation("walking-guy-walk-left"))
         self.showPlayerTag()
@@ -31,23 +30,6 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
         self.setNumberOfLoops(-1)
         self.setFrameRate(self.walkingFPS)
         self.play()
-
-        gameWorld = self.gameState.world
-        self.position = (spawnLocation[0]*gameWorld.getTileWidth()+16, spawnLocation[1]*gameWorld.getTileHeight() + 16 + self.collisionSize[1]/2)
-
-        if controllerId == 0:
-            self.addEvents([
-                events.bindKeyAxis("a", "d", self.moveLeft),
-                events.bindKeyAxis("w", "s", self.moveUp)
-            ])
-
-        controllerId = 0
-        self.addEvents([
-            events.bindJoystickAxisMotionEvent(controllerId, 0, self.moveLeft),
-            events.bindJoystickAxisMotionEvent(controllerId, 1, self.moveUp),
-            events.bindJoystickButtonAxis(controllerId, 1, 0, lambda e, v: self.modifyWalkingSpeed(v))
-        ])
-
 
     def _getCollideObjects(self, rect):
         collidePlayers = self.gameState.getCollisions(rect, self)
@@ -77,6 +59,21 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
 
         return True
 
+    def bindEvents(self):
+        super(AOPlayerCharacter, self).bindEvents()
+        self.addEvents([
+            events.bindKeyAxis("a", "d", self.moveLeft),
+            events.bindKeyAxis("w", "s", self.moveUp),
+            events.bindJoystickAxisMotionEvent(0, 0, self.moveLeft),
+            events.bindJoystickAxisMotionEvent(0, 1, self.moveUp),
+            events.bindJoystickButtonAxis(0, 1, 0, lambda e, v: self.modifyWalkingSpeed(v))
+        ])
+
+    def begin(self):
+        super(AOPlayerCharacter, self).begin()
+        self.canCollide = True
+        self.movePositionY(self.collisionSize[1]/2)
+
     def showPlayerTag(self):
         playerTagBG = Text.Text("P%d"%(self.playerId+1), None, colors.BLACK)
         playerTagBG.movePosition(-2, -self.height+2)
@@ -101,11 +98,6 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
         self.currentSpeed = self.walkingSpeed + 80 * value
         self.maxFPS = self.walkingFPS + 15 * value
 
-    def hasCollided(self, other):
-        if other and other.hasTag("powerup"):
-            other.disable()
-            return True
-
     def updateMoveAnimation(self):
         if abs(self.velocity[0]) > abs(self.velocity[1]):
             self.setFrameRate(abs(self.velocity[0])*self.maxFPS)
@@ -122,11 +114,15 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
 
     def tick(self, delta):
         super(AOPlayerCharacter, self).tick(delta)
-        if not self.velocity[0] == 0 or not self.velocity[1] == 0:
-            self.updateMoveAnimation()
-            newPosition = [self.rawPosition[0] + self.velocity[0] * self.currentSpeed * delta, self.rawPosition[1] + self.velocity[1] * self.currentSpeed * delta]
-            if self._safeMoveAdjust(newPosition):
-                self.position = (newPosition[0], newPosition[1])
+        if self.gameState["currentPlayerIndex"] == self.playerId:
+            if not self.velocity[0] == 0 or not self.velocity[1] == 0:
+                self.updateMoveAnimation()
+                newPosition = [self.rawPosition[0] + self.velocity[0] * self.currentSpeed * delta, self.rawPosition[1] + self.velocity[1] * self.currentSpeed * delta]
+                if self._safeMoveAdjust(newPosition):
+                    self.position = (newPosition[0], newPosition[1])
+            else:
+                self.setFrame(0)
+                self.setFrameRate(0)
         else:
             self.setFrame(0)
             self.setFrameRate(0)

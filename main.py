@@ -21,28 +21,31 @@ sounds.addToGlobalLoadList([
     ("startup", "windows-logon.wav")
 ])
 
+def shuffled(lst):
+    random.shuffle(lst)
+    return lst
+
 # Inits pygame and various components
 def initScreen():
     return pygame.display.set_mode(SCREEN_SIZE, SCREEN_FLAGS)
 
 def init():
-    [mod.init() for mod in [pygame, images, fonts, sounds, joysticks, display, clock]]
-    #display.setFPS(30)
+    return [mod.init() for mod in [pygame, images, fonts, sounds, joysticks, display, clock]]
 
 def main():
     init()
     gs = GameState.GameState()
     GameState.GameState.setGlobalGameState(gs)
+    mainRenderList = gs.renderList
     hudRenderList = RenderList.RenderList("hud")
-    playerRenderList = SortedRenderList.SortedRenderList("player")
-    powerupRenderList = RenderList.RenderList("powerups")
     worldRenderList = RenderList.RenderList("world")
+    worldRenderList.add(gs.world)
     particleRenderList = RenderList.RenderList("particle")
     mainCamera = Camera.Camera()
     hudCamera = Camera.Camera()
 
     infoText = TInfoText.TInfoText()
-    hudRenderList.addObject(infoText)
+    hudRenderList.add(infoText)
 
     def quitApplication():
         pygame.quit()
@@ -50,50 +53,25 @@ def main():
     events.bindQuitEvent(lambda e: quitApplication())
     events.bindKeyDownEvent(["q"], lambda e: quitApplication())
 
-    tileMap = TileMap.TileMap("test1.json")
-    worldRenderList.addObject(tileMap)
-    gs.world = tileMap
 
-    players = []
     def updatePlayers(event=None):
-        numberOfPlayers = joysticks.updateJoysticks()
-        #numberOfPlayers = 200
-        spawnLocations = gs.world.getTiles("spawn")
-        random.shuffle(spawnLocations)
-        if numberOfPlayers == 0:
-            numberOfPlayers = 1
-        while len(players):
-            players[0].disabled = True
-            players.pop(0)
-        playerRenderList.removeAll()
-        for i in range(0, numberOfPlayers):
-            animatedGuy = AOPlayerCharacter.AOPlayerCharacter(i, spawnLocations.pop()[0])
-            playerRenderList.addObject(animatedGuy)
-            players.append(animatedGuy)
-    events.bindKeyDownEvent(["l"], updatePlayers)
-    events.bindJoystickButtonUpEvent(0, 5, updatePlayers)
-    updatePlayers()
+        numberOfPlayers = joysticks.updateJoysticks() or 10
+        numberOfPlayers = 10
+        spawnLocations = shuffled(gs.world.getTiles("spawn"))
+        gs["currentPlayerIndex"] = 0
+        gs["players"] = [gs.createGameObject(AOPlayerCharacter.AOPlayerCharacter, player=i, location=spawnLocations.pop()[0]) for i in range(numberOfPlayers)]
 
-    powerups = []
     def updatePowerups(event=None):
-        while len(powerups):
-            powerups[0].disabled = True
-            powerups.pop(0)
-
-        powerupLocations = gs.world.getTiles("powerups")
-        for tile in powerupLocations:
-            powerup = SOPowerUp.SOPowerUp(tile[0])
-            powerups.append(powerup)
-            powerupRenderList.addObject(powerup)
-
-    events.bindKeyDownEvent(["l"], updatePowerups)
-    events.bindJoystickButtonUpEvent(0, 5, updatePowerups)
-    updatePowerups()
+        [gs.createGameObject(SOPowerUp.SOPowerUp, location=tile[0]) for tile in gs.world.getTiles("powerups")]
 
     def loadLevel(level):
-        tileMap.loadMap(level)
+        gs.loadMap(level)
         updatePlayers()
         updatePowerups()
+
+    def nextPlayer():
+        gs["currentPlayerIndex"] = (gs["currentPlayerIndex"] + 1) % len(gs["players"])
+    events.bindJoystickButtonDownEvent(0, 5, lambda e: nextPlayer())
 
     events.bindKeyDownEvent(["1"], lambda e, l: loadLevel(l), "default.json")
     events.bindKeyDownEvent(["2"], lambda e, l: loadLevel(l), "test1.json")
@@ -106,6 +84,8 @@ def main():
     events.bindKeyDownEvent(["o"], lambda e: sounds.playSoundOnce("startup"))
     events.bindTimer(events.printContainerSizes, 250, -1)
 
+    loadLevel("test1.json")
+
     while True:
         # Limit framerate to the desired FPS
         delta = clock.tick()
@@ -114,14 +94,14 @@ def main():
         events.handleEvents()
         events.tick(delta)
 
-        mainCamera.centerOnObject(players[0])
+        mainCamera.centerOnObject(gs["players"][gs["currentPlayerIndex"]])
 
         # Draw screen
         screen = display.getScreen()
         #screen.fill(colors.BLACK)
         worldRenderList.render(screen, mainCamera)
-        playerRenderList.render(screen, mainCamera)
-        powerupRenderList.render(screen, mainCamera)
+
+        mainRenderList.render(screen, mainCamera)
         particleRenderList.render(screen, mainCamera)
         hudRenderList.render(screen, hudCamera)
         for obj in gs.getCollisions(pygame.Rect(0,0,200000,200000), None):

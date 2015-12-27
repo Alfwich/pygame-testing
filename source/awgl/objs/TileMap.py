@@ -60,7 +60,7 @@ class TileMap(StaticObject.StaticObject):
         def getHeight(self):
             return int(self.layerData["height"])
 
-    def __init__(self, mapFile, globalScale=1):
+    def __init__(self, globalScale=1):
         super(TileMap, self).__init__()
         self.mapLayers = {}
         self.mapLayerTypes = {}
@@ -68,7 +68,7 @@ class TileMap(StaticObject.StaticObject):
         self.cachedLayerRenderObject = {}
         self.globalScale = globalScale
         self.canTick = False
-        self.loadMap(mapFile)
+        #self.loadMap(mapFile)
 
     def _clearTileMap(self):
         self.mapLayers = {}
@@ -77,7 +77,7 @@ class TileMap(StaticObject.StaticObject):
         self.cachedLayerRenderObject = {}
 
     def _createCachedSurface(self, tileLayer):
-        newSurface = pygame.Surface((len(tileLayer[0])*self.tileSets[0].getTileWidth(), len(tileLayer)*self.tileSets[0].getTileHeight()), pygame.SRCALPHA, 32)
+        newSurface = pygame.Surface((len(tileLayer[0])*self.tileSets[0].tileWidth, len(tileLayer)*self.tileSets[0].tileHeight), pygame.SRCALPHA, 32)
         return newSurface.convert_alpha()
         """
         self.cachedMapSurfaces[layerId].set_colorkey((255,0,255))
@@ -114,9 +114,9 @@ class TileMap(StaticObject.StaticObject):
         cacheList = []
 
         for rowIdx, row in enumerate(tileLayer):
-            tileYPosition = rowIdx * self.tileSets[0].getTileHeight()
+            tileYPosition = rowIdx * self.tileSets[0].tileHeight
             for colIdx, tile in enumerate(row):
-                tileXPosition = colIdx * self.tileSets[0].getTileWidth()
+                tileXPosition = colIdx * self.tileSets[0].tileWidth
                 if not tile == 0:
                     cacheList.append((tile, (tileXPosition, tileYPosition)))
 
@@ -126,9 +126,9 @@ class TileMap(StaticObject.StaticObject):
         if offset is None:
             offset = (0, 0)
         for rowIdx, row in enumerate(tileLayer):
-            tileYPosition = rowIdx * self.tileSets[0].getTileHeight() + offset[1]
+            tileYPosition = rowIdx * self.tileSets[0].tileHeight + offset[1]
             for colIdx, tile in enumerate(row):
-                tileXPosition = colIdx * self.tileSets[0].getTileWidth() + offset[0]
+                tileXPosition = colIdx * self.tileSets[0].tileWidth + offset[0]
                 if not tile == 0:
                     surface.blit(self._getTileBitmap(tile), (tileXPosition, tileYPosition), self._getTileRect(tile))
 
@@ -160,19 +160,21 @@ class TileMap(StaticObject.StaticObject):
         tileSet = self._getCorrectTileSet(tileIndex)
         return tileSet.getTileRect(tileIndex) if not tileSet is None else None
 
-    def getTileWidth(self):
-        return self.tileSets[0].getTileWidth()
+    @property
+    def tileWidth(self):
+        return self.tileSets[0].tileWidth
 
-    def getTileHeight(self):
-        return self.tileSets[0].getTileHeight()
+    @property
+    def tileHeight(self):
+        return self.tileSets[0].tileHeight
 
     def getTilesAtPosition(self, x, y, mapType):
         result = []
 
         try:
             if mapType in self.mapLayerTypes:
-                tileWidth = self.getTileWidth()
-                tileHeight = self.getTileHeight()
+                tileWidth = self.tileWidth
+                tileHeight = self.tileHeight
                 modifiedX = int(x/tileWidth)
                 modifiedY = int(y/tileHeight)
                 for layer in self.mapLayerTypes[mapType]:
@@ -187,12 +189,12 @@ class TileMap(StaticObject.StaticObject):
     def getTilesOnRect(self, rect, mapType=None):
         result = set()
         layerContainer = self.mapLayerTypes[mapType] if (not mapType is None and mapType in self.mapLayerTypes) else [layer for layerList in self.mapLayerTypes.values() for layer in layerList]
-        tileWidth = self.getTileWidth()
-        tileHeight = self.getTileHeight()
+        tileWidth = self.tileWidth
+        tileHeight = self.tileHeight
         try:
             for mapLayer in layerContainer:
-                for x in range(rect.x/self.getTileWidth(), (rect.x+rect.w)/self.getTileWidth()+1):
-                    for y in range(rect.y/self.getTileHeight(), (rect.y+rect.h)/self.getTileHeight()+1):
+                for x in range(rect.x/self.tileWidth, (rect.x+rect.w)/self.tileWidth+1):
+                    for y in range(rect.y/self.tileHeight, (rect.y+rect.h)/self.tileHeight+1):
                         tile = mapLayer.map[y][x];
                         if tile > 0:
                             result.add((x*tileWidth,y*tileHeight,tileWidth,tileHeight))
@@ -233,6 +235,9 @@ class TileMap(StaticObject.StaticObject):
 
             for idx, layer in enumerate(cfg["layers"]):
                 self._loadMapLayer(layer, idx)
+
+            return True
+        return False
 
     def draw(self, screen, offset=None):
         objectPosition = self.position

@@ -1,6 +1,5 @@
 import pygame
 from ..modules import events
-import GameState
 
 class alignment:
     TOP = LEFT = 0
@@ -27,7 +26,7 @@ class GameObject(object):
         self._position = [0, 0]
         self._size = [0, 0]
         self.rect = pygame.Rect(0,0,0,0)
-        self._gameState = GameState.GameState.getGlobalGameState()
+        self._gameState = None
         self.tags = {}
         self.children = []
         self._alignment = [alignment.CENTER, alignment.CENTER]
@@ -63,7 +62,12 @@ class GameObject(object):
 
     @property
     def gameState(self):
-        return self._gameState or GameState.GameState.getGlobalGameState()
+        return self._gameState
+
+    @gameState.setter
+    def gameState(self, newState):
+        if self._gameState is None:
+            self._gameState = newState
 
     @property
     def gameWorld(self):
@@ -140,6 +144,12 @@ class GameObject(object):
 
     def movePosition(self, deltaX, deltaY):
         self._position[0] += deltaX
+        self._position[1] += deltaY
+
+    def movePositionX(self, deltaX):
+        self._position[0] += deltaX
+
+    def movePositionY(self, deltaY):
         self._position[1] += deltaY
 
     @property
@@ -247,4 +257,10 @@ class GameObject(object):
         return False
 
     def tick(self, delta):
+        pass
+
+    def bindEvents(self):
+        pass
+
+    def begin(self):
         pass

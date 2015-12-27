@@ -16,8 +16,8 @@ class SortedRenderList(RenderList.RenderList):
     def setContinuousSort(self, newSortOption):
         self._continouslySort = newSortOption
 
-    def addObject(self, obj):
-        super(SortedRenderList, self).addObject(obj)
+    def add(self, obj):
+        super(SortedRenderList, self).add(obj)
         self._isSorted = False
 
     def removeObject(self, removeObj):

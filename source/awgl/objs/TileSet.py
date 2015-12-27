@@ -39,8 +39,10 @@ class TileSet(object):
     def tileIndexIsMember(self, tileIndex):
         return tileIndex >= self.tileIndexes[0] and tileIndex <= self.tileIndexes[1]
 
-    def getTileWidth(self):
+    @property
+    def tileWidth(self):
         return self.tileSize[0]
 
-    def getTileHeight(self):
+    @property
+    def tileHeight(self):
         return self.tileSize[1]
