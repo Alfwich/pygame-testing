@@ -27,7 +27,7 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
     def clearPlayerCharacters():
         AOPlayerCharacter.playerCharacters = []
 
-    def __init__(self, controllerId=0, gameState=None, spawnLocation=(0,0)):
+    def __init__(self, controllerId=0, gameState=None, spawnLocation=(0, 0)):
         super(AOPlayerCharacter, self).__init__()
         self.walkingSpeed = 125
         self.walkingFPS = 30
@@ -70,6 +70,7 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
         collRect.disableTick()
         #self.children.append(collRect)
 
+
         AOPlayerCharacter.playerCharacters.append(self)
 
 
@@ -89,7 +90,6 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
 
     def _hasCollision(self, newPosition):
         return len(self._getCollisionObjects(newPosition)) > 1
-
 
     def _safeMoveAdjust(self, newPosition):
         collideObjectsX = self._getCollisionObjects((newPosition[0], self.position[1]))
@@ -152,18 +152,6 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
             newPosition = [self.position[0] + self.velocity[0] * self.currentSpeed * delta, self.position[1] + self.velocity[1] * self.currentSpeed * delta]
             if self._safeMoveAdjust(newPosition):
                 self.setPosition(newPosition[0], newPosition[1])
-            """
-            if not self.velocity[0] == 0:
-                deltaX = self.velocity[0] * delta * self.currentSpeed
-                self.position[0] += deltaX
-                    self.position[0] -= deltaX
-
-            if not self.velocity[1] == 0:
-                deltaY = self.velocity[1] * delta * self.currentSpeed
-                self.position[1] += deltaY
-                if self._hasCollision(self.position):
-                    self.position[1] -= deltaY
-            """
         else:
             self.setFrame(0)
             self.setFrameRate(0)

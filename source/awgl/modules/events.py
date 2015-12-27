@@ -4,6 +4,7 @@ from pygame.locals import *
 
 _callbacks = {}
 _createdEventHandlers = set()
+_frameEvents = []
 _tickableObjects = []
 _timers = []
 
@@ -66,6 +67,9 @@ def _handleTimers(delta):
             _timers = filter(lambda x: x, _timers)
 
 def handleEvents():
+    for e in _frameEvents:
+        e()
+
     for e in pygame.event.get():
         #print e
         if e.type in _callbacks:
@@ -83,6 +87,12 @@ def registerTickableObject(obj):
 
 def deregisterTickableObject(obj):
     _tickableObjects.remove(obj)
+
+def bindFrameEvent(callback):
+    def frameEventWrapper():
+        callback()
+    _frameEvents.append(frameEventWrapper)
+    return id(frameEventWrapper)
 
 def bindQuitEvent(callback, obj=None):
     def quitEventWrapper(event):
@@ -227,7 +237,8 @@ def unbindEvent(eventHandles):
     for eventHandle in eventHandles:
         if eventHandle in _createdEventHandlers:
             _removeEventFromBoundEvents(eventHandle)
-
+        elif eventHandle in _frameEvents:
+            _frameEvents.remove(eventHandle)
 
     return False
 

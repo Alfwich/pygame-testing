@@ -26,7 +26,7 @@ def initScreen():
     return pygame.display.set_mode(SCREEN_SIZE, SCREEN_FLAGS)
 
 def init():
-    [mod.init() for mod in [pygame, images, fonts, joysticks, display, clock]]
+    [mod.init() for mod in [pygame, images, fonts, sounds, joysticks, display, clock]]
     #display.setFPS(30)
 
 def main():
@@ -58,7 +58,6 @@ def main():
         spawnLocations = gs.getMap().getTiles("spawn")
         random.shuffle(spawnLocations)
         AOPlayerCharacter.AOPlayerCharacter.clearPlayerCharacters()
-        #numberOfPlayers = 20
         if numberOfPlayers == 0:
             numberOfPlayers = 1
         while len(players):
@@ -94,6 +93,7 @@ def main():
     events.bindKeyDownEvent(["t"], lambda e: display.setSmallestResolution())
     events.bindKeyDownEvent(["y"], lambda e: display.setLargestResolution())
     events.bindKeyDownEvent(["o"], lambda e: sounds.playSoundOnce("startup"))
+    events.bindFrameEvent(AOPlayerCharacter.AOPlayerCharacter.setupQuadTree)
 
     while True:
         # Limit framerate to the desired FPS
@@ -101,7 +101,6 @@ def main():
 
         # Handle game events through the event queue and tick all game constructs
         events.handleEvents()
-        AOPlayerCharacter.AOPlayerCharacter.setupQuadTree()
         events.tick(delta)
 
         mainCamera.centerOnObject(players[0])
