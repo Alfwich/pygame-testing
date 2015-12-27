@@ -14,6 +14,9 @@ class GameObject(object):
         self._boundEvents = []
         self.position = [0, 0]
         self.size = [0, 0]
+        self.rect = pygame.Rect(0,0,0,0)
+        self.gameState = None
+        self.tags = {}
         self.children = []
         self.alignment = [alignment.CENTER, alignment.CENTER]
         self.enableTick()
@@ -32,6 +35,33 @@ class GameObject(object):
         for axis, align in enumerate(self.alignment):
             newPosition[axis] = self._alignAxis(newPosition[axis], size[axis], align)
         return newPosition
+
+    def setTag(self, tag, value=True):
+        self.tags[tag] = value
+
+    def getTag(self, tag):
+        return self.tags[tag] if tag in self.tags else None
+
+    def removeTag(self, tag):
+        if tag in self.tags:
+            del self.tags[tag]
+
+    def hasTag(self, tag):
+        return tag in self.tags
+
+    def setGameState(self, gameState):
+        self.gameState = gameState
+
+    def getGameState(self):
+        return self.gameState
+
+    def enableCollision(self):
+        if self.gameState:
+            self.gameState.registerCollidableObject(self)
+
+    def disableCollision(self):
+        if self.gameState:
+            self.gameState.deregisterCollidableObject(self)
 
     def setAlignment(self, alignX, alignY):
         self.alignment = [alignX, alignY]
@@ -70,6 +100,13 @@ class GameObject(object):
     def getSize(self):
         return list(self.size)
 
+    def getRect(self):
+        return pygame.Rect(self.position[0], self.position[1], self.size[0], self.size[1])
+
+    def getRawRect(self):
+        rect = self.getRect()
+        return (rect.x, rect.y, rect.w, rect.h)
+
     def getWidth(self):
         return self.getSize()[0]
 
@@ -82,12 +119,6 @@ class GameObject(object):
 
         for eventId in eventIds:
             self._boundEvents.append(eventId)
-
-    def disable(self):
-        for eventId in self._boundEvents:
-            events.unbindEvent(eventId)
-        self._boundEvents = []
-        self._isValid = False
 
     def isVisible(self):
         return self._isVisible
@@ -111,6 +142,9 @@ class GameObject(object):
         self.disableTick()
         for child in self.children:
             child.disable()
+
+        if self.gameState:
+            self.gameState.deregisterCollidableObject(self)
 
     def enableTick(self):
         if not self._canTick:
@@ -138,6 +172,9 @@ class GameObject(object):
             offset[1] += self.getPositionY()
             for child in self.children:
                 child.render(screen, None, list(offset))
+
+    def hasCollided(self, other):
+        return False
 
     def tick(self, delta):
         pass

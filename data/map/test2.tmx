@@ -21,4 +21,9 @@
    eJxjYKA+YIFiStm0No9STGvzRv076t9R/476l9rmURMAAIyjBFE=
   </data>
  </layer>
+ <layer name="powerups" width="20" height="20" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJxjYBg4wDyAdo+CkQeYGRBpDpk9WMyjNhhI/w62sBjKYDCHJQCfWAA6
+  </data>
+ </layer>
 </map>

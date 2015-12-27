@@ -11,6 +11,9 @@ _timers = []
 LEFT_MOUSE_BUTTON = 1
 RIGHT_MOUSE_BUTTON = 3
 
+def printContainerSizes():
+    print(map(len, [[ item for sublist in _callbacks.values() for item in sublist], _createdEventHandlers, _frameEvents, _tickableObjects, _timers]))
+
 def _processKeysArray(keys):
     keyOrds = []
 
@@ -73,7 +76,7 @@ def handleEvents():
     for e in pygame.event.get():
         #print e
         if e.type in _callbacks:
-            for callback in _callbacks[e.type]:
+            for callback in list(_callbacks[e.type]):
                 callback(e)
 
 def tick(delta=0.0):
@@ -223,12 +226,12 @@ def bindVideoChangeEvent(callback, obj=None):
     return id(videoExposeEventWrapper)
 
 def _removeEventFromBoundEvents(eventHandle):
+    _createdEventHandlers.remove(eventHandle)
     for eventType in _callbacks:
-        for event in _callbacks[eventType]:
+        for idx, event in enumerate(_callbacks[eventType]):
             if id(event) == eventHandle:
-                _callbacks[eventType].remove(event)
-                _createdEventHandlers.remove(eventHandle)
-                return True
+                _callbacks[eventType][idx] = None
+        _callbacks[eventType] = filter(lambda x: x, _callbacks[eventType])
 
 def unbindEvent(eventHandles):
     if not isinstance(eventHandles, list):

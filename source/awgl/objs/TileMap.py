@@ -208,7 +208,7 @@ class TileMap(StaticObject.StaticObject):
 
     def getTiles(self, mapType=None):
         result = []
-        layerContainer = self.mapLayerTypes[mapType] if (not mapType is None and mapType in self.mapLayerTypes) else [layer for layerList in self.mapLayerTypes.values() for layer in layerList]
+        layerContainer = self.mapLayerTypes[mapType] if (not mapType is None and mapType in self.mapLayerTypes) else [layer for layerList in self.mapLayerTypes.values() for layer in layerList] if mapType is None else []
         for mapLayer in layerContainer:
             for x in range(mapLayer.getWidth()):
                 for y in range(mapLayer.getHeight()):

@@ -13,32 +13,17 @@ images.addToGlobalLoadList([
 ])
 
 class AOPlayerCharacter(AnimatedObject.AnimatedObject):
-    playerCharacters = []
-    playerCharactersQuadTree = QuadTree.QuadTree([])
-
-    @staticmethod
-    def setupQuadTree():
-        for player in AOPlayerCharacter.playerCharacters:
-            player.rect = player.getRect()
-
-        AOPlayerCharacter.playerCharactersQuadTree = QuadTree.QuadTree(AOPlayerCharacter.playerCharacters)
-
-    @staticmethod
-    def clearPlayerCharacters():
-        AOPlayerCharacter.playerCharacters = []
-
     def __init__(self, controllerId=0, gameState=None, spawnLocation=(0, 0)):
         super(AOPlayerCharacter, self).__init__()
         self.walkingSpeed = 125
         self.walkingFPS = 30
         self.currentSpeed = self.walkingSpeed
         self.maxFPS = self.walkingFPS
-        self.gameState = gameState
         self.velocity = [0,0]
         self.collisionOffset = [0, 10]
         self.collisionSize = [20, 20]
-        self.rect = None
         self.playerId = controllerId
+        self.setGameState(gameState)
         self.setBitmap(images.getImage("walking-guy"))
         self.setAnimation(animations.getAnimation("walking-guy-walk-left"))
         self.showPlayerTag()
@@ -63,29 +48,17 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
             events.bindJoystickButtonAxis(controllerId, 1, 0, lambda e, v: self.modifyWalkingSpeed(v))
         ])
 
-        collRect = StaticObject.StaticObject()
-        collRectSurface = pygame.Surface(self.collisionSize)
-        collRectSurface.fill(colors.RED)
-        collRect.setBitmap(collRectSurface)
-        collRect.disableTick()
-        #self.children.append(collRect)
-
-
-        AOPlayerCharacter.playerCharacters.append(self)
-
-
+        gameState.registerCollidableObject(self)
 
     def _getCollideObjects(self, rect):
-        collidePlayers = AOPlayerCharacter.playerCharactersQuadTree.hit(rect) if not AOPlayerCharacter.playerCharactersQuadTree is None else []
-        if self in collidePlayers:
-            collidePlayers.remove(self)
+        collidePlayers = self.getGameState().getCollisions(rect, self)
         collidePlayers = set(map(lambda p: p.getRawRect(), collidePlayers))
 
         return collidePlayers
 
     def _getCollisionObjects(self, newPosition):
         selfRect = pygame.Rect(newPosition[0]-self.collisionSize[0]/2, newPosition[1]-self.collisionSize[1]/2, self.collisionSize[0], self.collisionSize[1])
-        hits = self._getCollideObjects(selfRect) | self.gameState.getMap().getTilesOnRect(selfRect, "collision")
+        hits = self._getCollideObjects(selfRect) | self.getGameState().getMap().getTilesOnRect(selfRect, "collision")
         return hits
 
     def _hasCollision(self, newPosition):
@@ -130,6 +103,11 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
     def modifyWalkingSpeed(self, value):
         self.currentSpeed = self.walkingSpeed + 80 * value
         self.maxFPS = self.walkingFPS + 15 * value
+
+    def hasCollided(self, other):
+        if other and other.hasTag("powerup"):
+            other.disable()
+            return True
 
     def updateMoveAnimation(self):
         if abs(self.velocity[0]) > abs(self.velocity[1]):

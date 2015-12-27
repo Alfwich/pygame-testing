@@ -38,6 +38,19 @@
          "width":20,
          "x":0,
          "y":0
+        }, 
+        {
+         "compression":"zlib",
+         "data":"eJxjYBg4wDyAdo+CkQeYGRBpDpk9WMyjNhhI\/w62sBjKYDCHJQCfWAA6",
+         "encoding":"base64",
+         "height":20,
+         "name":"powerups",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":false,
+         "width":20,
+         "x":0,
+         "y":0
         }],
  "nextobjectid":1,
  "orientation":"orthogonal",

@@ -32,6 +32,5 @@ class RenderList(object):
         self.objectIds = {}
 
     def render(self, screen, camera=None):
-        shouldCameraTransform = not camera is None
         for obj in self.objects:
             obj.render(screen, camera)

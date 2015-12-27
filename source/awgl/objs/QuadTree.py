@@ -91,7 +91,7 @@ class QuadTree(object):
             self.sw = QuadTree(sw_items, depth, (bounding_rect.left, cy, cx, bounding_rect.bottom))
 
 
-    def hit(self, rect):
+    def getHits(self, rect):
         """Returns the items that overlap a bounding rectangle.
 
         Returns the set of all items in the quad-tree that overlap with a
@@ -103,16 +103,17 @@ class QuadTree(object):
         """
 
         # Find the hits at the current level.
-        hits = set( [ self.items[n] for n in rect.collidelistall( self.items ) ] )
+        hitResults = [ self.items[n] for n in rect.collidelistall( self.items ) ]
+        hits = set(hitResults if hitResults else [])
 
         # Recursively check the lower quadrants.
         if self.nw and rect.left <= self.cx and rect.top <= self.cy:
-            hits |= self.nw.hit(rect)
+            hits |= self.nw.getHits(rect)
         if self.sw and rect.left <= self.cx and rect.bottom >= self.cy:
-            hits |= self.sw.hit(rect)
+            hits |= self.sw.getHits(rect)
         if self.ne and rect.right >= self.cx and rect.top <= self.cy:
-            hits |= self.ne.hit(rect)
+            hits |= self.ne.getHits(rect)
         if self.se and rect.right >= self.cx and rect.bottom >= self.cy:
-            hits |= self.se.hit(rect)
+            hits |= self.se.getHits(rect)
 
         return hits

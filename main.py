@@ -34,6 +34,7 @@ def main():
     gs = GameState.GameState()
     hudRenderList = RenderList.RenderList("hud")
     playerRenderList = SortedRenderList.SortedRenderList("player")
+    powerupRenderList = RenderList.RenderList("powerups")
     worldRenderList = RenderList.RenderList("world")
     particleRenderList = RenderList.RenderList("particle")
     mainCamera = Camera.Camera()
@@ -57,7 +58,6 @@ def main():
         numberOfPlayers = joysticks.updateJoysticks()
         spawnLocations = gs.getMap().getTiles("spawn")
         random.shuffle(spawnLocations)
-        AOPlayerCharacter.AOPlayerCharacter.clearPlayerCharacters()
         if numberOfPlayers == 0:
             numberOfPlayers = 1
         while len(players):
@@ -72,28 +72,37 @@ def main():
     events.bindJoystickButtonUpEvent(0, 5, updatePlayers)
     updatePlayers()
 
-    def loadLevel1():
-        tileMap.loadMap("default.json")
-        updatePlayers()
+    powerups = []
+    def updatePowerups(event=None):
+        while len(powerups):
+            powerups[0].disable()
+            powerups.pop(0)
 
-    def loadLevel2():
-        tileMap.loadMap("test1.json")
-        updatePlayers()
+        powerupLocations = gs.getMap().getTiles("powerups")
+        for tile in powerupLocations:
+            powerup = SOPowerUp.SOPowerUp(gs, tile[0])
+            powerups.append(powerup)
+            powerupRenderList.addObject(powerup)
 
-    def loadLevel3():
-        tileMap.loadMap("test2.json")
-        updatePlayers()
+    events.bindKeyDownEvent(["l"], updatePowerups)
+    events.bindJoystickButtonUpEvent(0, 5, updatePowerups)
+    updatePowerups()
 
-    events.bindKeyDownEvent(["1"], lambda e: loadLevel1())
-    events.bindKeyDownEvent(["2"], lambda e: loadLevel2())
-    events.bindKeyDownEvent(["3"], lambda e: loadLevel3())
+    def loadLevel(level):
+        tileMap.loadMap(level)
+        updatePlayers()
+        updatePowerups()
+
+    events.bindKeyDownEvent(["1"], lambda e, l: loadLevel(l), "default.json")
+    events.bindKeyDownEvent(["2"], lambda e, l: loadLevel(l), "test1.json")
+    events.bindKeyDownEvent(["3"], lambda e, l: loadLevel(l), "test2.json")
     events.bindKeyDownEvent(["f"], lambda e: display.toggleFullscreen())
     events.bindKeyDownEvent(["g"], lambda e: display.decreaseScreenMode())
     events.bindKeyDownEvent(["h"], lambda e: display.increaseScreenMode())
     events.bindKeyDownEvent(["t"], lambda e: display.setSmallestResolution())
     events.bindKeyDownEvent(["y"], lambda e: display.setLargestResolution())
     events.bindKeyDownEvent(["o"], lambda e: sounds.playSoundOnce("startup"))
-    events.bindFrameEvent(AOPlayerCharacter.AOPlayerCharacter.setupQuadTree)
+    events.bindTimer(events.printContainerSizes, 250, -1)
 
     while True:
         # Limit framerate to the desired FPS
@@ -110,8 +119,13 @@ def main():
         #screen.fill(colors.BLACK)
         worldRenderList.render(screen, mainCamera)
         playerRenderList.render(screen, mainCamera)
+        powerupRenderList.render(screen, mainCamera)
         particleRenderList.render(screen, mainCamera)
         hudRenderList.render(screen, hudCamera)
+        for obj in gs.getCollisions(pygame.Rect(0,0,2000,2000), None):
+            objRect = pygame.Rect(obj.rect)
+            mainCamera.transformRectWorldPosition(objRect)
+            pygame.draw.rect(screen, colors.RED, objRect)
         pygame.display.update()
 
 if __name__ == "__main__":

@@ -12,6 +12,14 @@ class Camera():
         position[0] -= self.offset[0]
         position[1] -= self.offset[1]
 
+    def transformRectWorldPosition(self, rect):
+        rect.x += self.offset[0]
+        rect.y += self.offset[1]
+
+    def transformRectScreenPosition(self, rect):
+        rect.x -= self.offset[0]
+        rect.y -= self.offset[1]
+
     def setOffset(self, x, y):
         self.offset = [x, y]
 
