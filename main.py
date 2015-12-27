@@ -32,6 +32,7 @@ def init():
 def main():
     init()
     gs = GameState.GameState()
+    GameState.GameState.setGlobalGameState(gs)
     hudRenderList = RenderList.RenderList("hud")
     playerRenderList = SortedRenderList.SortedRenderList("player")
     powerupRenderList = RenderList.RenderList("powerups")
@@ -51,22 +52,22 @@ def main():
 
     tileMap = TileMap.TileMap("test1.json")
     worldRenderList.addObject(tileMap)
-    gs.setMap(tileMap)
+    gs.world = tileMap
 
     players = []
     def updatePlayers(event=None):
         numberOfPlayers = joysticks.updateJoysticks()
         #numberOfPlayers = 200
-        spawnLocations = gs.getMap().getTiles("spawn")
+        spawnLocations = gs.world.getTiles("spawn")
         random.shuffle(spawnLocations)
         if numberOfPlayers == 0:
             numberOfPlayers = 1
         while len(players):
-            players[0].disable()
+            players[0].disabled = True
             players.pop(0)
         playerRenderList.removeAll()
         for i in range(0, numberOfPlayers):
-            animatedGuy = AOPlayerCharacter.AOPlayerCharacter(i, gs, spawnLocations.pop()[0])
+            animatedGuy = AOPlayerCharacter.AOPlayerCharacter(i, spawnLocations.pop()[0])
             playerRenderList.addObject(animatedGuy)
             players.append(animatedGuy)
     events.bindKeyDownEvent(["l"], updatePlayers)
@@ -76,12 +77,12 @@ def main():
     powerups = []
     def updatePowerups(event=None):
         while len(powerups):
-            powerups[0].disable()
+            powerups[0].disabled = True
             powerups.pop(0)
 
-        powerupLocations = gs.getMap().getTiles("powerups")
+        powerupLocations = gs.world.getTiles("powerups")
         for tile in powerupLocations:
-            powerup = SOPowerUp.SOPowerUp(gs, tile[0])
+            powerup = SOPowerUp.SOPowerUp(tile[0])
             powerups.append(powerup)
             powerupRenderList.addObject(powerup)
 

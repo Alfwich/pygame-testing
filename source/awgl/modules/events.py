@@ -66,7 +66,7 @@ def _handleTimers(delta):
         shouldFilterTimers = False
         for idx, timer in enumerate(_timers):
             timer.tick(delta)
-            if not timer.isValid():
+            if not timer.valid:
                 _timers[idx] = None
                 shouldFilterTimers = True
         if shouldFilterTimers:

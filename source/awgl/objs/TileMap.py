@@ -67,7 +67,7 @@ class TileMap(StaticObject.StaticObject):
         self.tileSets = []
         self.cachedLayerRenderObject = {}
         self.globalScale = globalScale
-        self.disableTick()
+        self.canTick = False
         self.loadMap(mapFile)
 
     def _clearTileMap(self):
@@ -235,7 +235,7 @@ class TileMap(StaticObject.StaticObject):
                 self._loadMapLayer(layer, idx)
 
     def draw(self, screen, offset=None):
-        objectPosition = self.getPosition()
+        objectPosition = self.position
         if not offset is None:
             objectPosition[0] += offset[0]
             objectPosition[1] += offset[1]

@@ -5,28 +5,48 @@ from ..modules import fonts, colors
 class Text(StaticObject.StaticObject):
     def __init__(self, text=None, font=None, color=colors.WHITE, backgroundColor=colors.TRANSPARENT):
         super(Text, self).__init__()
-        self.text = str(text)
-        self.font = font
-        self.color = color
-        self.backgroundColor = backgroundColor
+        self._text = str(text)
+        self._font = font
+        self._color = color
+        self._backgroundColor = backgroundColor
         self._updateSurface()
-        self.disableTick()
+        self.canTick = False
 
     def _updateSurface(self):
-        self.setBitmap(fonts.renderTextSurface(self.text, self.font, self.color, self.backgroundColor))
+        self.bitmap = fonts.renderTextSurface(self._text, self._font, self._color, self._backgroundColor)
 
-    def setText(self, newText):
-        self.text = str(newText)
+    @property
+    def text(self):
+        return self._text
+
+    @text.setter
+    def text(self, newText):
+        self._text = str(newText)
         self._updateSurface()
 
-    def setFont(self, newFont):
-        self.font = newFont
+    @property
+    def font(self):
+        return self._font
+
+    @font.setter
+    def font(self, newFont):
+        self._font = newFont
         self._updateSurface()
 
-    def setColor(self, newColor):
-        self.color = newColor
+    @property
+    def color(self):
+        return self._color
+
+    @color.setter
+    def color(self, newColor):
+        self._color = newColor
         self._updateSurface()
 
-    def setBackgroundColor(self, newBackgroundColor):
-        self.backgroundColor = newBackgroundColor
+    @property
+    def backgroundColor(self):
+        return self._backgroundColor
+
+    @backgroundColor.setter
+    def backgroundColor(self, newBackgroundColor):
+        self._backgroundColor = newBackgroundColor
         self._updateSurface()

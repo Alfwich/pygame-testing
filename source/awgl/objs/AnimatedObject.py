@@ -14,8 +14,9 @@ class AnimatedObject(StaticObject.StaticObject):
             self.frame = 0
             self.animation = animation
 
-    def getRenderRect(self):
-        return self.animation.getFrameRect(int(self.frame)) if self.animation else self.renderRect if self.bitmap else None
+    @property
+    def renderRect(self):
+        return self.animation[int(self.frame)] if self.animation else self.renderRect if self.bitmap else None
 
     def setNumberOfLoops(self, loops):
         self.numLoops = loops
@@ -35,8 +36,13 @@ class AnimatedObject(StaticObject.StaticObject):
     def setFrame(self, frame):
         self.frame = frame
 
-    def getSize(self):
+    @property
+    def size(self):
         return (self.animation.getFrameRect(int(self.frame)).w, self.animation.getFrameRect(int(self.frame)).h)
+
+    @size.setter
+    def size(self, newSize):
+        pass
 
     def tick(self, delta):
         super(AnimatedObject, self).tick(delta)

@@ -3,7 +3,7 @@ import RenderList
 
 class SortedRenderList(RenderList.RenderList):
 
-    def __init__(self, name, cmpFunction=lambda x: x.getPositionY()):
+    def __init__(self, name, cmpFunction=lambda x: x.positionY):
         super(SortedRenderList, self).__init__(name)
         self.compareFunction = cmpFunction
         self._isSorted = False

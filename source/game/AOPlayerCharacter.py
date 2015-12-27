@@ -13,7 +13,7 @@ images.addToGlobalLoadList([
 ])
 
 class AOPlayerCharacter(AnimatedObject.AnimatedObject):
-    def __init__(self, controllerId=0, gameState=None, spawnLocation=(0, 0)):
+    def __init__(self, controllerId=0, spawnLocation=(0, 0)):
         super(AOPlayerCharacter, self).__init__()
         self.walkingSpeed = 125
         self.walkingFPS = 30
@@ -22,18 +22,18 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
         self.velocity = [0,0]
         self.collisionOffset = [0, 10]
         self.collisionSize = [20, 25]
+        self.canCollide = True
         self.playerId = controllerId
-        self.setGameState(gameState)
-        self.setBitmap(images.getImage("walking-guy"))
+        self.bitmap = images.getImage("walking-guy")
         self.setAnimation(animations.getAnimation("walking-guy-walk-left"))
         self.showPlayerTag()
-        self.setAlignmentY(GameObject.alignment.BOTTOM)
+        self.alignmentY = GameObject.alignment.BOTTOM
         self.setNumberOfLoops(-1)
         self.setFrameRate(self.walkingFPS)
         self.play()
 
-        gameWorld = gameState.getMap()
-        self.setPosition(spawnLocation[0]*gameWorld.getTileWidth()+16, spawnLocation[1]*gameWorld.getTileHeight() + 16 + self.collisionSize[1]/2)
+        gameWorld = self.gameState.world
+        self.position = (spawnLocation[0]*gameWorld.getTileWidth()+16, spawnLocation[1]*gameWorld.getTileHeight() + 16 + self.collisionSize[1]/2)
 
         if controllerId == 0:
             self.addEvents([
@@ -48,10 +48,9 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
             events.bindJoystickButtonAxis(controllerId, 1, 0, lambda e, v: self.modifyWalkingSpeed(v))
         ])
 
-        gameState.registerCollidableObject(self)
 
     def _getCollideObjects(self, rect):
-        collidePlayers = self.getGameState().getCollisions(rect, self)
+        collidePlayers = self.gameState.getCollisions(rect, self)
         collidePlayers = set(map(lambda p: p.getRawRect(), collidePlayers))
 
         return collidePlayers
@@ -60,7 +59,7 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
         selfRect = self.getRect()
         selfRect.x = newPosition[0]-self.collisionSize[0]/2
         selfRect.y = newPosition[1]-self.collisionSize[1]
-        hits = self._getCollideObjects(selfRect) | self.getGameState().getMap().getTilesOnRect(selfRect, "collision")
+        hits = self._getCollideObjects(selfRect) | self.gameState.world.getTilesOnRect(selfRect, "collision")
         return hits
 
     def _hasCollision(self, newPosition):
@@ -80,17 +79,17 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
 
     def showPlayerTag(self):
         playerTagBG = Text.Text("P%d"%(self.playerId+1), None, colors.BLACK)
-        playerTagBG.movePosition(-2, -(self.getHeight())+2)
+        playerTagBG.movePosition(-2, -self.height+2)
         self.children.append(playerTagBG)
         events.bindTimer(playerTagBG.disable, 3000)
 
         playerTag = Text.Text("P%d"%(self.playerId+1), None, colors.WHITE)
-        playerTag.movePosition(0, -(self.getHeight()))
+        playerTag.movePosition(0, -self.height)
         self.children.append(playerTag)
         events.bindTimer(playerTag.disable, 3000)
 
     def getRect(self):
-        return pygame.Rect(self.getPositionX()-self.collisionSize[0]/2, self.getPositionY()-self.collisionSize[1], self.collisionSize[0], self.collisionSize[1])
+        return pygame.Rect(self.positionX-self.collisionSize[0]/2, self.positionY-self.collisionSize[1], self.collisionSize[0], self.collisionSize[1])
 
     def moveLeft(self, e, value):
         self.velocity[0] = value
@@ -125,9 +124,9 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
         super(AOPlayerCharacter, self).tick(delta)
         if not self.velocity[0] == 0 or not self.velocity[1] == 0:
             self.updateMoveAnimation()
-            newPosition = [self.position[0] + self.velocity[0] * self.currentSpeed * delta, self.position[1] + self.velocity[1] * self.currentSpeed * delta]
+            newPosition = [self.rawPosition[0] + self.velocity[0] * self.currentSpeed * delta, self.rawPosition[1] + self.velocity[1] * self.currentSpeed * delta]
             if self._safeMoveAdjust(newPosition):
-                self.setPosition(newPosition[0], newPosition[1])
+                self.position = (newPosition[0], newPosition[1])
         else:
             self.setFrame(0)
             self.setFrameRate(0)

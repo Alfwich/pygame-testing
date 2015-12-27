@@ -31,7 +31,7 @@ class Camera():
         self.offset[1] += deltaY
 
     def centerOnObject(self, obj):
-        objectPosition = obj.getPosition()
+        objectPosition = obj.position
         screenSize = display.getScreenSize()
         self.offset[0] = int(screenSize[0]/2 - objectPosition[0])
         self.offset[1] = int(screenSize[1]/2 - objectPosition[1])

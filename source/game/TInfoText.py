@@ -9,13 +9,13 @@ fonts.addToGlobalLoadList([
 class TInfoText(Text.Text):
     def __init__(self):
         super(TInfoText, self).__init__(self._generateText())
-        self.setFont(fonts.getFont("console"))
-        self.setBackgroundColor(colors.BLACK)
-        self.setAlignment(GameObject.alignment.LEFT, GameObject.alignment.TOP)
-        self.enableTick()
+        self.font = fonts.getFont("console")
+        self.backgroundColor = colors.BLACK
+        self.alignment = GameObject.alignment.LEFT_TOP
+        self.canTick = True
 
     def _generateText(self):
         return "res: %s, fps: %.2f" % (display.getScreenSize(), clock.getFPS())
 
     def tick(self, delta):
-        self.setText(self._generateText())
+        self.text = self._generateText()

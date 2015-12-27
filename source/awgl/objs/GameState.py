@@ -2,19 +2,31 @@ import QuadTree
 from ..modules import events
 
 class GameState(object):
+    _globalGameState = None
+
+    @staticmethod
+    def setGlobalGameState(gameState):
+        GameState._globalGameState = gameState
+
+    @staticmethod
+    def getGlobalGameState():
+        return GameState._globalGameState
+
     def __init__(self):
         self.props = {}
-        self.tileMap = None
+        self._world = None
         self.collider = None
         self.colliderObjects = []
         self.generatedObjects = set()
         events.bindFrameEvent(self.updateCollider)
 
-    def setMap(self, newMap):
-        self.tileMap = newMap
+    @property
+    def world(self):
+        return self._world
 
-    def getMap(self):
-        return self.tileMap
+    @world.setter
+    def world(self, newWorld):
+        self._world = newWorld
 
     def registerCollidableObject(self, obj):
         if not obj in self.colliderObjects:

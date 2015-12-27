@@ -1,25 +1,37 @@
 import pygame
 from ..modules import events
+import GameState
 
 class alignment:
     TOP = LEFT = 0
     CENTER = 1
     BOTTOM = RIGHT = 2
+    LEFT_TOP = (LEFT, TOP)
+    CENTER_TOP = (CENTER, TOP)
+    RIGHT_TOP = (RIGHT, TOP)
+    LEFT_CENTER = (LEFT, CENTER)
+    CENTER_CENTER = (CENTER, CENTER)
+    RIGHT_CENTER = (RIGHT, CENTER)
+    LEFT_BOTTOM = (LEFT, BOTTOM)
+    CENTER_BOTTOM = (CENTER, BOTTOM)
+    RIGHT_BOTTOM = (RIGHT, BOTTOM)
+
 
 class GameObject(object):
     def __init__(self):
         self._isVisible = True
         self._isValid = True
         self._canTick = False
+        self._canCollide = False
         self._boundEvents = []
-        self.position = [0, 0]
-        self.size = [0, 0]
+        self._position = [0, 0]
+        self._size = [0, 0]
         self.rect = pygame.Rect(0,0,0,0)
-        self.gameState = None
+        self._gameState = GameState.GameState.getGlobalGameState()
         self.tags = {}
         self.children = []
-        self.alignment = [alignment.CENTER, alignment.CENTER]
-        self.enableTick()
+        self._alignment = [alignment.CENTER, alignment.CENTER]
+        self.canTick = True
 
     def _alignAxis(self, axisValue, dimSize, align):
         if align == alignment.CENTER:
@@ -30,9 +42,9 @@ class GameObject(object):
             return axisValue
 
     def _alignPosition(self, position):
-        size = self.getSize()
+        size = self.size
         newPosition = [position[0], position[1]]
-        for axis, align in enumerate(self.alignment):
+        for axis, align in enumerate(self._alignment):
             newPosition[axis] = self._alignAxis(newPosition[axis], size[axis], align)
         return newPosition
 
@@ -49,71 +61,112 @@ class GameObject(object):
     def hasTag(self, tag):
         return tag in self.tags
 
-    def setGameState(self, gameState):
-        self.gameState = gameState
+    @property
+    def gameState(self):
+        return self._gameState or GameState.GameState.getGlobalGameState()
 
-    def getGameState(self):
-        return self.gameState
+    @property
+    def gameWorld(self):
+        gameState = self.gameState
+        if gameState:
+            return gameState.world
 
-    def enableCollision(self):
-        if self.gameState:
-            self.gameState.registerCollidableObject(self)
+    @property
+    def canCollide(self):
+        return self._canCollide
 
-    def disableCollision(self):
-        if self.gameState:
-            self.gameState.deregisterCollidableObject(self)
+    @canCollide.setter
+    def canCollide(self, newValue):
+        if self.gameState and not newValue is self._canCollide:
+            self._canCollide = newValue
+            if newValue:
+                self.gameState.registerCollidableObject(self)
+            else:
+                self.gameState.deregisterCollidableObject(self)
 
-    def setAlignment(self, alignX, alignY):
-        self.alignment = [alignX, alignY]
+    @property
+    def alignment(self):
+        return self._alignment
 
-    def setAlignmentX(self, alignX):
-        self.alignment[0] = alignX
+    @alignment.setter
+    def alignment(self, newAlignment):
+        self._alignment[0] = newAlignment[0]
+        self._alignment[1] = newAlignment[1]
 
-    def setAlignmentY(self, alignY):
-        self.alignment[1] = alignY
+    @property
+    def alignmentX(self, alignX):
+        return self._alignment[0]
 
-    def getPosition(self):
-        return map(int, self.position)
+    @alignment.setter
+    def alignmentX(self, alignX):
+        self._alignment[0] = alignX
 
-    def getPositionX(self):
-        return self.getPosition()[0]
+    @property
+    def alignmentY(self, alignY):
+        return self._alignment[1]
 
-    def getPositionY(self):
-        return self.getPosition()[1]
+    @alignment.setter
+    def alignmentY(self, alignY):
+        self._alignment[1] = alignY
 
-    def setPosition(self, x, y):
-        self.position = [x, y]
+    @property
+    def position(self):
+        return [int(self._position[0]), int(self._position[1])]
 
-    def setPositionX(self, x):
-        self.position[0] = x
+    @property
+    def rawPosition(self):
+        return list(self._position)
 
-    def setPositionY(self, y):
-        self.position[1] = y
+    @property
+    def positionX(self):
+        return self._position[0]
+
+    @property
+    def positionY(self):
+        return self._position[1]
+
+    @position.setter
+    def position(self, newPosition):
+        self._position[0] = newPosition[0]
+        self._position[1] = newPosition[1]
+
+    @positionX.setter
+    def positionX(self, x):
+        self._position[0] = x
+
+    @positionY.setter
+    def positionY(self, y):
+        self._position[1] = y
 
     def movePosition(self, deltaX, deltaY):
-        self.position[0] += deltaX
-        self.position[1] += deltaY
+        self._position[0] += deltaX
+        self._position[1] += deltaY
 
-    def setSize(self, width, height):
-        self.size = [width, height]
+    @property
+    def size(self):
+        return [self._size[0], self._size[1]]
 
-    def getSize(self):
-        return list(self.size)
+    @size.setter
+    def size(self, newSize):
+        self._size[0] = newSize[0]
+        self._size[1] = newSize[1]
 
     def getRect(self):
-        position = self._alignPosition(self.getPosition())
-        size = self.getSize()
+        position = self._alignPosition(self.position)
+        size = self.size
         return pygame.Rect(position[0], position[1], size[0], size[1])
 
     def getRawRect(self):
         rect = self.getRect()
         return (rect.x, rect.y, rect.w, rect.h)
 
-    def getWidth(self):
-        return self.getSize()[0]
+    @property
+    def width(self):
+        return self.size[0]
 
-    def getHeight(self):
-        return self.getSize()[1]
+    @property
+    def height(self):
+        return self.size[1]
 
     def addEvents(self, eventIds):
         if not isinstance(eventIds, list):
@@ -122,10 +175,12 @@ class GameObject(object):
         for eventId in eventIds:
             self._boundEvents.append(eventId)
 
-    def isVisible(self):
+    @property
+    def visible(self):
         return self._isVisible
 
-    def setVisibility(self, visibility):
+    @visible.setter
+    def visible(self, visibility):
         self._isVisible = visibility
 
     def addEvents(self, eventIds):
@@ -135,31 +190,44 @@ class GameObject(object):
         for eventId in eventIds:
             self._boundEvents.append(eventId)
 
+
     def disable(self):
-        for eventId in self._boundEvents:
-            events.unbindEvent(eventId)
-        self._boundEvents = []
-        self._isValid = False
-        self._isVisible = False
-        self.disableTick()
-        for child in self.children:
-            child.disable()
+        self.disabled = True
 
-        if self.gameState:
-            self.gameState.deregisterCollidableObject(self)
+    @property
+    def disabled(self):
+        return not self._isValid
 
-    def enableTick(self):
-        if not self._canTick:
-            self._canTick = True
-            events.registerTickableObject(self)
+    @disabled.setter
+    def disabled(self, newValue):
+        if self._isValid and newValue:
+            self._isValid = False
+            for eventId in self._boundEvents:
+                events.unbindEvent(eventId)
+            self._boundEvents = []
+            self.visible = False
+            self.canTick = False
+            for child in self.children:
+                child.disable()
 
-    def disableTick(self):
-        if self._canTick:
-            self._canTick = False
-            events.deregisterTickableObject(self)
+            if self.gameState:
+                self.gameState.deregisterCollidableObject(self)
+
+    @property
+    def canTick(self):
+        return self._canTick
+
+    @canTick.setter
+    def canTick(self, newValue):
+        if not newValue is self._canTick:
+            self._canTick = newValue
+            if newValue:
+                events.registerTickableObject(self)
+            else:
+                events.deregisterTickableObject(self)
 
     def render(self, screen, camera=None, offset=None):
-        if self.isVisible():
+        if self.visible:
             if offset is None:
                 offset = [0, 0]
 
@@ -170,8 +238,8 @@ class GameObject(object):
                 alignedOffset = self._alignPosition(offset)
                 self.draw(screen, alignedOffset)
 
-            offset[0] += self.getPositionX()
-            offset[1] += self.getPositionY()
+            offset[0] += self.positionX
+            offset[1] += self.positionY
             for child in self.children:
                 child.render(screen, None, list(offset))
 
