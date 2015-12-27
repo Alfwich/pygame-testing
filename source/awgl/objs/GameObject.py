@@ -9,7 +9,7 @@ class alignment:
     CENTER_TOP = (CENTER, TOP)
     RIGHT_TOP = (RIGHT, TOP)
     LEFT_CENTER = (LEFT, CENTER)
-    CENTER_CENTER = (CENTER, CENTER)
+    MIDDLE = CENTER_CENTER = (CENTER, CENTER)
     RIGHT_CENTER = (RIGHT, CENTER)
     LEFT_BOTTOM = (LEFT, BOTTOM)
     CENTER_BOTTOM = (CENTER, BOTTOM)
@@ -29,7 +29,7 @@ class GameObject(object):
         self._gameState = None
         self.tags = {}
         self.children = []
-        self._alignment = [alignment.CENTER, alignment.CENTER]
+        self._alignment = list(alignment.MIDDLE)
         self.canTick = True
 
     def _alignAxis(self, axisValue, dimSize, align):
@@ -187,7 +187,7 @@ class GameObject(object):
 
     @property
     def visible(self):
-        return self._isVisible
+        return self._isVisible and not self._alpha == 0
 
     @visible.setter
     def visible(self, visibility):

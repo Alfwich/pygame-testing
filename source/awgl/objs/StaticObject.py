@@ -9,7 +9,7 @@ class StaticObject(GameObject.GameObject):
         self._cachedBitmap = None
         self._bitmap = None
         self._renderRect = None
-        self._alpha = 255
+        self._alpha = 255.0
         self._rotation = 0.0
         self._scale = [1, 1]
 
@@ -23,17 +23,17 @@ class StaticObject(GameObject.GameObject):
                 self._bitmap = pygame.transform.scale(self._bitmap, (self.bitmap.get_width()*self._scale[0], self.bitmap.get_height()*self._scale[1]))
             if not self._rotation == 0.0:
                 self._bitmap = pygame.transform.rotate(self._bitmap, self._rotation)
-            if self._alpha < 255:
-                self._bitmap.fill((255, 255, 255, self._alpha), None, pygame.BLEND_RGBA_MULT)
+            if self._alpha < 255.0:
+                self._bitmap.fill((255, 255, 255, int(self._alpha)), None, pygame.BLEND_RGBA_MULT)
 
 
     @property
-    def alpha(self, value):
+    def alpha(self):
         return self._alpha
 
     @alpha.setter
     def alpha(self, value):
-        self._alpha = value
+        self._alpha = sorted([0.0, value, 255.0])[1]
         self._updateBitmap()
 
     @property
@@ -43,12 +43,17 @@ class StaticObject(GameObject.GameObject):
     @rotation.setter
     def rotation(self, value):
         self._rotation = value
-        self._updateBitmap
+        self._updateBitmap()
 
     @property
+    def scale(self):
+        return list(self._scale)
+
+    @scale.setter
     def scale(self, newScale):
         self._scale[0] = int(newScale[0])
         self._scale[1] = int(newScale[1])
+        self._updateBitmap()
 
     @property
     def bitmap(self):
@@ -57,9 +62,9 @@ class StaticObject(GameObject.GameObject):
     @bitmap.setter
     def bitmap(self, newSurface):
         if newSurface:
-            self.size = (newSurface.get_width(), newSurface.get_height())
-            self._cachedBitmap = self._bitmap = newSurface
+            self._cachedBitmap = self._bitmap = newSurface.convert_alpha()
             self._updateBitmap()
+            self.size = (self._bitmap.get_width(), self._bitmap.get_height())
             self._updateRenderRect()
 
     @property

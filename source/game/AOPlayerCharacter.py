@@ -22,7 +22,7 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
         self.velocity = [0,0]
         self.collisionOffset = [0, 10]
         self.collisionSize = [20, 25]
-        self.playerId = configuration["player"]
+        self.playerId = configuration.get("player", 0)
         self.bitmap = images.getImage("walking-guy")
         self.setAnimation(animations.getAnimation("walking-guy-walk-left"))
         self.showPlayerTag()

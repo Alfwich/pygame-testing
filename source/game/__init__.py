@@ -1,3 +1,3 @@
 
 
-__all__ = ["AOPlayerCharacter", "TInfoText", "SOPowerUp"]
+__all__ = ["AOPlayerCharacter", "TInfoText", "SOPowerUp", "SOScreenFader"]

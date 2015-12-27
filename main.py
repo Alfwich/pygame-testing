@@ -47,6 +47,10 @@ def main():
     infoText = TInfoText.TInfoText()
     hudRenderList.add(infoText)
 
+    screenFader = SOScreenFader.SOScreenFader(fadeSpeed=255)
+    screenFader.fadeOut()
+    hudRenderList.add(screenFader)
+
     def quitApplication():
         pygame.quit()
         sys.exit()
@@ -65,9 +69,13 @@ def main():
         [gs.createGameObject(SOPowerUp.SOPowerUp, location=tile[0]) for tile in gs.world.getTiles("powerups")]
 
     def loadLevel(level):
-        gs.loadMap(level)
-        updatePlayers()
-        updatePowerups()
+        screenFader.fadeIn()
+        def loadLevelWrapper():
+            gs.loadMap(level)
+            updatePlayers()
+            updatePowerups()
+            screenFader.fadeOut()
+        events.bindTimer(loadLevelWrapper, 1500)
 
     def nextPlayer():
         gs["currentPlayerIndex"] = (gs["currentPlayerIndex"] + 1) % len(gs["players"])
@@ -84,7 +92,10 @@ def main():
     events.bindKeyDownEvent(["o"], lambda e: sounds.playSoundOnce("startup"))
     events.bindTimer(events.printContainerSizes, 250, -1)
 
-    loadLevel("test1.json")
+    gs.loadMap("test1.json")
+    updatePlayers()
+    updatePowerups()
+    screenFader.fadeOut()
 
     while True:
         # Limit framerate to the desired FPS

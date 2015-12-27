@@ -19,4 +19,6 @@ class SOPowerUp(StaticObject.StaticObject):
     def hasCollided(self, other):
         if isinstance(other, AOPlayerCharacter.AOPlayerCharacter):
             other.walkingSpeed *= 1.1
+            other.currentSpeed *= 1.1
             self.disable()
+            return True
