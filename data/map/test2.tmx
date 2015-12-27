@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="32" tileheight="32" nextobjectid="1">
- <tileset firstgid="1" name="control" tilewidth="32" tileheight="32" tilecount="4">
-  <image source="../image/control-tiles.png" width="64" height="64"/>
+ <tileset firstgid="1" name="control" tilewidth="32" tileheight="32" tilecount="16">
+  <image source="../image/control-tiles.png" width="128" height="128"/>
  </tileset>
- <tileset firstgid="5" name="base" tilewidth="32" tileheight="32" tilecount="256">
+ <tileset firstgid="17" name="base" tilewidth="32" tileheight="32" tilecount="256">
   <image source="../image/tile-map-1.png" width="512" height="512"/>
  </tileset>
  <layer name="Tile Layer 1" width="20" height="20">
   <data encoding="base64" compression="zlib">
-   eJxbwcDAsILKeCkQL6cCG4a3AvF2KrCRzdsGxMugNDns5VjMO4YkTyr7OBbzriHJk8q+PurfUf+O+ndY+PcokvmUsGH4KpL5lLBBGAD5zR00
+   eJzbwsDAsIXKeCMQb6YCG4YPAvFhKrCRzTsExJugNDnszVjMu4QkTyr7MhbzHiHJk8p+POrfUf+O+ndY+PcikvmUsGH4IZL5lLBBGAC6wi/0
   </data>
  </layer>
  <layer name="collision" width="20" height="20" visible="0">
@@ -18,12 +18,17 @@
  </layer>
  <layer name="spawn" width="20" height="20" visible="0">
   <data encoding="base64" compression="zlib">
-   eJxjYKA+YIFiStm0No9STGvzRv076t9R/476l9rmURMAAIyjBFE=
+   eJxjYKA+YIJiStm0No9STGvzRv076t9R/476l9rmURMAAMlqAik=
   </data>
  </layer>
  <layer name="powerups" width="20" height="20" visible="0">
   <data encoding="base64" compression="zlib">
-   eJxjYBg4wDyAdo+CkQeYGRBpDpk9WMyjNhhI/w62sBjKYDCHJQCfWAA6
+   eJxjYBg4wDaAdo+CkQfYGBBpDpk9WMyjNhhI/w62sBjKYDCHJQA4fwBz
+  </data>
+ </layer>
+ <layer name="debug" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjZmBgYB7Fo3gUj+JRPIpJxAC2cgSx
   </data>
  </layer>
 </map>

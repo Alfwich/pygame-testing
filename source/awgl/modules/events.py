@@ -11,6 +11,9 @@ _timers = []
 LEFT_MOUSE_BUTTON = 1
 RIGHT_MOUSE_BUTTON = 3
 
+def autoUnbindEvents(func):
+    return None
+
 def printContainerSizes():
     print(map(len, [[ item for sublist in _callbacks.values() for item in sublist], _createdEventHandlers, _frameEvents, _tickableObjects, _timers]))
 

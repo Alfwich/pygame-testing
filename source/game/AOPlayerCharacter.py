@@ -21,7 +21,7 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
         self.maxFPS = self.walkingFPS
         self.velocity = [0,0]
         self.collisionOffset = [0, 10]
-        self.collisionSize = [20, 20]
+        self.collisionSize = [20, 25]
         self.playerId = controllerId
         self.setGameState(gameState)
         self.setBitmap(images.getImage("walking-guy"))
@@ -33,7 +33,7 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
         self.play()
 
         gameWorld = gameState.getMap()
-        self.setPosition(spawnLocation[0]*gameWorld.getTileWidth() + self.collisionSize[0]/2, spawnLocation[1]*gameWorld.getTileHeight() + self.collisionSize[1]/2)
+        self.setPosition(spawnLocation[0]*gameWorld.getTileWidth()+16, spawnLocation[1]*gameWorld.getTileHeight() + 16 + self.collisionSize[1]/2)
 
         if controllerId == 0:
             self.addEvents([
@@ -57,7 +57,9 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
         return collidePlayers
 
     def _getCollisionObjects(self, newPosition):
-        selfRect = pygame.Rect(newPosition[0]-self.collisionSize[0]/2, newPosition[1]-self.collisionSize[1]/2, self.collisionSize[0], self.collisionSize[1])
+        selfRect = self.getRect()
+        selfRect.x = newPosition[0]-self.collisionSize[0]/2
+        selfRect.y = newPosition[1]-self.collisionSize[1]
         hits = self._getCollideObjects(selfRect) | self.getGameState().getMap().getTilesOnRect(selfRect, "collision")
         return hits
 
@@ -88,11 +90,7 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
         events.bindTimer(playerTag.disable, 3000)
 
     def getRect(self):
-        return pygame.Rect(self.getPositionX()-self.collisionSize[0]/2, self.getPositionY()-self.collisionSize[1]/2, self.collisionSize[0], self.collisionSize[1])
-
-    def getRawRect(self):
-        rect = self.getRect()
-        return (rect.x, rect.y, rect.w, rect.h)
+        return pygame.Rect(self.getPositionX()-self.collisionSize[0]/2, self.getPositionY()-self.collisionSize[1], self.collisionSize[0], self.collisionSize[1])
 
     def moveLeft(self, e, value):
         self.velocity[0] = value

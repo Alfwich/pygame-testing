@@ -56,6 +56,7 @@ def main():
     players = []
     def updatePlayers(event=None):
         numberOfPlayers = joysticks.updateJoysticks()
+        #numberOfPlayers = 200
         spawnLocations = gs.getMap().getTiles("spawn")
         random.shuffle(spawnLocations)
         if numberOfPlayers == 0:
@@ -122,10 +123,10 @@ def main():
         powerupRenderList.render(screen, mainCamera)
         particleRenderList.render(screen, mainCamera)
         hudRenderList.render(screen, hudCamera)
-        for obj in gs.getCollisions(pygame.Rect(0,0,2000,2000), None):
+        for obj in gs.getCollisions(pygame.Rect(0,0,200000,200000), None):
             objRect = pygame.Rect(obj.rect)
             mainCamera.transformRectWorldPosition(objRect)
-            pygame.draw.rect(screen, colors.RED, objRect)
+            pygame.draw.lines(screen, colors.DEBUG, True, [objRect.topleft, objRect.topright, objRect.bottomright, objRect.bottomleft], 2)
         pygame.display.update()
 
 if __name__ == "__main__":

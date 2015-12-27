@@ -2,7 +2,7 @@
  "layers":[
         {
          "compression":"zlib",
-         "data":"eJxbwcDAsILKeCkQL6cCG4a3AvF2KrCRzdsGxMugNDns5VjMO4YkTyr7OBbzriHJk8q+PurfUf+O+ndY+PcokvmUsGH4KpL5lLBBGAD5zR00",
+         "data":"eJzbwsDAsIXKeCMQb6YCG4YPAvFhKrCRzTsExJugNDnszVjMu4QkTyr7MhbzHiHJk8p+POrfUf+O+ndY+PcikvmUsGH4IZL5lLBBGAC6wi\/0",
          "encoding":"base64",
          "height":20,
          "name":"Tile Layer 1",
@@ -28,7 +28,7 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJxjYKA+YIFiStm0No9STGvzRv076t9R\/476l9rmURMAAIyjBFE=",
+         "data":"eJxjYKA+YIJiStm0No9STGvzRv076t9R\/476l9rmURMAAMlqAik=",
          "encoding":"base64",
          "height":20,
          "name":"spawn",
@@ -41,13 +41,26 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJxjYBg4wDyAdo+CkQeYGRBpDpk9WMyjNhhI\/w62sBjKYDCHJQCfWAA6",
+         "data":"eJxjYBg4wDaAdo+CkQfYGBBpDpk9WMyjNhhI\/w62sBjKYDCHJQA4fwBz",
          "encoding":"base64",
          "height":20,
          "name":"powerups",
          "opacity":1,
          "type":"tilelayer",
          "visible":false,
+         "width":20,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "compression":"zlib",
+         "data":"eJxjZmBgYB7Fo3gUj+JRPIpJxAC2cgSx",
+         "encoding":"base64",
+         "height":20,
+         "name":"debug",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":true,
          "width":20,
          "x":0,
          "y":0
@@ -64,8 +77,8 @@
         {
          "firstgid":1,
          "image":"..\/image\/control-tiles.png",
-         "imageheight":64,
-         "imagewidth":64,
+         "imageheight":128,
+         "imagewidth":128,
          "margin":0,
          "name":"control",
          "properties":
@@ -73,12 +86,12 @@
 
             },
          "spacing":0,
-         "tilecount":4,
+         "tilecount":16,
          "tileheight":32,
          "tilewidth":32
         }, 
         {
-         "firstgid":5,
+         "firstgid":17,
          "image":"..\/image\/tile-map-1.png",
          "imageheight":512,
          "imagewidth":512,

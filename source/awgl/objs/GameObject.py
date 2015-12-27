@@ -101,7 +101,9 @@ class GameObject(object):
         return list(self.size)
 
     def getRect(self):
-        return pygame.Rect(self.position[0], self.position[1], self.size[0], self.size[1])
+        position = self._alignPosition(self.getPosition())
+        size = self.getSize()
+        return pygame.Rect(position[0], position[1], size[0], size[1])
 
     def getRawRect(self):
         rect = self.getRect()
