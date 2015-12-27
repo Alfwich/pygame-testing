@@ -116,12 +116,12 @@ def main():
         pygame.display.update()
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1 and sys.argv[1] == "debug":
+    if len(sys.argv) > 1 and sys.argv[1] == "profile":
         import cProfile, pstats
-        cProfile.run("main()", "profile.log")
-        p = pstats.Stats('profile.log')
-        p.strip_dirs().sort_stats(-1).print_stats()
-        p.sort_stats('tottime')
+        cProfile.run("main()", "profile.generated.log")
+        out = open("profile.output.log", "w")
+        p = pstats.Stats('profile.generated.log', stream=out)
+        p.strip_dirs().sort_stats('tottime')
         p.print_stats()
 
     else:
