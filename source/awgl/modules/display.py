@@ -5,7 +5,7 @@ _screenModes = None
 _fps = 1000
 _title = "PyGame Testing"
 _fullscreen = False
-_screenSize = [1280, 800]
+_screenSize = (1280, 800)
 _currentScreenSize = 8
 _screenFlags = pygame.DOUBLEBUF | pygame.HWSURFACE | pygame.NOFRAME
 
@@ -17,10 +17,11 @@ def _updateTitle():
     pygame.display.set_caption(_title)
 
 def init():
-    global _screenModes
+    global _screenModes, _screenSize
     pygame.display.init()
     pygame.mouse.set_visible(False)
     _screenModes = pygame.display.list_modes()[::-1]
+    _screenSize = _screenSize if _screenSize in _screenModes else _screenModes[-1]
     _updateScreen()
     _updateTitle()
 

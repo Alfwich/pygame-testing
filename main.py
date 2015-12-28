@@ -69,16 +69,19 @@ def main():
         [gs.createGameObject(SOPowerUp.SOPowerUp, location=tile[0]) for tile in gs.world.getTiles("powerups")]
 
     def loadLevel(level):
-        screenFader.fadeIn()
-        def loadLevelWrapper():
-            gs.loadMap(level)
-            updatePlayers()
-            updatePowerups()
-            screenFader.fadeOut()
-        events.bindTimer(loadLevelWrapper, 1500)
+        if not screenFader.visible:
+            screenFader.fadeIn(level)
+            def loadLevelWrapper():
+                gs.loadMap(level)
+                updatePlayers()
+                updatePowerups()
+                screenFader.fadeOut()
+            events.bindTimer(loadLevelWrapper, 1500)
 
     def nextPlayer():
         gs["currentPlayerIndex"] = (gs["currentPlayerIndex"] + 1) % len(gs["players"])
+        
+    events.bindKeyDownEvent(["e"], lambda e: nextPlayer())
     events.bindJoystickButtonDownEvent(0, 5, lambda e: nextPlayer())
 
     events.bindKeyDownEvent(["1"], lambda e, l: loadLevel(l), "default.json")
@@ -115,10 +118,12 @@ def main():
         mainRenderList.render(screen, mainCamera)
         particleRenderList.render(screen, mainCamera)
         hudRenderList.render(screen, hudCamera)
+        """
         for obj in gs.getCollisions(pygame.Rect(0,0,200000,200000), None):
             objRect = pygame.Rect(obj.rect)
             mainCamera.transformRectWorldPosition(objRect)
             pygame.draw.lines(screen, colors.DEBUG, True, [objRect.topleft, objRect.topright, objRect.bottomright, objRect.bottomleft], 2)
+        """
         pygame.display.update()
 
 if __name__ == "__main__":

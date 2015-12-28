@@ -62,8 +62,8 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
     def bindEvents(self):
         super(AOPlayerCharacter, self).bindEvents()
         self.addEvents([
-            events.bindKeyAxis("a", "d", self.moveLeft),
-            events.bindKeyAxis("w", "s", self.moveUp),
+            events.bindKeyAxis(["a", "K_LEFT"], ["d", "K_RIGHT"], self.moveLeft),
+            events.bindKeyAxis(["w", "K_UP"], ["s", "K_DOWN"], self.moveUp),
             events.bindJoystickAxisMotionEvent(0, 0, self.moveLeft),
             events.bindJoystickAxisMotionEvent(0, 1, self.moveUp),
             events.bindJoystickButtonAxis(0, 1, 0, lambda e, v: self.modifyWalkingSpeed(v))

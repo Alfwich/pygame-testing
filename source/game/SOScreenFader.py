@@ -11,6 +11,9 @@ class SOScreenFader(StaticObject.StaticObject):
         self.fadeSpeed = configuration.get("fadeSpeed", 30)
         self.position = map(lambda c: c/2, display.getScreenSize())
         self.canTick = False
+        self.screenText = Text.Text()
+        self.screenText.alignment = GameObject.alignment.RIGHT_BOTTOM
+        self.children.append(self.screenText)
         self._updateScreenBitmap()
         self.addEvents(events.bindVideoChangeEvent(self._updateScreenBitmap))
 
@@ -19,15 +22,18 @@ class SOScreenFader(StaticObject.StaticObject):
         screenBitmap.fill(colors.BLACK)
         self.bitmap = screenBitmap
         self.position = map(lambda c: c/2, display.getScreenSize())
+        self.screenText.position = map(lambda c: c-10, self.position)
 
     def fadeOut(self):
         self.alpha = 255
+        self.screenText.text = ""
         self._fadeDirection = -1
         self._ignoreFrames = 2
         self.canTick = True
 
-    def fadeIn(self):
+    def fadeIn(self, text=""):
         self.alpha = 0
+        self.screenText.text = "Loading: %s" % text
         self._fadeDirection = 1
         self._ignoreFrames = 2
         self.canTick = True
