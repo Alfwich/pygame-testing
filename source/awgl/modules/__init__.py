@@ -10,5 +10,6 @@ __all__ = [
     "joysticks",
     "display",
     "clock",
-    "math"
+    "math",
+    "debug"
 ]

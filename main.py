@@ -92,9 +92,6 @@ def main():
         gs["currentPlayerIndex"] = len(players)-1 if gs["currentPlayerIndex"] == 0 else gs["currentPlayerIndex"]-1
         mainCamera.focus = gs["players"][gs["currentPlayerIndex"]]
 
-    def printEventContainerSizes():
-        print("Event Information: %s" % events.getContainerSizeString())
-
     events.bindKeyDownEvent(["e"], lambda e: prevPlayer())
     events.bindJoystickButtonDownEvent(0, 5, lambda e: prevPlayer())
 
@@ -110,7 +107,7 @@ def main():
     events.bindKeyDownEvent(["t"], lambda e: display.setSmallestResolution())
     events.bindKeyDownEvent(["y"], lambda e: display.setLargestResolution())
     events.bindKeyDownEvent(["o"], lambda e: sounds.playSoundOnce("startup"))
-    events.bindTimer(printEventContainerSizes, 250, -1)
+    events.bindTimer(debug.printEventContainerSizes, 250, -1)
     events.bindTimer(joysticks.updateJoysticks, 1000, -1)
 
     gs.loadMap("test1.json")
@@ -132,16 +129,10 @@ def main():
         screen = display.getScreen()
         #screen.fill(colors.BLACK)
         worldRenderList.render(screen, mainCamera)
-
         mainRenderList.render(screen, mainCamera)
         particleRenderList.render(screen, mainCamera)
+        debug.renderGameStateCollisionRects(screen, gs, mainCamera)
         hudRenderList.render(screen, hudCamera)
-        """
-        for obj in gs.getCollisions(pygame.Rect(0,0,200000,200000), None):
-            objRect = pygame.Rect(obj.rect)
-            mainCamera.transformRectWorldPosition(objRect)
-            pygame.draw.lines(screen, colors.DEBUG, True, [objRect.topleft, objRect.topright, objRect.bottomright, objRect.bottomleft], 2)
-        """
         pygame.display.update()
 
 if __name__ == "__main__":
