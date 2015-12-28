@@ -23,7 +23,6 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
         self.collisionOffset = [0, 10]
         self.collisionSize = [20, 25]
         self.playerId = configuration.get("player", 0)
-        self.tint = colors.randomColor()#(255, 200, 200)
         self.bitmap = images.getImage("walking-guy")
         self.setAnimation(animations.getAnimation("walking-guy-walk-left"))
         self.showPlayerTag()
@@ -78,12 +77,12 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
     def showPlayerTag(self):
         playerTagBG = Text.Text("P%d"%(self.playerId+1), None, colors.BLACK)
         playerTagBG.movePosition(-2, -self.height+2)
-        self.children.append(playerTagBG)
+        self.addChild(playerTagBG)
         events.bindTimer(playerTagBG.disable, 3000)
 
         playerTag = Text.Text("P%d"%(self.playerId+1), None, colors.WHITE)
         playerTag.movePosition(0, -self.height)
-        self.children.append(playerTag)
+        self.addChild(playerTag)
         events.bindTimer(playerTag.disable, 3000)
 
     def getRect(self):

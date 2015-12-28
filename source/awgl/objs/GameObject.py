@@ -29,7 +29,8 @@ class GameObject(object):
         self.rect = pygame.Rect(0,0,0,0)
         self._gameState = None
         self.tags = {}
-        self.children = []
+        self._parent = None
+        self._children = []
         self._alignment = list(alignment.MIDDLE)
         self.canTick = True
 
@@ -201,6 +202,21 @@ class GameObject(object):
         for eventId in eventIds:
             self._boundEvents.append(eventId)
 
+    @property
+    def parent(self):
+        return self._parent
+
+    @parent.setter
+    def parent(self, newParent):
+        self._parent = newParent
+
+    def addChild(self, child):
+        child.parent = self
+        self._children.append(child)
+
+    def removeChild(self, child):
+        if child in self._children:
+            self._children.remove(child)
 
     def disable(self):
         self.disabled = True
@@ -218,8 +234,13 @@ class GameObject(object):
             self._boundEvents = []
             self.visible = False
             self.canTick = False
-            for child in self.children:
+            if self._parent:
+                self._parent.removeChild(self)
+            self._parent = None
+
+            for child in self._children:
                 child.disable()
+            self._children = []
 
             if self.gameState:
                 self.gameState.deregisterCollidableObject(self)
@@ -264,7 +285,7 @@ class GameObject(object):
 
             offset[0] += self.positionX
             offset[1] += self.positionY
-            for child in self.children:
+            for child in self._children:
                 child.render(screen, None, list(offset))
 
     def hasCollided(self, other):

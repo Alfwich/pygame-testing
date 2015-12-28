@@ -13,7 +13,7 @@ class SOScreenFader(StaticObject.StaticObject):
         self.canTick = False
         self.screenText = Text.Text()
         self.screenText.alignment = GameObject.alignment.RIGHT_BOTTOM
-        self.children.append(self.screenText)
+        self.addChild(self.screenText)
         self._updateScreenBitmap()
         self.addEvents(events.bindVideoChangeEvent(self._updateScreenBitmap))
 
