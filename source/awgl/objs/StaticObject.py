@@ -50,6 +50,8 @@ class StaticObject(GameObject.GameObject):
             self._tint.a = newAlphaValue
             if self._tint.a <= 0:
                 self.visible = False
+            else:
+                self.visible = True
             self._updateBitmap()
 
     @property

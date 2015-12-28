@@ -4,7 +4,7 @@ from ..objs import GameObject
 class Camera(GameObject.GameObject):
     def __init__(self):
         super(Camera, self).__init__()
-        self._focus = None
+        self._target = None
         self._transitionTime = 1.0
         self._transitionDuration = 1.0
         self._startPosition = [0, 0]
@@ -27,13 +27,13 @@ class Camera(GameObject.GameObject):
         rect.y -= self.positionY
 
     @property
-    def focus(self):
-        return self._focus
+    def target(self):
+        return self._target
 
-    @focus.setter
-    def focus(self, newFocus):
+    @target.setter
+    def target(self, newTarget):
         self.canTick = True
-        self._focus = newFocus
+        self._target = newTarget
         self._transitionTime = 0.0
         self._startPosition = self.position
 
@@ -63,9 +63,9 @@ class Camera(GameObject.GameObject):
 
     def tick(self, delta):
         super(Camera, self).tick(delta)
-        if self._focus:
+        if self._target:
             if self._transitionTime < self._transitionDuration:
                 self._transitionTime += delta
-            self.centerOnObject(self._focus)
+            self.centerOnObject(self._target)
         else:
             self.canTick = False

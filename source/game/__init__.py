@@ -1,3 +1,9 @@
 
 
-__all__ = ["AOPlayerCharacter", "TInfoText", "SOPowerUp", "SOScreenFader"]
+__all__ = [
+    "AOPlayerCharacter",
+    "TInfoText",
+    "SOPowerUp",
+    "SOScreenFader",
+    "DOTargetRect"
+]

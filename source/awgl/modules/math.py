@@ -1,4 +1,4 @@
-import math
+import math as pyMath
 
 def vectorLerp(a, b, pos):
     result = []

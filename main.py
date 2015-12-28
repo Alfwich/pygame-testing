@@ -40,6 +40,7 @@ def main():
     hudRenderList = RenderList.RenderList("hud")
     worldRenderList = RenderList.RenderList("world")
     worldRenderList.add(gs.world)
+    overRenderList = RenderList.RenderList("over")
     particleRenderList = RenderList.RenderList("particle")
     mainCamera = Camera.Camera()
     mainCamera.priority = 15
@@ -48,6 +49,9 @@ def main():
 
     infoText = TInfoText.TInfoText()
     hudRenderList.add(infoText)
+
+    objectTargeter = DOTargetRect.DOTargetRect()
+    overRenderList.add(objectTargeter)
 
     screenFader = SOScreenFader.SOScreenFader(fadeSpeed=1024)
     screenFader.fadeOut()
@@ -60,13 +64,13 @@ def main():
     events.bindKeyDownEvent(["q"], lambda e: quitApplication())
 
     def updatePlayers(event=None):
-        numberOfPlayers = 10
+        numberOfPlayers = 1
         spawnLocations = shuffled(gs.world.getTiles("spawn"))
         gs["currentPlayerIndex"] = 0
         gs["players"] = [gs.createGameObject(AOPlayerCharacter.AOPlayerCharacter, player=i, location=spawnLocations.pop()[0]) for i in range(numberOfPlayers)]
 
-    def updateCameraFocus(event=None):
-        mainCamera.focus = gs["players"][gs["currentPlayerIndex"]]
+    def updateCameraTarget(event=None):
+        mainCamera.target = objectTargeter.target = gs["players"][gs["currentPlayerIndex"]]
         mainCamera.forceFinishAnimation()
 
     def updatePowerups(event=None):
@@ -77,20 +81,23 @@ def main():
             screenFader.fadeIn(level)
             def loadLevelWrapper():
                 gs.loadMap(level)
-                updatePlayers()
-                updatePowerups()
-                screenFader.fadeOut()
-                updateCameraFocus()
+                levelPostLoad()
             events.bindTimer(loadLevelWrapper, screenFader.estimatedFadeTime)
 
     def nextPlayer():
         gs["currentPlayerIndex"] = (gs["currentPlayerIndex"] + 1) % len(gs["players"])
-        mainCamera.focus = gs["players"][gs["currentPlayerIndex"]]
+        mainCamera.target = objectTargeter.target = gs["players"][gs["currentPlayerIndex"]]
 
     def prevPlayer():
         players = gs["players"]
         gs["currentPlayerIndex"] = len(players)-1 if gs["currentPlayerIndex"] == 0 else gs["currentPlayerIndex"]-1
-        mainCamera.focus = gs["players"][gs["currentPlayerIndex"]]
+        mainCamera.target = objectTargeter.target = gs["players"][gs["currentPlayerIndex"]]
+
+    def levelPostLoad():
+        updatePlayers()
+        updatePowerups()
+        screenFader.fadeOut()
+        updateCameraTarget()
 
     events.bindKeyDownEvent(["e"], lambda e: prevPlayer())
     events.bindJoystickButtonDownEvent(0, 5, lambda e: prevPlayer())
@@ -110,23 +117,7 @@ def main():
     events.bindTimer(joysticks.updateJoysticks, 1000, -1)
 
     gs.loadMap("test1.json")
-    updatePlayers()
-    updatePowerups()
-    screenFader.fadeOut()
-    updateCameraFocus()
-
-    """
-    doTest = DrawableObject.DrawableObject()
-    doTest.size = (100, 100)
-    def drawBox(obj, screen, offset):
-        boxPosition = obj.position
-        if offset:
-            boxPosition[0] += offset[0]
-            boxPosition[1] += offset[1]
-        pygame.draw.rect(screen, colors.RED, (boxPosition[0], boxPosition[1], obj.width, obj.height), 10)
-    doTest.drawFunction = drawBox
-    mainRenderList.add(doTest)
-    """
+    levelPostLoad()
 
     while True:
         # Limit framerate to the desired FPS
@@ -139,9 +130,10 @@ def main():
 
         # Draw screen
         screen = display.getScreen()
-        #screen.fill(colors.BLACK)
+        screen.fill(colors.BLACK)
         worldRenderList.render(screen, mainCamera)
         mainRenderList.render(screen, mainCamera)
+        overRenderList.render(screen, mainCamera)
         particleRenderList.render(screen, mainCamera)
         debug.renderGameStateCollisionRects(screen, gs, mainCamera)
         hudRenderList.render(screen, hudCamera)
