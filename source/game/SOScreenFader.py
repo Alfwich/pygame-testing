@@ -10,7 +10,6 @@ class SOScreenFader(StaticObject.StaticObject):
         self.alpha = 255
         self.fadeSpeed = configuration.get("fadeSpeed", 30)
         self.position = map(lambda c: c/2, display.getScreenSize())
-        self.canTick = False
         self.screenText = Text.Text()
         self.screenText.alignment = GameObject.alignment.RIGHT_BOTTOM
         self.addChild(self.screenText)

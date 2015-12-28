@@ -17,9 +17,8 @@ class StaticObject(GameObject.GameObject):
         self._renderRect = self._bitmap.get_rect()
 
     def _updateBitmap(self):
-        if not self._cachedBitmap is None:
+        if not self._cachedBitmap is None and self.visible:
             self._bitmap = self._cachedBitmap.copy()
-
             if not self._tint is colors.DEFAULT_TINT:
                 self._bitmap.fill(self._tint, None, pygame.BLEND_RGBA_MULT)
             if not self._scale[0] == 1 or not self._scale[1] == 1:
@@ -49,6 +48,8 @@ class StaticObject(GameObject.GameObject):
         newAlphaValue = int(sorted([0.0, value, 255.0])[1])
         if not newAlphaValue == self._tint.a:
             self._tint.a = newAlphaValue
+            if self._tint.a <= 0:
+                self.visible = False
             self._updateBitmap()
 
     @property

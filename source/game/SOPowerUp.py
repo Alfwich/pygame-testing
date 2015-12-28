@@ -10,7 +10,6 @@ class SOPowerUp(StaticObject.StaticObject):
         powerupBitmap = pygame.Surface((10,10))
         powerupBitmap.fill(colors.BLUE)
         self.bitmap = powerupBitmap
-        self.canTick = False
 
     def begin(self):
         super(SOPowerUp, self).begin()

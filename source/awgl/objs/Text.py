@@ -10,7 +10,6 @@ class Text(StaticObject.StaticObject):
         self._color = color
         self._backgroundColor = backgroundColor
         self._updateSurface()
-        self.canTick = False
 
     def _updateSurface(self):
         self.bitmap = fonts.renderTextSurface(self._text, self._font, self._color, self._backgroundColor)

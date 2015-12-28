@@ -8,6 +8,7 @@ class AnimatedObject(StaticObject.StaticObject):
         self.frame = 0
         self.fps = 1
         self.animation = None
+        self.canTick = True
 
     def setAnimation(self, animation):
         if not animation is self.animation:

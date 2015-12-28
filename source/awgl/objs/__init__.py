@@ -10,5 +10,6 @@ __all__ = [
     "Text",
     "GameObject",
     "GameState",
-    "QuadTree"
+    "QuadTree",
+    "DrawableObject"
 ]

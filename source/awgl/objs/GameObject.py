@@ -32,7 +32,6 @@ class GameObject(object):
         self._parent = None
         self._children = []
         self._alignment = list(alignment.MIDDLE)
-        self.canTick = True
 
     def _alignAxis(self, axisValue, dimSize, align):
         if align == alignment.CENTER:
@@ -189,7 +188,7 @@ class GameObject(object):
 
     @property
     def visible(self):
-        return self._isVisible and not self.alpha == 0
+        return self._isVisible
 
     @visible.setter
     def visible(self, visibility):

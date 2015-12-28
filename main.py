@@ -115,6 +115,19 @@ def main():
     screenFader.fadeOut()
     updateCameraFocus()
 
+    """
+    doTest = DrawableObject.DrawableObject()
+    doTest.size = (100, 100)
+    def drawBox(obj, screen, offset):
+        boxPosition = obj.position
+        if offset:
+            boxPosition[0] += offset[0]
+            boxPosition[1] += offset[1]
+        pygame.draw.rect(screen, colors.RED, (boxPosition[0], boxPosition[1], obj.width, obj.height), 10)
+    doTest.drawFunction = drawBox
+    mainRenderList.add(doTest)
+    """
+
     while True:
         # Limit framerate to the desired FPS
         delta = clock.tick()
