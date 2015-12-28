@@ -64,6 +64,7 @@ def main():
         spawnLocations = shuffled(gs.world.getTiles("spawn"))
         gs["currentPlayerIndex"] = 0
         gs["players"] = [gs.createGameObject(AOPlayerCharacter.AOPlayerCharacter, player=i, location=spawnLocations.pop()[0]) for i in range(numberOfPlayers)]
+        mainCamera.focus = gs["players"][0]
 
     def updatePowerups(event=None):
         [gs.createGameObject(SOPowerUp.SOPowerUp, location=tile[0]) for tile in gs.world.getTiles("powerups")]
@@ -80,7 +81,8 @@ def main():
 
     def nextPlayer():
         gs["currentPlayerIndex"] = (gs["currentPlayerIndex"] + 1) % len(gs["players"])
-        
+        mainCamera.focus = gs["players"][gs["currentPlayerIndex"]]
+
     events.bindKeyDownEvent(["e"], lambda e: nextPlayer())
     events.bindJoystickButtonDownEvent(0, 5, lambda e: nextPlayer())
 
@@ -108,7 +110,6 @@ def main():
         events.handleEvents()
         events.tick(delta)
 
-        mainCamera.centerOnObject(gs["players"][gs["currentPlayerIndex"]])
 
         # Draw screen
         screen = display.getScreen()

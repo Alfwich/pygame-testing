@@ -9,5 +9,6 @@ __all__ = [
     "sounds",
     "joysticks",
     "display",
-    "clock"
+    "clock",
+    "math"
 ]

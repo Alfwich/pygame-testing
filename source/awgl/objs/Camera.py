@@ -1,37 +1,60 @@
-from ..modules import display
+from ..modules import display, math
+from ..objs import GameObject
 
-class Camera():
+class Camera(GameObject.GameObject):
     def __init__(self):
-        self.offset = [0, 0]
+        super(Camera, self).__init__()
+        self._focus = None
+        self._transitionTime = 0.0
+        self._startPosition = [0, 0]
+        self.canTick = False
 
     def transformWorldPosition(self, position):
-        position[0] += self.offset[0]
-        position[1] += self.offset[1]
+        position[0] += self.positionX
+        position[1] += self.positionY
 
     def transformScreenPosition(self, position):
-        position[0] -= self.offset[0]
-        position[1] -= self.offset[1]
+        position[0] -= self.positionX
+        position[1] -= self.positionY
 
     def transformRectWorldPosition(self, rect):
-        rect.x += self.offset[0]
-        rect.y += self.offset[1]
+        rect.x += self.positionX
+        rect.y += self.positionY
 
     def transformRectScreenPosition(self, rect):
-        rect.x -= self.offset[0]
-        rect.y -= self.offset[1]
+        rect.x -= self.positionX
+        rect.y -= self.positionY
 
-    def setOffset(self, x, y):
-        self.offset = [x, y]
+    @property
+    def focus(self):
+        return self._focus
 
-    def getOffset(self):
-        return list(self.offset)
+    @focus.setter
+    def focus(self, newFocus):
+        self.canTick = True
+        self._transitionTime = 0.0
+        self._startPosition = self.position
+        self._focus = newFocus
 
     def moveOffset(self, deltaX, deltaY):
-        self.offset[0] += deltaX
-        self.offset[1] += deltaY
+        self.positionX += deltaX
+        self.positionY += deltaY
 
     def centerOnObject(self, obj):
         objectPosition = obj.position
         screenSize = display.getScreenSize()
-        self.offset[0] = int(screenSize[0]/2 - objectPosition[0])
-        self.offset[1] = int(screenSize[1]/2 - objectPosition[1])
+        desired = [int(screenSize[0]/2 - objectPosition[0]), int(screenSize[1]/2 - objectPosition[1])]
+        if self._transitionTime < 1.0:
+            self.position = math.vectorLerp(self._startPosition, desired, self._transitionTime)
+        else:
+            self.position = desired
+
+    def tick(self, delta):
+        super(Camera, self).tick(delta)
+        if self._focus:
+            if self._transitionTime < 1.0:
+                self._transitionTime += delta
+            self.centerOnObject(self._focus)
+
+        else:
+            self.canTick = False
