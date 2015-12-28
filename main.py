@@ -30,7 +30,7 @@ def initScreen():
     return pygame.display.set_mode(SCREEN_SIZE, SCREEN_FLAGS)
 
 def init():
-    return [mod.init() for mod in [pygame, images, fonts, sounds, joysticks, display, clock]]
+    return [mod.init() for mod in [pygame, images, fonts, sounds, joysticks, display, clock, debug]]
 
 def main():
     init()
@@ -107,7 +107,6 @@ def main():
     events.bindKeyDownEvent(["t"], lambda e: display.setSmallestResolution())
     events.bindKeyDownEvent(["y"], lambda e: display.setLargestResolution())
     events.bindKeyDownEvent(["o"], lambda e: sounds.playSoundOnce("startup"))
-    events.bindTimer(debug.printEventContainerSizes, 250, -1)
     events.bindTimer(joysticks.updateJoysticks, 1000, -1)
 
     gs.loadMap("test1.json")

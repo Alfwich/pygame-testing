@@ -9,6 +9,10 @@ def debugSwitch(func):
     return func if DEBUG else doNothing
 
 @debugSwitch
+def init():
+    events.bindTimer(printEventContainerSizes, 250, -1)
+
+@debugSwitch
 def renderGameStateCollisionRects(screen, gameState, mainCamera):
     for obj in gameState.getCollisions(pygame.Rect(0,0,200000,200000), None):
         objRect = pygame.Rect(obj.rect)
