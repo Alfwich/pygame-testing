@@ -187,7 +187,7 @@ class GameObject(object):
 
     @property
     def visible(self):
-        return self._isVisible and not self._alpha == 0
+        return self._isVisible and not self.alpha == 0
 
     @visible.setter
     def visible(self, visibility):

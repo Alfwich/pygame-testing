@@ -14,8 +14,8 @@ RIGHT_MOUSE_BUTTON = 3
 def autoUnbindEvents(func):
     return None
 
-def printContainerSizes():
-    print(map(len, [[ item for sublist in _callbacks.values() for item in sublist], _createdEventHandlers, _frameEvents, _tickableObjects, _timers]))
+def getContainerSizeString():
+    return "callbacks=%d, createdEventHandlers=%d, frameEvents=%d, tickableObjects=%d, timers=%d" % tuple(map(len, [[ item for sublist in _callbacks.values() for item in sublist], _createdEventHandlers, _frameEvents, _tickableObjects, _timers]))
 
 def _processKeysArray(keys):
     keyOrds = []

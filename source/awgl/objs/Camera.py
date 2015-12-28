@@ -5,7 +5,8 @@ class Camera(GameObject.GameObject):
     def __init__(self):
         super(Camera, self).__init__()
         self._focus = None
-        self._transitionTime = 0.0
+        self._transitionTime = 1.0
+        self._transitionDuration = 1.0
         self._startPosition = [0, 0]
         self.canTick = False
 
@@ -32,9 +33,20 @@ class Camera(GameObject.GameObject):
     @focus.setter
     def focus(self, newFocus):
         self.canTick = True
+        self._focus = newFocus
         self._transitionTime = 0.0
         self._startPosition = self.position
-        self._focus = newFocus
+
+    def forceFinishAnimation(self):
+        self._transitionTime = 1.0
+
+    @property
+    def transitionDuration(self):
+        return self._transitionDuration
+
+    @transitionDuration.setter
+    def transitionDuration(self, newValue):
+        self._transitionDuration = newValue
 
     def moveOffset(self, deltaX, deltaY):
         self.positionX += deltaX
@@ -44,17 +56,16 @@ class Camera(GameObject.GameObject):
         objectPosition = obj.position
         screenSize = display.getScreenSize()
         desired = [int(screenSize[0]/2 - objectPosition[0]), int(screenSize[1]/2 - objectPosition[1])]
-        if self._transitionTime < 1.0:
-            self.position = math.vectorLerp(self._startPosition, desired, self._transitionTime)
+        if self._transitionTime < self._transitionDuration:
+            self.position = math.vectorLerp(self._startPosition, desired, self._transitionTime/self._transitionDuration)
         else:
             self.position = desired
 
     def tick(self, delta):
         super(Camera, self).tick(delta)
         if self._focus:
-            if self._transitionTime < 1.0:
+            if self._transitionTime < self._transitionDuration:
                 self._transitionTime += delta
             self.centerOnObject(self._focus)
-
         else:
             self.canTick = False

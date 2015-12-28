@@ -42,12 +42,13 @@ def main():
     worldRenderList.add(gs.world)
     particleRenderList = RenderList.RenderList("particle")
     mainCamera = Camera.Camera()
+    mainCamera.transitionDuration = 0.2
     hudCamera = Camera.Camera()
 
     infoText = TInfoText.TInfoText()
     hudRenderList.add(infoText)
 
-    screenFader = SOScreenFader.SOScreenFader(fadeSpeed=255)
+    screenFader = SOScreenFader.SOScreenFader(fadeSpeed=1024)
     screenFader.fadeOut()
     hudRenderList.add(screenFader)
 
@@ -57,14 +58,15 @@ def main():
     events.bindQuitEvent(lambda e: quitApplication())
     events.bindKeyDownEvent(["q"], lambda e: quitApplication())
 
-
     def updatePlayers(event=None):
-        numberOfPlayers = joysticks.updateJoysticks() or 10
-        numberOfPlayers = 10
+        numberOfPlayers = 200
         spawnLocations = shuffled(gs.world.getTiles("spawn"))
         gs["currentPlayerIndex"] = 0
         gs["players"] = [gs.createGameObject(AOPlayerCharacter.AOPlayerCharacter, player=i, location=spawnLocations.pop()[0]) for i in range(numberOfPlayers)]
-        mainCamera.focus = gs["players"][0]
+
+    def updateCameraFocus(event=None):
+        mainCamera.focus = gs["players"][gs["currentPlayerIndex"]]
+        mainCamera.forceFinishAnimation()
 
     def updatePowerups(event=None):
         [gs.createGameObject(SOPowerUp.SOPowerUp, location=tile[0]) for tile in gs.world.getTiles("powerups")]
@@ -77,14 +79,26 @@ def main():
                 updatePlayers()
                 updatePowerups()
                 screenFader.fadeOut()
-            events.bindTimer(loadLevelWrapper, 1500)
+                updateCameraFocus()
+            events.bindTimer(loadLevelWrapper, screenFader.estimatedFadeTime)
 
     def nextPlayer():
         gs["currentPlayerIndex"] = (gs["currentPlayerIndex"] + 1) % len(gs["players"])
         mainCamera.focus = gs["players"][gs["currentPlayerIndex"]]
 
-    events.bindKeyDownEvent(["e"], lambda e: nextPlayer())
-    events.bindJoystickButtonDownEvent(0, 5, lambda e: nextPlayer())
+    def prevPlayer():
+        players = gs["players"]
+        gs["currentPlayerIndex"] = len(players)-1 if gs["currentPlayerIndex"] == 0 else gs["currentPlayerIndex"]-1
+        mainCamera.focus = gs["players"][gs["currentPlayerIndex"]]
+
+    def printEventContainerSizes():
+        print("Event Information: %s" % events.getContainerSizeString())
+
+    events.bindKeyDownEvent(["e"], lambda e: prevPlayer())
+    events.bindJoystickButtonDownEvent(0, 5, lambda e: prevPlayer())
+
+    events.bindKeyDownEvent(["r"], lambda e: nextPlayer())
+    events.bindJoystickButtonDownEvent(0, 4, lambda e: nextPlayer())
 
     events.bindKeyDownEvent(["1"], lambda e, l: loadLevel(l), "default.json")
     events.bindKeyDownEvent(["2"], lambda e, l: loadLevel(l), "test1.json")
@@ -95,12 +109,14 @@ def main():
     events.bindKeyDownEvent(["t"], lambda e: display.setSmallestResolution())
     events.bindKeyDownEvent(["y"], lambda e: display.setLargestResolution())
     events.bindKeyDownEvent(["o"], lambda e: sounds.playSoundOnce("startup"))
-    events.bindTimer(events.printContainerSizes, 250, -1)
+    events.bindTimer(printEventContainerSizes, 250, -1)
+    events.bindTimer(joysticks.updateJoysticks, 1000, -1)
 
     gs.loadMap("test1.json")
     updatePlayers()
     updatePowerups()
     screenFader.fadeOut()
+    updateCameraFocus()
 
     while True:
         # Limit framerate to the desired FPS

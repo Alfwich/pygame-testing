@@ -23,6 +23,7 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
         self.collisionOffset = [0, 10]
         self.collisionSize = [20, 25]
         self.playerId = configuration.get("player", 0)
+        self.tint = colors.randomColor()#(255, 200, 200)
         self.bitmap = images.getImage("walking-guy")
         self.setAnimation(animations.getAnimation("walking-guy-walk-left"))
         self.showPlayerTag()

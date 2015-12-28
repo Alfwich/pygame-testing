@@ -24,6 +24,10 @@ class SOScreenFader(StaticObject.StaticObject):
         self.position = map(lambda c: c/2, display.getScreenSize())
         self.screenText.position = map(lambda c: c-10, self.position)
 
+    @property
+    def estimatedFadeTime(self):
+        return 1000 * (255 / float(self.fadeSpeed)) + 200
+
     def fadeOut(self):
         self.alpha = 255
         self.screenText.text = ""
