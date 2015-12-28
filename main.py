@@ -42,6 +42,7 @@ def main():
     worldRenderList.add(gs.world)
     particleRenderList = RenderList.RenderList("particle")
     mainCamera = Camera.Camera()
+    mainCamera.priority = 15
     mainCamera.transitionDuration = 0.2
     hudCamera = Camera.Camera()
 
@@ -59,7 +60,7 @@ def main():
     events.bindKeyDownEvent(["q"], lambda e: quitApplication())
 
     def updatePlayers(event=None):
-        numberOfPlayers = 200
+        numberOfPlayers = 10
         spawnLocations = shuffled(gs.world.getTiles("spawn"))
         gs["currentPlayerIndex"] = 0
         gs["players"] = [gs.createGameObject(AOPlayerCharacter.AOPlayerCharacter, player=i, location=spawnLocations.pop()[0]) for i in range(numberOfPlayers)]

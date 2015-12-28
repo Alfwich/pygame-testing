@@ -5,7 +5,7 @@ from pygame.locals import *
 _callbacks = {}
 _createdEventHandlers = set()
 _frameEvents = []
-_tickableObjects = []
+_tickableObjects = {}#[]
 _timers = []
 
 LEFT_MOUSE_BUTTON = 1
@@ -15,7 +15,7 @@ def autoUnbindEvents(func):
     return None
 
 def getContainerSizeString():
-    return "callbacks=%d, createdEventHandlers=%d, frameEvents=%d, tickableObjects=%d, timers=%d" % tuple(map(len, [[ item for sublist in _callbacks.values() for item in sublist], _createdEventHandlers, _frameEvents, _tickableObjects, _timers]))
+    return "callbacks=%d, createdEventHandlers=%d, frameEvents=%d, tickableObjects=%d, timers=%d" % tuple(map(len, [[ item for sublist in _callbacks.values() for item in sublist], _createdEventHandlers, _frameEvents, [item for sublist in _tickableObjects.values() for item in sublist], _timers]))
 
 def _processKeysArray(keys):
     keyOrds = []
@@ -73,8 +73,7 @@ def _handleTimers(delta):
             _timers = filter(lambda x: x, _timers)
 
 def handleEvents():
-    for e in _frameEvents:
-        e()
+    for e in _frameEvents: e()
 
     for e in pygame.event.get():
         #print e
@@ -83,16 +82,21 @@ def handleEvents():
                 callback(e)
 
 def tick(delta=0.0):
-    for obj in _tickableObjects:
-        obj.tick(delta)
+    for priority in sorted(_tickableObjects.keys()):
+        for obj in _tickableObjects[priority]:
+            obj.tick(delta)
 
     _handleTimers(delta)
 
-def registerTickableObject(obj):
-    _tickableObjects.append(obj)
+def registerTickableObject(obj, priority=10):
+    if priority not in _tickableObjects:
+        _tickableObjects[priority] = []
+    _tickableObjects[priority].append(obj)
 
 def deregisterTickableObject(obj):
-    _tickableObjects.remove(obj)
+    for priority in _tickableObjects:
+        if obj in _tickableObjects[priority]:
+            _tickableObjects[priority].remove(obj)
 
 def bindFrameEvent(callback):
     def frameEventWrapper():

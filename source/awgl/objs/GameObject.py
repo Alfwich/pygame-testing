@@ -21,6 +21,7 @@ class GameObject(object):
         self._isVisible = True
         self._isValid = True
         self._canTick = False
+        self._priority = 10
         self._canCollide = False
         self._boundEvents = []
         self._position = [0, 0]
@@ -232,9 +233,22 @@ class GameObject(object):
         if not newValue is self._canTick:
             self._canTick = newValue
             if newValue:
-                events.registerTickableObject(self)
+                events.registerTickableObject(self, self._priority)
             else:
                 events.deregisterTickableObject(self)
+
+    @property
+    def priority(self):
+        return self._priority
+
+    @priority.setter
+    def priority(self, newValue):
+        if not self._priority == newValue:
+            self._priority = newValue
+            if self.canTick:
+                events.deregisterTickableObject(self)
+                events.registerTickableObject(self, self._priority)
+
 
     def render(self, screen, camera=None, offset=None):
         if self.visible:
