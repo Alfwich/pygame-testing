@@ -38,8 +38,13 @@ def enableOpenGL():
 def disableOpenGL():
     global _openGlEnabled
     if _openGlEnabled:
+        wasFullscreen = display.isFullscreen()
+        if wasFullscreen:
+            display.disableFullscreen()
         _openGlEnabled = False
         display.updateScreen()
+        if wasFullscreen:
+            display.enableFullscreen()
 
 def clear():
     if _openGlEnabled:

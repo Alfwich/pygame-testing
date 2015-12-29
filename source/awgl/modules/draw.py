@@ -28,13 +28,12 @@ def _boxSoftware(surface, topLeft, bottomRight, color, width):
     if width > 0:
         boxWidth = bottomRight[0]-topLeft[0]
         boxHeight = bottomRight[1]-topLeft[1]
+
         # Draws the box in Top, Right, Bottom, Left order
         pygame.gfxdraw.box(surface, (topLeft[0], topLeft[1], boxWidth, width), color)
         pygame.gfxdraw.box(surface, (bottomRight[0], topLeft[1], width, boxHeight), color)
         pygame.gfxdraw.box(surface, (topLeft[0], bottomRight[1], boxWidth, width), color)
         pygame.gfxdraw.box(surface, (topLeft[0], topLeft[1], width, boxHeight), color)
-
-        #pygame.draw.rect(surface, color, _rectFromTopLeftBottomRight(topLeft, bottomRight), width)
     else:
         surface.fill(color, _rectFromTopLeftBottomRight(topLeft, bottomRight))
 

@@ -94,7 +94,22 @@ def getFPS():
 def getDesiredFPS():
     return _fps
 
+def isFullscreen():
+    return _fullscreen
+
 def toggleFullscreen():
     global _fullscreen
     _fullscreen = not _fullscreen
     updateScreen()
+
+def disableFullscreen():
+    global _fullscreen
+    if _fullscreen:
+        _fullscreen = False
+        updateScreen()
+
+def enableFullscreen():
+    global _fullscreen
+    if not _fullscreen:
+        _fullscreen = True
+        updateScreen()
