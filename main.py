@@ -116,6 +116,7 @@ def main():
     events.bindKeyDownEvent(["y"], lambda e: display.setLargestResolution())
     events.bindKeyDownEvent(["o"], lambda e: sounds.playSoundOnce("startup"))
     events.bindKeyDownEvent(["="], lambda e: renderer.disableOpenGL())
+    events.bindKeyDownEvent(["-"], lambda e: renderer.enableOpenGL())
     events.bindTimer(joysticks.updateJoysticks, 1000, -1)
     #events.bindTimer(debug.printDisplayInfo, 500, -1)
 

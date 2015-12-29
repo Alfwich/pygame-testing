@@ -228,21 +228,3 @@ class TileMap(GameObject.GameObject):
         for layer, tileLayer in self.mapLayers.iteritems():
             if tileLayer.bitmap:
                 renderer.renderObjectToScreen(tileLayer, objectPosition)
-                """
-                if not opengl.openGLIsEnabled():
-                    renderRect = pygame.Rect(-objectPosition[0], -objectPosition[1], display.getScreenWidth(), display.getScreenHeight())
-                    screen.blit(tileLayer.bitmap, (0, 0), renderRect)
-                else:
-                    opengl.renderObjectToScreen(tileLayer, objectPosition)
-                """
-            """
-            if isinstance(cachedLayer, pygame.Surface):
-                renderRect = pygame.Rect(-objectPosition[0], -objectPosition[1], display.getScreenWidth(), display.getScreenHeight())
-                screen.blit(cachedLayer, (0, 0), renderRect)
-            elif isinstance(cachedLayer, list):
-                for tile in cachedLayer:
-                    tilePosition = [tile[1][0] + objectPosition[0], tile[1][1] + objectPosition[1]]
-                    screen.blit(self._getTileBitmap(tile[0]), tilePosition, self._getTileRect(tile[0]))
-            """
-            #else:
-                #self._drawLayerToSurface(tileLayer, screen, offset)

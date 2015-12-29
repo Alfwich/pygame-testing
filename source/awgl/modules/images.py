@@ -2,8 +2,12 @@ import pygame
 
 import events, renderer
 
-from OpenGL.GL import *
-from OpenGL.GLU import *
+
+try:
+    from OpenGL.GL import *
+    from OpenGL.GLU import *
+except:
+    pass
 
 IMAGE_LOAD_TEMPLATE = "data/image/%s"
 _cachedImages = {}

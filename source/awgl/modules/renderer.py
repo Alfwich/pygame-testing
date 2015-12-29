@@ -1,8 +1,9 @@
-import pygame, os
-import display, colors
+import pygame, os, sys
+import display, colors, images as awglImages
 
-_openGLLoadFailure = True
+_openGLLoadFailure = False
 _openGlEnabled = True
+
 try:
     from OpenGL.GL import *
     from OpenGL.GLU import *
@@ -12,39 +13,60 @@ except:
     _openGlEnabled = False
 
 def init(size):
+    global _openGlEnabled, _openGLLoadFailure
     if _openGlEnabled:
-        glClearColor(0.0, 0.0, 0.0, 1.0)
-        glClear(GL_COLOR_BUFFER_BIT)
+        try:
+            glClearColor(0.0, 0.0, 0.0, 1.0)
+            glClear(GL_COLOR_BUFFER_BIT)
 
-        glMatrixMode(GL_PROJECTION)
-        glLoadIdentity();
-        gluOrtho2D(0, size[0], size[1], 0)
-        glMatrixMode(GL_MODELVIEW)
+            glMatrixMode(GL_PROJECTION)
+            glLoadIdentity();
+            gluOrtho2D(0, size[0], size[1], 0)
+            glMatrixMode(GL_MODELVIEW)
 
-        glEnable(GL_TEXTURE_2D)
-        glEnable(GL_BLEND)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+            glEnable(GL_TEXTURE_2D)
+            glEnable(GL_BLEND)
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        except:
+            print("Could not enable OpenGL. Reverting back to software mode.(%s)" % sys.exc_info()[0])
+            _openGlEnabled = False
+            _openGLLoadFailure = True
+            display.updateScreen()
 
 def openGLIsEnabled():
     return _openGlEnabled
 
+def getRendererMode():
+    return "opengl" if _openGlEnabled else "software"
+
 def enableOpenGL():
-    global _openGlEnabled
-    if not _openGLLoadFailure and not _openGlEnabled:
-        _openGlEnabled = True
-        images.clearOpenGLImageCache()
+    global _openGlEnabled, _openGLLoadFailure
+    try:
+        if not _openGLLoadFailure and not _openGlEnabled:
+            if display.isFullscreen():
+                display.disableFullscreen()
+                _openGlEnabled = True
+                display.enableFullscreen()
+            else:
+                _openGlEnabled = True
+                display.updateScreen()
+            awglImages.clearOpenGLImageCache()
+    except:
+        print("Could not enable OpenGL. Reverting back to software mode.(%s)" % sys.exc_info()[0])
+        _openGlEnabled = False
+        _openGLLoadFailure = True
         display.updateScreen()
 
 def disableOpenGL():
     global _openGlEnabled
     if _openGlEnabled:
-        wasFullscreen = display.isFullscreen()
-        if wasFullscreen:
+        if display.isFullscreen():
             display.disableFullscreen()
-        _openGlEnabled = False
-        display.updateScreen()
-        if wasFullscreen:
+            _openGlEnabled = False
             display.enableFullscreen()
+        else:
+            _openGlEnabled = False
+            display.updateScreen()
 
 def clear():
     if _openGlEnabled:

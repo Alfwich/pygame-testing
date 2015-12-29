@@ -1,5 +1,5 @@
 import pygame, random
-from ..awgl.modules import clock, display, colors, fonts
+from ..awgl.modules import clock, display, colors, fonts, renderer
 from ..awgl.objs import Text, GameObject
 
 fonts.addToGlobalLoadList([
@@ -16,7 +16,7 @@ class TInfoText(Text.Text):
         self.canTick = True
 
     def _generateText(self):
-        return "res: %s, fps: %.2f" % (display.getScreenSize(), clock.getFPS())
+        return "res: %s, fps: %.2f(%s)" % (display.getScreenSize(), clock.getFPS(), renderer.getRendererMode())
 
     def tick(self, delta):
         self._displayTime += delta
