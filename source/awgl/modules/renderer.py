@@ -14,7 +14,7 @@ except:
 def init(size):
     if _openGlEnabled:
         glClearColor(0.0, 0.0, 0.0, 1.0)
-        glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
+        glClear(GL_COLOR_BUFFER_BIT)
 
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity();
@@ -58,7 +58,6 @@ def _renderOpenGL(obj, pos):
         bitmapSize = map( float, obj.bitmap.get_size())
         normalizedTexturePos = (texturePos.x/bitmapSize[0], 1-texturePos.y/bitmapSize[1], texturePos.w/bitmapSize[0], texturePos.h/bitmapSize[1])
         glBindTexture(GL_TEXTURE_2D, texture)
-        glBegin(GL_QUADS)
         drawPoints = [
             (pos[0], pos[1]),
             (pos[0]+size[0], pos[1]),
@@ -73,10 +72,11 @@ def _renderOpenGL(obj, pos):
             (normalizedTexturePos[0], normalizedTexturePos[1]-normalizedTexturePos[3])
         ]
 
+        glBegin(GL_QUADS)
+        glColor3f(1.0, 1.0, 1.0)
         for tx, cr in zip(texPoints, drawPoints):
-            glTexCoord2f(*tx); glVertex2f(*cr)
+            glTexCoord2f(*tx); glVertex3f(cr[0], cr[1], 0.0)
         glEnd()
-        glFlush()
         return True
     return False
 

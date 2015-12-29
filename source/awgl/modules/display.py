@@ -6,7 +6,6 @@ _screenModes = None
 _fps = 1000
 _title = "PyGame Testing"
 _fullscreen = False
-_openGlEnabled = True
 _screenSize = (1280, 800)
 _currentScreenSize = 8
 _screenFlags = pygame.DOUBLEBUF | pygame.HWSURFACE | pygame.NOFRAME
@@ -33,7 +32,6 @@ def toggleOpengl():
         renderer.enableOpenGL()
     else:
         renderer.disableOpenGL()
-
 
 def getScreen():
     return _screen

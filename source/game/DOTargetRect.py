@@ -1,5 +1,5 @@
-import pygame, pygame.gfxdraw, random, math
-from ..awgl.modules import colors
+import pygame, pygame.gfxdraw, random
+from ..awgl.modules import colors, draw, math
 from ..awgl.objs import *
 
 def drawBox(obj, screen, offset):
@@ -8,12 +8,13 @@ def drawBox(obj, screen, offset):
         boxPosition[0] += offset[0]
         boxPosition[1] += offset[1]
 
-    pygame.gfxdraw.rectangle(screen, pygame.Rect(boxPosition[0], boxPosition[1], obj.width, obj.height), obj.color)
+    draw.box(screen, boxPosition, (boxPosition[0]+obj.width, boxPosition[1]+obj.height), obj.color, 2)
 
 class DOTargetRect(DrawableObject.DrawableObject):
     def __init__(self, **configuration):
         super(DOTargetRect, self).__init__()
-        self._color = colors.RED
+        self._color = pygame.Color(255, 0, 0, 255)
+        self._colorAlpha = 255.0
         self._target = None
         self.size = configuration.get("size", (100, 100))
         self.drawFunction = drawBox
@@ -40,12 +41,14 @@ class DOTargetRect(DrawableObject.DrawableObject):
         self.size = newTarget.size
         self.alignment = newTarget.alignment
         self._color.a = 255
-        self.canTick = True
+        self._colorAlpha = 255.0
+        self.canTick = self.visible = True
 
     def tick(self, delta):
         super(DOTargetRect, self).tick(delta)
-        if self._target and self._color.a > 0:
+        if self._target and self._colorAlpha > 0.0:
             self.position = self._target.position
-            self._color.a -= 1
+            self._colorAlpha -= 128.0 * delta
+            self._color.a = math.clamp(0, 255, int(self._colorAlpha))
         else:
-            self.canTick = False
+            self.visible = self.canTick = False

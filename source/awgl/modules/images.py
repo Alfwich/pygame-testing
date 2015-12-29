@@ -1,6 +1,6 @@
 import pygame
 
-import events
+import events, renderer
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -55,7 +55,8 @@ def loadOpenGLTexture(image):
     return _cachedOpenGLTextures[id(image)]
 
 def unloadOpenGLTexture(textureId):
-    glDeleteTextures(textureId)
+    if renderer.openGLIsEnabled():
+        glDeleteTextures(textureId)
 
 def getImage(name):
     if name in _cachedImages:

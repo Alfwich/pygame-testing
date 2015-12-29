@@ -7,3 +7,6 @@ def vectorLerp(a, b, pos):
         result.append(ele * (1-pos) + b[idx] * (pos))
 
     return result
+
+def clamp(minValue, maxValue, value):
+    return sorted([minValue, value, maxValue])[1]

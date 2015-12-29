@@ -11,6 +11,7 @@ __all__ = [
     "display",
     "clock",
     "renderer",
+    "draw",
     "math",
     "debug"
 ]

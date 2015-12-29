@@ -1,5 +1,5 @@
 import pygame
-import colors, events
+import colors, events, draw
 
 DEBUG = True
 def doNothing(*args, **kwargs):
@@ -17,7 +17,7 @@ def renderGameStateCollisionRects(screen, gameState, mainCamera):
     for obj in gameState.getCollisions(pygame.Rect(0,0,200000,200000), None):
         objRect = pygame.Rect(obj.rect)
         mainCamera.transformRectWorldPosition(objRect)
-        pygame.draw.lines(screen, colors.DEBUG, True, [objRect.topleft, objRect.topright, objRect.bottomright, objRect.bottomleft], 2)
+        draw.box(screen, objRect.topleft, objRect.bottomright, colors.DEBUG, 1)
 
 @debugSwitch
 def printEventContainerSizes():

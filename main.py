@@ -30,6 +30,7 @@ def initScreen():
     return pygame.display.set_mode(SCREEN_SIZE, SCREEN_FLAGS)
 
 def init():
+    renderer._openGlEnabled = True
     return [mod.init() for mod in [pygame, display, images, fonts, sounds, joysticks, clock, debug]]
 
 def main():
@@ -114,13 +115,15 @@ def main():
     events.bindKeyDownEvent(["t"], lambda e: display.setSmallestResolution())
     events.bindKeyDownEvent(["y"], lambda e: display.setLargestResolution())
     events.bindKeyDownEvent(["o"], lambda e: sounds.playSoundOnce("startup"))
+    events.bindKeyDownEvent(["="], lambda e: renderer.disableOpenGL())
     events.bindTimer(joysticks.updateJoysticks, 1000, -1)
     #events.bindTimer(debug.printDisplayInfo, 500, -1)
 
-    gs.loadMap("default.json")
+    gs.loadMap("test1.json")
     levelPostLoad()
 
     while True:
+
         # Limit framerate to the desired FPS
         delta = clock.tick()
 
