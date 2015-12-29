@@ -30,7 +30,7 @@ def initScreen():
     return pygame.display.set_mode(SCREEN_SIZE, SCREEN_FLAGS)
 
 def init():
-    return [mod.init() for mod in [pygame, images, fonts, sounds, joysticks, display, clock, debug]]
+    return [mod.init() for mod in [pygame, display, images, fonts, sounds, joysticks, clock, debug]]
 
 def main():
     init()
@@ -64,7 +64,7 @@ def main():
     events.bindKeyDownEvent(["q"], lambda e: quitApplication())
 
     def updatePlayers(event=None):
-        numberOfPlayers = 1
+        numberOfPlayers = 10
         spawnLocations = shuffled(gs.world.getTiles("spawn"))
         gs["currentPlayerIndex"] = 0
         gs["players"] = [gs.createGameObject(AOPlayerCharacter.AOPlayerCharacter, player=i, location=spawnLocations.pop()[0]) for i in range(numberOfPlayers)]
@@ -115,8 +115,9 @@ def main():
     events.bindKeyDownEvent(["y"], lambda e: display.setLargestResolution())
     events.bindKeyDownEvent(["o"], lambda e: sounds.playSoundOnce("startup"))
     events.bindTimer(joysticks.updateJoysticks, 1000, -1)
+    #events.bindTimer(debug.printDisplayInfo, 500, -1)
 
-    gs.loadMap("test1.json")
+    gs.loadMap("default.json")
     levelPostLoad()
 
     while True:
@@ -127,17 +128,16 @@ def main():
         events.handleEvents()
         events.tick(delta)
 
-
         # Draw screen
         screen = display.getScreen()
-        screen.fill(colors.BLACK)
+        renderer.clear()
         worldRenderList.render(screen, mainCamera)
         mainRenderList.render(screen, mainCamera)
         overRenderList.render(screen, mainCamera)
         particleRenderList.render(screen, mainCamera)
-        debug.renderGameStateCollisionRects(screen, gs, mainCamera)
+        #debug.renderGameStateCollisionRects(screen, gs, mainCamera)
         hudRenderList.render(screen, hudCamera)
-        pygame.display.update()
+        renderer.update()
 
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "profile":

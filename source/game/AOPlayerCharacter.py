@@ -24,6 +24,7 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
         self.collisionSize = [20, 25]
         self.playerId = configuration.get("player", 0)
         self.bitmap = images.getImage("walking-guy")
+        #self.bitmap = images.getImage("test-image")
         self.setAnimation(animations.getAnimation("walking-guy-walk-left"))
         self.showPlayerTag()
         self.alignmentY = GameObject.alignment.BOTTOM

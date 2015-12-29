@@ -22,3 +22,7 @@ def renderGameStateCollisionRects(screen, gameState, mainCamera):
 @debugSwitch
 def printEventContainerSizes():
     print("Event Information: %s" % events.getContainerSizeString())
+
+@debugSwitch
+def printDisplayInfo():
+    print pygame.display.Info()

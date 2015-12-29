@@ -1,17 +1,15 @@
 import pygame
+import renderer
 
 _screen = None
 _screenModes = None
 _fps = 1000
 _title = "PyGame Testing"
 _fullscreen = False
+_openGlEnabled = True
 _screenSize = (1280, 800)
 _currentScreenSize = 8
 _screenFlags = pygame.DOUBLEBUF | pygame.HWSURFACE | pygame.NOFRAME
-
-def _updateScreen():
-    global _screen
-    _screen = pygame.display.set_mode(_screenSize, _screenFlags | (pygame.FULLSCREEN if _fullscreen else 0))
 
 def _updateTitle():
     pygame.display.set_caption(_title)
@@ -22,8 +20,20 @@ def init():
     pygame.mouse.set_visible(False)
     _screenModes = pygame.display.list_modes()[::-1]
     _screenSize = _screenSize if _screenSize in _screenModes else _screenModes[-1]
-    _updateScreen()
+    updateScreen()
     _updateTitle()
+
+def updateScreen():
+    global _screen
+    _screen = pygame.display.set_mode(_screenSize, _screenFlags | (pygame.FULLSCREEN if _fullscreen else 0) | (pygame.OPENGL if renderer.openGLIsEnabled() else 0))
+    renderer.init(_screenSize)
+
+def toggleOpengl():
+    if renderer.openGLIsEnabled():
+        renderer.enableOpenGL()
+    else:
+        renderer.disableOpenGL()
+
 
 def getScreen():
     return _screen
@@ -60,7 +70,7 @@ def setSmallestResolution():
 def setScreenSize(screenMode):
     global _screenSize
     _screenSize = screenMode
-    _updateScreen()
+    updateScreen()
 
 def getScreenSize():
     return _screenSize
@@ -89,4 +99,4 @@ def getDesiredFPS():
 def toggleFullscreen():
     global _fullscreen
     _fullscreen = not _fullscreen
-    _updateScreen()
+    updateScreen()

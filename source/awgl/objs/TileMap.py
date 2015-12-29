@@ -1,17 +1,18 @@
 import pygame, json, zlib, base64, sys
-from ..modules import images, display, colors
-import StaticObject, TileSet, QuadTree
+from ..modules import images, display, colors, renderer
+import GameObject, StaticObject, TileSet, QuadTree
 
 DEFAULT_MAP_TEMPLATE = "data/map/%s"
 
-class TileMap(StaticObject.StaticObject):
+class TileMap(GameObject.GameObject):
     class Tile():
         def __init__(self, rect, value):
             self.rect = rect
             self.value = value
 
-    class MapLayer():
+    class MapLayer(StaticObject.StaticObject):
         def __init__(self, rawLayerData):
+            super(TileMap.MapLayer, self).__init__()
             self.map = []
             self.layerData = rawLayerData
             self.cachedLayer = None
@@ -67,8 +68,6 @@ class TileMap(StaticObject.StaticObject):
         self.tileSets = []
         self.cachedLayerRenderObject = {}
         self.globalScale = globalScale
-        self.canTick = False
-        #self.loadMap(mapFile)
 
     def _clearTileMap(self):
         self.mapLayers = {}
@@ -90,37 +89,15 @@ class TileMap(StaticObject.StaticObject):
 
     def _shouldSurfaceCache(self, layerId):
         return True
-        """ Needs more thought
-        tileLayer = self.mapLayers[layerId].map
-        if self._mapFilledPercentage(tileLayer) > 0.25:
-            return True
-        return False
-        """
 
     def _setupCachedLayer(self, layerId):
-        if self._shouldSurfaceCache(layerId):
-            self._setupCachedSurface(layerId)
-        else:
-            self._setupCachedList(layerId)
+        self._setupCachedSurface(layerId)
 
     def _setupCachedSurface(self, layerId):
-        tileLayer = self.mapLayers[layerId].map
-        cachedSurface = self._createCachedSurface(tileLayer)
+        tileLayer = self.mapLayers[layerId]
+        cachedSurface = self._createCachedSurface(tileLayer.map)
         self._drawLayerToSurface(tileLayer, cachedSurface)
-        self.cachedLayerRenderObject[layerId] = cachedSurface
-
-    def _setupCachedList(self, layerId):
-        tileLayer = self.mapLayers[layerId].map
-        cacheList = []
-
-        for rowIdx, row in enumerate(tileLayer):
-            tileYPosition = rowIdx * self.tileSets[0].tileHeight
-            for colIdx, tile in enumerate(row):
-                tileXPosition = colIdx * self.tileSets[0].tileWidth
-                if not tile == 0:
-                    cacheList.append((tile, (tileXPosition, tileYPosition)))
-
-        self.cachedLayerRenderObject[layerId] = cacheList
+        tileLayer.bitmap = cachedSurface
 
     def _drawLayerToSurface(self, tileLayer, surface, offset=None):
         if offset is None:
@@ -249,14 +226,23 @@ class TileMap(StaticObject.StaticObject):
         objectPosition[1] = int(objectPosition[1])
 
         for layer, tileLayer in self.mapLayers.iteritems():
-            if layer in self.cachedLayerRenderObject:
-                cachedLayer = self.cachedLayerRenderObject[layer]
-                if isinstance(cachedLayer, pygame.Surface):
+            if tileLayer.bitmap:
+                renderer.renderObjectToScreen(tileLayer, objectPosition)
+                """
+                if not opengl.openGLIsEnabled():
                     renderRect = pygame.Rect(-objectPosition[0], -objectPosition[1], display.getScreenWidth(), display.getScreenHeight())
-                    screen.blit(cachedLayer, (0, 0), renderRect)
-                elif isinstance(cachedLayer, list):
-                    for tile in cachedLayer:
-                        tilePosition = [tile[1][0] + objectPosition[0], tile[1][1] + objectPosition[1]]
-                        screen.blit(self._getTileBitmap(tile[0]), tilePosition, self._getTileRect(tile[0]))
+                    screen.blit(tileLayer.bitmap, (0, 0), renderRect)
+                else:
+                    opengl.renderObjectToScreen(tileLayer, objectPosition)
+                """
+            """
+            if isinstance(cachedLayer, pygame.Surface):
+                renderRect = pygame.Rect(-objectPosition[0], -objectPosition[1], display.getScreenWidth(), display.getScreenHeight())
+                screen.blit(cachedLayer, (0, 0), renderRect)
+            elif isinstance(cachedLayer, list):
+                for tile in cachedLayer:
+                    tilePosition = [tile[1][0] + objectPosition[0], tile[1][1] + objectPosition[1]]
+                    screen.blit(self._getTileBitmap(tile[0]), tilePosition, self._getTileRect(tile[0]))
+            """
             #else:
                 #self._drawLayerToSurface(tileLayer, screen, offset)

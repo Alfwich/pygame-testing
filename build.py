@@ -20,7 +20,7 @@ bdist_msi_options = {
 
 buildOptions = {
     "include_files" : ['data/'],
-    "packages" : ["source"]
+    "packages" : ["source", "OpenGL.GL", "OpenGL"]
 }
 execs = [Executable("main.py", base = None if DEBUG else "Win32GUI", shortcutName = product_name, shortcutDir = "DesktopFolder")]
 

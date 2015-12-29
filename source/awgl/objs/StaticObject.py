@@ -1,5 +1,5 @@
 import pygame
-from ..modules import events, colors
+from ..modules import events, colors, renderer, images
 import GameObject
 
 class StaticObject(GameObject.GameObject):
@@ -7,6 +7,7 @@ class StaticObject(GameObject.GameObject):
     def __init__(self):
         super(StaticObject, self).__init__()
         self._cachedBitmap = None
+        self._texture = None
         self._bitmap = None
         self._renderRect = None
         self._rotation = 0.0
@@ -17,14 +18,22 @@ class StaticObject(GameObject.GameObject):
         self._renderRect = self._bitmap.get_rect()
 
     def _updateBitmap(self):
-        if not self._cachedBitmap is None and self.visible:
-            self._bitmap = self._cachedBitmap.copy()
-            if not self._tint is colors.DEFAULT_TINT:
-                self._bitmap.fill(self._tint, None, pygame.BLEND_RGBA_MULT)
-            if not self._scale[0] == 1 or not self._scale[1] == 1:
-                self._bitmap = pygame.transform.scale(self._bitmap, (self.bitmap.get_width()*self._scale[0], self.bitmap.get_height()*self._scale[1]))
-            if not self._rotation == 0.0:
-                self._bitmap = pygame.transform.rotate(self._bitmap, self._rotation)
+        if self._bitmap:
+            if not self._cachedBitmap is None and self.visible:
+                self._bitmap = self._cachedBitmap.copy()
+                if not self._tint is colors.DEFAULT_TINT:
+                    self._bitmap.fill(self._tint, None, pygame.BLEND_RGBA_MULT)
+                if not self._scale[0] == 1 or not self._scale[1] == 1:
+                    self._bitmap = pygame.transform.scale(self._bitmap, (self.bitmap.get_width()*self._scale[0], self.bitmap.get_height()*self._scale[1]))
+                if not self._rotation == 0.0:
+                    self._bitmap = pygame.transform.rotate(self._bitmap, self._rotation)
+            images.unloadOpenGLImage(self._bitmap)
+
+
+    @property
+    def glTexture(self):
+        openGlTextureId = images.loadOpenGLTexture(self._bitmap)
+        return openGlTextureId
 
     @property
     def tint(self):
@@ -96,4 +105,4 @@ class StaticObject(GameObject.GameObject):
             objectPosition[0] += offset[0]
             objectPosition[1] += offset[1]
 
-        screen.blit(self.bitmap, objectPosition, self.renderRect)
+        renderer.renderObjectToScreen(self, objectPosition)
