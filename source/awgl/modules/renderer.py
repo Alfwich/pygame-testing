@@ -3,6 +3,7 @@ import display, colors, images as awglImages, events
 
 _openGLLoadFailure = False
 _openGlEnabled = True
+_skipRenderFrames = 0
 
 try:
     from OpenGL.GL import *
@@ -40,7 +41,7 @@ def getRendererMode():
     return "opengl" if _openGlEnabled else "software"
 
 def enableOpenGL():
-    global _openGlEnabled, _openGLLoadFailure
+    global _openGlEnabled, _openGLLoadFailure, _skipRenderFrames
     try:
         if not _openGLLoadFailure and not _openGlEnabled:
             if display.isFullscreen():
@@ -52,6 +53,7 @@ def enableOpenGL():
                 display.updateScreen()
             awglImages.clearOpenGLImageCache()
             events.postVideoEvent()
+            _skipRenderFrames = 2
     except:
         print("Could not enable OpenGL. Reverting back to software mode.(%s)" % sys.exc_info()[0])
         _openGlEnabled = False
@@ -59,7 +61,7 @@ def enableOpenGL():
         display.updateScreen()
 
 def disableOpenGL():
-    global _openGlEnabled
+    global _openGlEnabled, _skipRenderFrames
     if _openGlEnabled:
         if display.isFullscreen():
             display.disableFullscreen()
@@ -68,8 +70,13 @@ def disableOpenGL():
         else:
             _openGlEnabled = False
             display.updateScreen()
+        events.postVideoEvent()
+        _skipRenderFrames = 2
 
 def clear():
+    global _skipRenderFrames
+    if _skipRenderFrames > 0:
+        _skipRenderFrames -= 1
     if _openGlEnabled:
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
     else:
@@ -117,4 +124,5 @@ def _renderSoftware(obj, pos):
     return False
 
 def renderObjectToScreen(obj, pos):
-    return _renderOpenGL(obj, pos) if _openGlEnabled else _renderSoftware(obj, pos)
+    if _skipRenderFrames == 0:
+        return _renderOpenGL(obj, pos) if _openGlEnabled else _renderSoftware(obj, pos)

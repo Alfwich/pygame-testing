@@ -65,7 +65,7 @@ def main():
     events.bindKeyDownEvent(["q"], lambda e: quitApplication())
 
     def updatePlayers(event=None):
-        numberOfPlayers = 10
+        numberOfPlayers = 1000
         spawnLocations = shuffled(gs.world.getTiles("spawn"))
         gs["currentPlayerIndex"] = 0
         gs["players"] = [gs.createGameObject(AOPlayerCharacter.AOPlayerCharacter, player=i, location=spawnLocations.pop()[0]) for i in range(numberOfPlayers)]
@@ -112,6 +112,7 @@ def main():
     events.bindKeyDownEvent(["1"], lambda e, l: loadLevel(l), "default.json")
     events.bindKeyDownEvent(["2"], lambda e, l: loadLevel(l), "test1.json")
     events.bindKeyDownEvent(["3"], lambda e, l: loadLevel(l), "test2.json")
+    events.bindKeyDownEvent(["4"], lambda e, l: loadLevel(l), "test3.json")
     events.bindKeyDownEvent(["f"], lambda e: display.toggleFullscreen())
     events.bindKeyDownEvent(["g"], lambda e: display.decreaseScreenMode())
     events.bindKeyDownEvent(["h"], lambda e: display.increaseScreenMode())
@@ -123,7 +124,7 @@ def main():
     events.bindTimer(joysticks.updateJoysticks, 1000, -1)
     #events.bindTimer(debug.printDisplayInfo, 500, -1)
 
-    gs.loadMap("test1.json")
+    gs.loadMap("test3.json")
     levelPostLoad()
 
     while True:

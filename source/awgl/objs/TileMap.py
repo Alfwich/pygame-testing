@@ -78,10 +78,7 @@ class TileMap(GameObject.GameObject):
     def _createCachedSurface(self, tileLayer):
         newSurface = pygame.Surface((len(tileLayer[0])*self.tileSets[0].tileWidth, len(tileLayer)*self.tileSets[0].tileHeight), pygame.SRCALPHA, 32)
         return newSurface.convert_alpha()
-        """
-        self.cachedMapSurfaces[layerId].set_colorkey((255,0,255))
-        self.cachedMapSurfaces[layerId].fill(colors.TRANSPARENT)
-        """
+
     def _mapFilledPercentage(self, layer):
         filled = sum([sum(map(lambda y: 0 if y == 0 else 1,x)) for x in layer])
         size = sum([sum([1 for y in x ]) for x in layer])
