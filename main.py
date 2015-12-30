@@ -86,13 +86,16 @@ def main():
             events.bindTimer(loadLevelWrapper, screenFader.estimatedFadeTime)
 
     def nextPlayer():
-        gs["currentPlayerIndex"] = (gs["currentPlayerIndex"] + 1) % len(gs["players"])
-        mainCamera.target = objectTargeter.target = gs["players"][gs["currentPlayerIndex"]]
+        players = gs["players"]
+        if len(players) > 1:
+            gs["currentPlayerIndex"] = (gs["currentPlayerIndex"] + 1) % len(players)
+            mainCamera.target = objectTargeter.target = players[gs["currentPlayerIndex"]]
 
     def prevPlayer():
         players = gs["players"]
-        gs["currentPlayerIndex"] = len(players)-1 if gs["currentPlayerIndex"] == 0 else gs["currentPlayerIndex"]-1
-        mainCamera.target = objectTargeter.target = gs["players"][gs["currentPlayerIndex"]]
+        if len(players) > 1:
+            gs["currentPlayerIndex"] = len(players)-1 if gs["currentPlayerIndex"] == 0 else gs["currentPlayerIndex"]-1
+            mainCamera.target = objectTargeter.target = players[gs["currentPlayerIndex"]]
 
     def levelPostLoad():
         updatePlayers()
