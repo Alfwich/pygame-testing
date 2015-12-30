@@ -13,7 +13,7 @@ class DOScreenFader(DrawableObject.DrawableObject):
         self._alpha = 255
         self.fadeSpeed = configuration.get("fadeSpeed", 30)
         self.screenText = Text.Text()
-        self.screenText.alignment = GameObject.alignment.RIGHT_BOTTOM
+        self.screenText.alignment = GameObject.alignment.BOTTOM_RIGHT
         self.addChild(self.screenText)
         self._updateScreenBitmap()
         self.addEvents(events.bindVideoChangeEvent(self._updateScreenBitmap))

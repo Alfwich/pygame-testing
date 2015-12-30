@@ -1,19 +1,19 @@
 import pygame
-from ..modules import events
+from ..modules import events, renderer
 
 class alignment:
     TOP = LEFT = 0
     CENTER = 1
     BOTTOM = RIGHT = 2
-    LEFT_TOP = (LEFT, TOP)
-    CENTER_TOP = (CENTER, TOP)
-    RIGHT_TOP = (RIGHT, TOP)
-    LEFT_CENTER = (LEFT, CENTER)
+    TOP_LEFT = (LEFT, TOP)
+    TOP_CENTER = (CENTER, TOP)
+    TOP_RIGHT = (RIGHT, TOP)
+    CENTER_LEFT = (LEFT, CENTER)
     MIDDLE = CENTER_CENTER = (CENTER, CENTER)
-    RIGHT_CENTER = (RIGHT, CENTER)
-    LEFT_BOTTOM = (LEFT, BOTTOM)
-    CENTER_BOTTOM = (CENTER, BOTTOM)
-    RIGHT_BOTTOM = (RIGHT, BOTTOM)
+    CENTER_RIGHT = (RIGHT, CENTER)
+    BOTTOM_LEFT = (LEFT, BOTTOM)
+    BOTTOM_CENTER= (CENTER, BOTTOM)
+    BOTTOM_RIGHT = (RIGHT, BOTTOM)
 
 
 class GameObject(object):
@@ -116,7 +116,7 @@ class GameObject(object):
 
     @property
     def position(self):
-        return [int(self._position[0]), int(self._position[1])]
+        return [int(self._position[0]), int(self._position[1])] 
 
     @property
     def rawPosition(self):

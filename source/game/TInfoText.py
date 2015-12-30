@@ -12,7 +12,7 @@ class TInfoText(Text.Text):
         self._displayTime = 0.0
         self.font = fonts.getFont("console")
         self.backgroundColor = colors.BLACK
-        self.alignment = GameObject.alignment.LEFT_TOP
+        self.alignment = GameObject.alignment.TOP_LEFT
         self.canTick = True
 
     def _generateText(self):
