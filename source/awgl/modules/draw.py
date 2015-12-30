@@ -25,9 +25,9 @@ def line(surface, start, end, color=colors.WHITE, width=1):
     _lineOpenGL(start, end, color, width) if renderer.openGLIsEnabled() else _lineSoftware(surface, start, end, color, width)
 
 def _boxSoftware(surface, topLeft, bottomRight, color, width):
+    boxWidth = bottomRight[0]-topLeft[0]
+    boxHeight = bottomRight[1]-topLeft[1]
     if width > 0:
-        boxWidth = bottomRight[0]-topLeft[0]
-        boxHeight = bottomRight[1]-topLeft[1]
 
         # Draws the box in Top, Right, Bottom, Left order
         pygame.gfxdraw.box(surface, (topLeft[0], topLeft[1], boxWidth, width), color)
@@ -35,7 +35,7 @@ def _boxSoftware(surface, topLeft, bottomRight, color, width):
         pygame.gfxdraw.box(surface, (topLeft[0], bottomRight[1], boxWidth, width), color)
         pygame.gfxdraw.box(surface, (topLeft[0], topLeft[1], width, boxHeight), color)
     else:
-        surface.fill(color, _rectFromTopLeftBottomRight(topLeft, bottomRight))
+        pygame.gfxdraw.box(surface, (topLeft[0], topLeft[1], boxWidth, boxHeight), color)
 
 def _boxOpenGL(topLeft, bottomRight, color, width):
     glBindTexture(GL_TEXTURE_2D, 0)

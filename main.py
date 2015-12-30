@@ -54,7 +54,7 @@ def main():
     objectTargeter = DOTargetRect.DOTargetRect()
     overRenderList.add(objectTargeter)
 
-    screenFader = SOScreenFader.SOScreenFader(fadeSpeed=1024)
+    screenFader = DOScreenFader.DOScreenFader(fadeSpeed=255)
     screenFader.fadeOut()
     hudRenderList.add(screenFader)
 
@@ -78,7 +78,7 @@ def main():
         [gs.createGameObject(SOPowerUp.SOPowerUp, location=tile[0]) for tile in gs.world.getTiles("powerups")]
 
     def loadLevel(level):
-        if not screenFader.visible:
+        if not screenFader.isAnimating:
             screenFader.fadeIn(level)
             def loadLevelWrapper():
                 gs.loadMap(level)

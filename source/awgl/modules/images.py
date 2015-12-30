@@ -45,6 +45,9 @@ def loadImage(name, path):
 
     return _cachedImages[name]
 
+def setImage(name, image):
+    _cachedImages[name] = image
+
 def loadOpenGLTexture(image):
     if id(image) not in _cachedOpenGLTextures:
         textureData = pygame.image.tostring(image, "RGBA", 1)

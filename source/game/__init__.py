@@ -4,6 +4,6 @@ __all__ = [
     "AOPlayerCharacter",
     "TInfoText",
     "SOPowerUp",
-    "SOScreenFader",
+    "DOScreenFader",
     "DOTargetRect"
 ]

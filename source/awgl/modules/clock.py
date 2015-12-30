@@ -1,9 +1,10 @@
 import pygame
-import display
+import display, math
 
 _gameClock = None
 _globalTimeModifier = 1.0
 _isPaused = False
+_maxTick = 1000
 
 def init():
     pygame.display.init()
@@ -26,4 +27,4 @@ def unpause():
     _isPaused = False
 
 def tick():
-    return 0.0 if _isPaused else (_gameClock.tick(display.getDesiredFPS()) * _globalTimeModifier)/1000.0
+    return 0.0 if _isPaused else min((_gameClock.tick(display.getDesiredFPS()) * _globalTimeModifier), _maxTick)/1000.0
