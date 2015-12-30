@@ -3,7 +3,7 @@ import renderer
 
 _screen = None
 _screenModes = None
-_fps = 1000
+_fps = 60
 _title = "PyGame Testing"
 _fullscreen = False
 _screenSize = (1280, 800)

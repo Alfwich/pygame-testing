@@ -1,5 +1,5 @@
 import pygame
-from ..modules import events, colors, renderer, images
+from ..modules import events, colors, renderer, images, math
 import GameObject
 
 class StaticObject(GameObject.GameObject):
@@ -9,6 +9,7 @@ class StaticObject(GameObject.GameObject):
         self._cachedBitmap = None
         self._texture = None
         self._bitmap = None
+        self._bitmapIsDirty = False
         self._renderRect = None
         self._rotation = 0.0
         self._scale = [1, 1]
@@ -21,13 +22,14 @@ class StaticObject(GameObject.GameObject):
         if self._bitmap:
             if not self._cachedBitmap is None and self.visible:
                 self._bitmap = self._cachedBitmap.copy()
-                if not self._tint is colors.DEFAULT_TINT:
+                if not self._tint == colors.DEFAULT_TINT:
                     self._bitmap.fill(self._tint, None, pygame.BLEND_RGBA_MULT)
                 if not self._scale[0] == 1 or not self._scale[1] == 1:
                     self._bitmap = pygame.transform.scale(self._bitmap, (self.bitmap.get_width()*self._scale[0], self.bitmap.get_height()*self._scale[1]))
                 if not self._rotation == 0.0:
                     self._bitmap = pygame.transform.rotate(self._bitmap, self._rotation)
             images.unloadOpenGLImage(self._bitmap)
+            self._bitmapIsDirty = False
 
 
     @property
@@ -46,7 +48,9 @@ class StaticObject(GameObject.GameObject):
         self._tint.r = newTint.r
         self._tint.g = newTint.g
         self._tint.b = newTint.b
-        self._updateBitmap()
+        self._bitmapIsDirty = True
+        if not renderer.openGLIsEnabled():
+            self._updateBitmap()
 
     @property
     def alpha(self):
@@ -61,7 +65,10 @@ class StaticObject(GameObject.GameObject):
                 self.visible = False
             else:
                 self.visible = True
-            self._updateBitmap()
+
+            self._bitmapIsDirty = True
+            if not renderer.openGLIsEnabled():
+                self._updateBitmap()
 
     @property
     def rotation(self):
@@ -70,6 +77,7 @@ class StaticObject(GameObject.GameObject):
     @rotation.setter
     def rotation(self, value):
         self._rotation = value
+        self._bitmapIsDirty = True
         self._updateBitmap()
 
     @property
@@ -80,10 +88,13 @@ class StaticObject(GameObject.GameObject):
     def scale(self, newScale):
         self._scale[0] = int(newScale[0])
         self._scale[1] = int(newScale[1])
+        self._bitmapIsDirty = True
         self._updateBitmap()
 
     @property
     def bitmap(self):
+        if self._bitmapIsDirty:
+            self._updateBitmap()
         return self._bitmap
 
     @bitmap.setter

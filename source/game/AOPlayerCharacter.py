@@ -64,10 +64,16 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
         self.addEvents([
             events.bindKeyAxis(["a", "K_LEFT"], ["d", "K_RIGHT"], self.moveLeft),
             events.bindKeyAxis(["w", "K_UP"], ["s", "K_DOWN"], self.moveUp),
+            events.bindKeyDownEvent("6", self.changeColor),
             events.bindJoystickAxisMotionEvent(0, 0, self.moveLeft),
             events.bindJoystickAxisMotionEvent(0, 1, self.moveUp),
             events.bindJoystickButtonAxis(0, 1, 0, lambda e, v: self.modifyWalkingSpeed(v))
         ])
+
+
+    def changeColor(self, event=None):
+        self.tint = colors.randomColor()
+
 
     def begin(self):
         super(AOPlayerCharacter, self).begin()
