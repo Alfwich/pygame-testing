@@ -20,6 +20,6 @@ class TInfoText(Text.Text):
 
     def tick(self, delta):
         self._displayTime += delta
-        if self._displayTime > 0.25:
-            self._displayTime -= 0.25
-            self.text = self._generateText()
+        #if self._displayTime > 0.25:
+        #    self._displayTime -= 0.25
+        self.text = self._generateText()

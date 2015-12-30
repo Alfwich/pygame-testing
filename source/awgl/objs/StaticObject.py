@@ -7,20 +7,28 @@ class StaticObject(GameObject.GameObject):
     def __init__(self):
         super(StaticObject, self).__init__()
         self._cachedBitmap = None
-        self._texture = None
         self._bitmap = None
-        self._bitmapIsDirty = False
+        self._texture = None
         self._renderRect = None
         self._rotation = 0.0
         self._scale = [1, 1]
         self._tint = pygame.Color("#ffffffff")
+        self.addEvents(events.bindVideoChangeEvent(self._videoModeChanged))
+
+    def _videoModeChanged(self, event=None):
+        if renderer.openGLIsEnabled():
+            self._bitmap = self._cachedBitmap
+        self._updateBitmap()
 
     def _updateRenderRect(self):
         self._renderRect = self._bitmap.get_rect()
 
     def _updateBitmap(self):
-        if self._bitmap:
-            if not self._cachedBitmap is None and self.visible:
+        if renderer.openGLIsEnabled():
+            if self._bitmap:
+                self._texture = images.loadOpenGLTexture(self._bitmap)
+        else:
+            if self._cachedBitmap and self.visible:
                 self._bitmap = self._cachedBitmap.copy()
                 if not self._tint == colors.DEFAULT_TINT:
                     self._bitmap.fill(self._tint, None, pygame.BLEND_RGBA_MULT)
@@ -28,14 +36,10 @@ class StaticObject(GameObject.GameObject):
                     self._bitmap = pygame.transform.scale(self._bitmap, (self.bitmap.get_width()*self._scale[0], self.bitmap.get_height()*self._scale[1]))
                 if not self._rotation == 0.0:
                     self._bitmap = pygame.transform.rotate(self._bitmap, self._rotation)
-            images.unloadOpenGLImage(self._bitmap)
-            self._bitmapIsDirty = False
-
 
     @property
     def glTexture(self):
-        openGlTextureId = images.loadOpenGLTexture(self._bitmap)
-        return openGlTextureId
+        return self._texture
 
     @property
     def tint(self):
@@ -48,9 +52,7 @@ class StaticObject(GameObject.GameObject):
         self._tint.r = newTint.r
         self._tint.g = newTint.g
         self._tint.b = newTint.b
-        self._bitmapIsDirty = True
-        if not renderer.openGLIsEnabled():
-            self._updateBitmap()
+        self._updateBitmap()
 
     @property
     def alpha(self):
@@ -61,14 +63,8 @@ class StaticObject(GameObject.GameObject):
         newAlphaValue = int(sorted([0.0, value, 255.0])[1])
         if not newAlphaValue == self._tint.a:
             self._tint.a = newAlphaValue
-            if self._tint.a <= 0:
-                self.visible = False
-            else:
-                self.visible = True
-
-            self._bitmapIsDirty = True
-            if not renderer.openGLIsEnabled():
-                self._updateBitmap()
+            self.visible = False if self._tint.a <= 0 else True
+            self._updateBitmap()
 
     @property
     def rotation(self):
@@ -77,7 +73,6 @@ class StaticObject(GameObject.GameObject):
     @rotation.setter
     def rotation(self, value):
         self._rotation = value
-        self._bitmapIsDirty = True
         self._updateBitmap()
 
     @property
@@ -88,19 +83,18 @@ class StaticObject(GameObject.GameObject):
     def scale(self, newScale):
         self._scale[0] = int(newScale[0])
         self._scale[1] = int(newScale[1])
-        self._bitmapIsDirty = True
         self._updateBitmap()
 
     @property
     def bitmap(self):
-        if self._bitmapIsDirty:
-            self._updateBitmap()
         return self._bitmap
 
     @bitmap.setter
     def bitmap(self, newSurface):
         if newSurface:
-            self._cachedBitmap = self._bitmap = newSurface.convert_alpha()
+            if self._bitmap:
+                images.unloadOpenGLImage(self._bitmap)
+            self._cachedBitmap = self._bitmap = newSurface
             self._updateBitmap()
             self.size = (self._bitmap.get_width(), self._bitmap.get_height())
             self._updateRenderRect()

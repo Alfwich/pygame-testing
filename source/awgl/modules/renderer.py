@@ -1,5 +1,5 @@
 import pygame, os, sys
-import display, colors, images as awglImages
+import display, colors, images as awglImages, events
 
 _openGLLoadFailure = False
 _openGlEnabled = True
@@ -51,6 +51,7 @@ def enableOpenGL():
                 _openGlEnabled = True
                 display.updateScreen()
             awglImages.clearOpenGLImageCache()
+            events.postVideoEvent()
     except:
         print("Could not enable OpenGL. Reverting back to software mode.(%s)" % sys.exc_info()[0])
         _openGlEnabled = False
@@ -85,7 +86,6 @@ def _renderOpenGL(obj, pos):
         bitmapSize = map( float, obj.bitmap.get_size())
         normalizedTexturePos = (texturePos.x/bitmapSize[0], 1-texturePos.y/bitmapSize[1], texturePos.w/bitmapSize[0], texturePos.h/bitmapSize[1])
         tint = obj.tint
-        colorOffset = 255
         glBindTexture(GL_TEXTURE_2D, texture)
         drawPoints = [
             (pos[0], pos[1]),
@@ -102,7 +102,7 @@ def _renderOpenGL(obj, pos):
         ]
 
         glBegin(GL_QUADS)
-        glColor4f((tint.r+colorOffset)/255.0, (tint.g+colorOffset)/255.0, (tint.b+colorOffset)/255.0, tint.a/255.0)
+        glColor4f(tint.r/255.0, tint.g/255.0, tint.b/255.0, tint.a/255.0)
         for tx, cr in zip(texPoints, drawPoints):
             glTexCoord2f(*tx); glVertex3f(cr[0], cr[1], 0.0)
         glEnd()

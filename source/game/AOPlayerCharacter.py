@@ -120,6 +120,7 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
 
     def tick(self, delta):
         super(AOPlayerCharacter, self).tick(delta)
+        self.tint = colors.randomColor()
         if self.gameState["currentPlayerIndex"] == self.playerId:
             if not self.velocity[0] == 0 or not self.velocity[1] == 0:
                 self.updateMoveAnimation()

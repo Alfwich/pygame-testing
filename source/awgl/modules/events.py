@@ -262,3 +262,6 @@ def unbindTimer(timerId):
         if id(timeout) == timerId:
             _timers.remove(timeout)
             return
+
+def postVideoEvent():
+    pygame.event.post(pygame.event.Event(VIDEOEXPOSE))

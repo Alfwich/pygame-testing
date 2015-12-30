@@ -24,9 +24,11 @@ def clearOpenGLImageCache():
     _cachedOpenGLTextures = {}
 
 def unloadOpenGLImage(image):
-    if id(image) in _cachedOpenGLTextures:
-        unloadOpenGLTexture(_cachedOpenGLTextures[id(image)])
-        del _cachedOpenGLTextures[id(image)]
+    if image in _cachedOpenGLTextures:
+        _cachedOpenGLTextures[image][1] -= 1
+        if _cachedOpenGLTextures[image][1] == 0:
+            _unloadOpenGLTexture(_cachedOpenGLTextures[image])
+            del _cachedOpenGLTextures[image]
 
 def addToGlobalLoadList(newList):
     for asset in newList:
@@ -49,20 +51,21 @@ def setImage(name, image):
     _cachedImages[name] = image
 
 def loadOpenGLTexture(image):
-    if id(image) not in _cachedOpenGLTextures:
+    if image not in _cachedOpenGLTextures:
         textureData = pygame.image.tostring(image, "RGBA", 1)
         width = image.get_width()
         height = image.get_height()
-        texture = glGenTextures(1)
-        glBindTexture(GL_TEXTURE_2D, texture)
+        textureId = glGenTextures(1)
+        glBindTexture(GL_TEXTURE_2D, textureId)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData)
-        _cachedOpenGLTextures[id(image)] = texture
-    return _cachedOpenGLTextures[id(image)]
+        _cachedOpenGLTextures[image] = [textureId, 1]
 
-def unloadOpenGLTexture(textureId):
-    if renderer.openGLIsEnabled():
+    return _cachedOpenGLTextures[image][0]
+
+def _unloadOpenGLTexture(textureId):
+    if textureId and renderer.openGLIsEnabled():
         glDeleteTextures(textureId)
 
 def getImage(name):
