@@ -65,7 +65,7 @@ def main():
     events.bindKeyDownEvent(["q"], lambda e: quitApplication())
 
     def updatePlayers(event=None):
-        numberOfPlayers = 1000
+        numberOfPlayers = 10
         spawnLocations = shuffled(gs.world.getTiles("spawn"))
         gs["currentPlayerIndex"] = 0
         gs["players"] = [gs.createGameObject(AOPlayerCharacter.AOPlayerCharacter, player=i, location=spawnLocations.pop()[0]) for i in range(numberOfPlayers)]
