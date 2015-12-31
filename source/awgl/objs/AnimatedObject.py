@@ -39,7 +39,7 @@ class AnimatedObject(StaticObject.StaticObject):
 
     @property
     def size(self):
-        return (self.animation.getFrameRect(int(self.frame)).w, self.animation.getFrameRect(int(self.frame)).h)
+        return [self.animation.getFrameRect(int(self.frame)).w, self.animation.getFrameRect(int(self.frame)).h]
 
     @size.setter
     def size(self, newSize):

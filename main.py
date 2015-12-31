@@ -124,7 +124,7 @@ def main():
     events.bindTimer(joysticks.updateJoysticks, 1000, -1)
     #events.bindTimer(debug.printDisplayInfo, 500, -1)
 
-    gs.loadMap("test3.json")
+    gs.loadMap("test2.json")
     levelPostLoad()
 
     while True:
@@ -143,7 +143,7 @@ def main():
         mainRenderList.render(screen, mainCamera)
         overRenderList.render(screen, mainCamera)
         particleRenderList.render(screen, mainCamera)
-        #debug.renderGameStateCollisionRects(screen, gs, mainCamera)
+        debug.renderGameStateCollisionRects(screen, gs, mainCamera)
         hudRenderList.render(screen, hudCamera)
         renderer.update()
 

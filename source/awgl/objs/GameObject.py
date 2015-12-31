@@ -1,5 +1,5 @@
 import pygame
-from ..modules import events, renderer
+from ..modules import events
 
 class alignment:
     TOP = LEFT = 0
@@ -116,7 +116,7 @@ class GameObject(object):
 
     @property
     def position(self):
-        return [int(self._position[0]), int(self._position[1])] 
+        return [int(self._position[0]), int(self._position[1])]
 
     @property
     def rawPosition(self):

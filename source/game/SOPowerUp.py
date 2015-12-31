@@ -7,8 +7,8 @@ class SOPowerUp(StaticObject.StaticObject):
     def __init__(self, **configuration):
         super(SOPowerUp, self).__init__()
         self.setTag("powerup")
-        powerupBitmap = pygame.Surface((10,10))
-        powerupBitmap.fill(colors.BLUE)
+        powerupBitmap = pygame.Surface((40,40))
+        powerupBitmap.fill(colors.WHITE)
         self.bitmap = powerupBitmap
 
     def begin(self):
@@ -21,3 +21,9 @@ class SOPowerUp(StaticObject.StaticObject):
             other.currentSpeed *= 1.1
             self.disable()
             return True
+
+    def tick(self, delta):
+        self.rotation += delta * random.randint(0, 100)
+        self.tint = colors.randomColor()
+        newScale = random.randint(1,4)
+        self.scale = (newScale, newScale)

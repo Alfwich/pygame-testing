@@ -72,7 +72,7 @@ class StaticObject(GameObject.GameObject):
 
     @rotation.setter
     def rotation(self, value):
-        self._rotation = value
+        self._rotation = value % 360.0
         self._updateBitmap()
 
     @property

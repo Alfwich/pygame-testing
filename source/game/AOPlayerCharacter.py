@@ -26,7 +26,7 @@ class AOPlayerCharacter(AnimatedObject.AnimatedObject):
         self.bitmap = images.getImage("walking-guy")
         self.setAnimation(animations.getAnimation("walking-guy-walk-left"))
         self.showPlayerTag()
-        self.alignmentY = GameObject.alignment.BOTTOM
+        self.alignment = GameObject.alignment.BOTTOM_CENTER
         self.setNumberOfLoops(-1)
         self.setFrameRate(self.walkingFPS)
         self.play()
