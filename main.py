@@ -143,7 +143,7 @@ def main():
         mainRenderList.render(screen, mainCamera)
         overRenderList.render(screen, mainCamera)
         particleRenderList.render(screen, mainCamera)
-        debug.renderGameStateCollisionRects(screen, gs, mainCamera)
+        #debug.renderGameStateCollisionRects(screen, gs, mainCamera)
         hudRenderList.render(screen, hudCamera)
         renderer.update()
 
